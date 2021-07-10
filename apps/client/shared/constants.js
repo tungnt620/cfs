@@ -1,0 +1,1 @@
+export const LIMIT_CATEGORY_FETCH = 100

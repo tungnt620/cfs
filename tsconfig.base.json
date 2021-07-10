@@ -1,0 +1,27 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2017", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "paths": {
+      "@cfs/common": ["libs/common/src/index.js"],
+      "@cfs/ui": ["libs/ui/src/index.js"],
+      "@cfs/ui/icons": ["libs/ui/src/lib/icons/index.js"],
+      "@cfs/config": ["libs/config/src/index.ts"],
+      "@cfs/helper": ["libs/helper/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

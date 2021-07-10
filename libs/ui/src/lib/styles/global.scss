@@ -1,0 +1,49 @@
+body {
+  --main-bg-color: #fff;
+  --color-1: #9e9ea7;
+  --color-2: #787c7e;
+  --color-3: #0c8ecf;
+  --header-height: 60px;
+  --shadow-color: #f3f3f4;
+  --border-color1: #efefed;
+  --bg-color1: #efefed;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import 'antd/dist/antd.css';
+@import 'icons';
+@import 'custom';
+
+.color1 {
+  color: var(--color-1)
+}
+
+.color2 {
+  color: var(--color-2)
+}
+
+.color3 {
+  color: var(--color-3)
+}
+
+.border-color1 {
+  border-color: var(--border-color1);
+}
+
+.bg-color1 {
+  background-color: var(--bg-color1)
+}
+
+.header-height {
+  height: var(--header-height);
+}
+
+.h-full-without-header {
+  height: calc(100% - var(--header-height));
+}
+
+.header-shadow {
+  box-shadow: inset 0px -1px 0px var(--shadow-color);
+}

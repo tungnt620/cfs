@@ -1,0 +1,64 @@
+{
+  "implicitDependencies": {
+    "workspace.json": "*",
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
+    "tsconfig.base.json": "*",
+    "tslint.json": "*",
+    ".eslintrc.json": "*",
+    "nx.json": "*"
+  },
+  "affected": {
+    "defaultBase": "master"
+  },
+  "npmScope": "confession",
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/nx-cloud",
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e",
+          "build-storybook"
+        ],
+        "accessToken": "YzY4YjcwZmQtYWZlNC00ZWI2LThjODEtMDRiNWZjZTM1NjU5fHJlYWQtd3JpdGU=",
+        "canTrackAnalytics": false,
+        "showUsageWarnings": true
+      }
+    }
+  },
+  "projects": {
+    "client": {
+      "tags": []
+    },
+    "client-e2e": {
+      "tags": [],
+      "implicitDependencies": ["client"]
+    },
+    "common": {
+      "tags": []
+    },
+    "config": {
+      "tags": []
+    },
+    "data": {
+      "tags": []
+    },
+    "helper": {
+      "tags": []
+    },
+    "server": {
+      "tags": []
+    },
+    "ui": {
+      "tags": []
+    },
+    "worker": {
+      "tags": []
+    }
+  }
+}
