@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState, useCallback } from 'react';
 import { MenuOpen, MenuClose } from '@cfs/ui/icons';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Button, Menu } from 'antd';
+import { Avatar, Button, Dropdown, Menu } from 'antd';
 import LoginPopup from '../LoginPopup';
-import {
-  useLogoutMutation,
-  useSharedQuery,
-} from '@cfs/graphql';
-import { useApolloClient } from '@apollo/react-hooks';
+import { useLogoutMutation, useSharedQuery } from '@cfs/graphql';
+import { useApolloClient, useReactiveVar } from '@apollo/react-hooks';
+import { preventDefault, setIsLoggedIn } from '@cfs/helper';
+import { DownOutlined, UserOutlined } from '@ant-design/icons';
 
 const HeaderUI = () => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -17,11 +16,17 @@ const HeaderUI = () => {
   const client = useApolloClient();
   const [logout] = useLogoutMutation();
   const { data: shareData } = useSharedQuery({ ssr: false });
+  const isLoggedIn = useReactiveVar(setIsLoggedIn);
+
+  useEffect(() => {
+    setIsLoggedIn(!!shareData?.currentUser?.id);
+  }, [shareData?.currentUser?.id]);
 
   const handleLogout = useCallback(() => {
     const reset = async () => {
       try {
         await logout();
+        setIsLoggedIn(false);
         await client.resetStore();
       } catch (e) {
         console.error(e);
@@ -64,17 +69,32 @@ const HeaderUI = () => {
           </a>
         </Link>
 
-        <div>
+        <div className="flex">
           <Link href="/new">
             <a>
               <Button type="primary">Viết bài</Button>
             </a>
           </Link>
 
-          {shareData?.currentUser?.id ? (
-            <Button onClick={handleLogout} type="link">
-              Đăng xuất
-            </Button>
+          {isLoggedIn ? (
+            <div className="flex ml-4 items-center">
+              <Avatar size={32} icon={<UserOutlined />} className="mr-1" />
+              <Dropdown
+                overlay={
+                  <Menu>
+                    <Menu.Item>
+                      <Button onClick={handleLogout} type="link">
+                        Đăng xuất
+                      </Button>
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
+                <a className="ant-dropdown-link" onClick={preventDefault}>
+                  {shareData.currentUser.username} <DownOutlined />
+                </a>
+              </Dropdown>
+            </div>
           ) : (
             <Button onClick={toggleLoginPopupVisible} type="link">
               Đăng nhập

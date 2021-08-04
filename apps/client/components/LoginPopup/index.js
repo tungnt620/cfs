@@ -3,7 +3,8 @@ import { Alert, Button, Form, Input, Modal, notification } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { extractError, getCodeFromError } from '@cfs/helper';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { useCurrentUserAuthenticationsLazyQuery, useLoginMutation } from '@cfs/graphql';
+import { useLoginMutation } from '@cfs/graphql';
+import { setIsLoggedIn } from '@cfs/helper';
 
 function hasErrors(fieldsError) {
   return Object.keys(fieldsError).some((field) => fieldsError[field]);
@@ -13,7 +14,6 @@ const LoginPopup = ({ toggleVisible }) => {
   const [error, setError] = useState(undefined);
   const [form] = useForm();
   const [login] = useLoginMutation({});
-  const [getCurrentUserInfo] = useCurrentUserAuthenticationsLazyQuery();
 
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const handleSubmit = useCallback(
@@ -26,7 +26,7 @@ const LoginPopup = ({ toggleVisible }) => {
             password: values.password,
           },
         });
-        // await getCurrentUserInfo();
+        setIsLoggedIn(true);
         notification.success({
           message: `Đăng nhập thành công`,
           placement: 'bottomRight',

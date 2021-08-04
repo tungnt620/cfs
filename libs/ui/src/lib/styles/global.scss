@@ -9,12 +9,12 @@ body {
   --bg-color1: #efefed;
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 @import 'antd/dist/antd.css';
 @import 'icons';
 @import 'custom';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 .color1 {
   color: var(--color-1)
