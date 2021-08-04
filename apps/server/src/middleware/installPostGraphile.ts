@@ -34,7 +34,7 @@ export interface OurGraphQLContext {
 const TagsFilePlugin = makePgSmartTagsFromFilePlugin(
   // We're using JSONC for VSCode compatibility; also using an explicit file
   // path keeps the tests happy.
-  resolve(__dirname, "../../postgraphile.tags.jsonc")
+  resolve(__dirname, "../../../apps/server/postgraphile.tags.jsonc")
 );
 
 type UUID = string;
@@ -125,28 +125,26 @@ export function getPostGraphileOptions({
      * gives you much more control (and stability) over how errors are
      * output to the user.
      */
-    /*
         // See https://www.graphile.org/postgraphile/debugging/
-        extendedErrors:
-          isDev || isTest
-            ? [
-                "errcode",
-                "severity",
-                "detail",
-                "hint",
-                "positon",
-                "internalPosition",
-                "internalQuery",
-                "where",
-                "schema",
-                "table",
-                "column",
-                "dataType",
-                "constraint",
-              ]
-            : ["errcode"],
-        showErrorStack: isDev || isTest,
-        */
+        // extendedErrors:
+        //   isDev || isTest
+        //     ? [
+        //         "errcode",
+        //         "severity",
+        //         "detail",
+        //         "hint",
+        //         "positon",
+        //         "internalPosition",
+        //         "internalQuery",
+        //         "where",
+        //         "schema",
+        //         "table",
+        //         "column",
+        //         "dataType",
+        //         "constraint",
+        //       ]
+        //     : ["errcode"],
+    // showErrorStack: isDev || isTest,
 
     // Automatically update GraphQL schema when database changes
     watchPg: isDev,
@@ -154,7 +152,7 @@ export function getPostGraphileOptions({
     // Keep data/schema.graphql up to date
     sortExport: true,
     exportGqlSchemaPath: isDev
-      ? `${__dirname}/../../../../data/schema.graphql`
+      ? `${__dirname}/../../../data/schema.graphql`
       : undefined,
 
     /*

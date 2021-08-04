@@ -7,7 +7,6 @@ const {
   withDotenvUpdater,
   updateDotenv,
   readDotenv,
-  runSync,
 } = require("./_setup_utils");
 const inquirer = require("inquirer");
 
@@ -60,9 +59,6 @@ runMain(async () => {
       ...answers,
     })
   );
-
-  // And perform setup
-  // runSync(yarnCmd, ["server", "build"]);
 
   if (process.argv[2] === "auto") {
     // We're advancing automatically

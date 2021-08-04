@@ -24,6 +24,7 @@ export function extractError(
 export function getExceptionFromError(
   error: null | Error | ApolloError | GraphQLError
 ): Error | null {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const graphqlError: GraphQLError = extractError(error);
   const exception =

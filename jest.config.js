@@ -5,8 +5,9 @@ module.exports = {
     '<rootDir>/libs/ui',
     '<rootDir>/libs/common',
     '<rootDir>/libs/config',
-    '<rootDir>/apps/data',
     '<rootDir>/libs/helper',
     '<rootDir>/apps/worker',
+    '<rootDir>/apps/db',
+    '<rootDir>/libs/graphql',
   ],
 };

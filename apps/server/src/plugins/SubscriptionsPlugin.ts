@@ -32,7 +32,7 @@ type AugmentedGraphQLFieldResolver<
  * limitation).
  */
 const currentUserTopicFromContext = async (
-  _args: {},
+  _args: any,
   context: { [key: string]: any },
   _resolveInfo: GraphQLResolveInfo
 ) => {
@@ -106,7 +106,7 @@ function recordByIdFromTable(
   const { pgSql: sql } = build;
   return async (
     event: TgGraphQLSubscriptionPayload,
-    _args: {},
+    _args: any,
     _context: OurGraphQLContext,
     { graphile: { selectGraphQLResultFromTable } }
   ) => {

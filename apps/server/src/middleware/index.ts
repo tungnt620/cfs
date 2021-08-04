@@ -1,4 +1,3 @@
-import installCSRFProtection from "./installCSRFProtection";
 import installCypressServerCommand from "./installCypressServerCommand";
 import installDatabasePools from "./installDatabasePools";
 import installErrorHandler from "./installErrorHandler";
@@ -10,11 +9,9 @@ import installPostGraphile from "./installPostGraphile";
 import installSameOrigin from "./installSameOrigin";
 import installSession from "./installSession";
 import installSharedStatic from "./installSharedStatic";
-import installSSR from "./installSSR";
 import installWorkerUtils from "./installWorkerUtils";
 
 export {
-  installCSRFProtection,
   installCypressServerCommand,
   installDatabasePools,
   installErrorHandler,
@@ -26,6 +23,5 @@ export {
   installSameOrigin,
   installSession,
   installSharedStatic,
-  installSSR,
   installWorkerUtils,
 };

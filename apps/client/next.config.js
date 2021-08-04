@@ -1,8 +1,9 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const withNx = require('@nrwl/next/plugins/with-nx');
 
-module.exports = withNx({
+const nextConfig = {
   images: {
     domains: ['confession.vn', 'storage.googleapis.com'],
-  },
-});
+  }
+};
+
+module.exports = withNx(nextConfig);

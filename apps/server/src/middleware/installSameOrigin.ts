@@ -1,8 +1,8 @@
-import { Express, RequestHandler } from "express";
+import { Express, RequestHandler } from 'express';
 
-import { getWebsocketMiddlewares } from "../app";
+import { getWebsocketMiddlewares } from '../app';
 
-declare module "express-serve-static-core" {
+declare module 'express-serve-static-core' {
   interface Request {
     /**
      * True if either the request 'Origin' header matches our ROOT_URL, or if
@@ -16,7 +16,9 @@ declare module "express-serve-static-core" {
 export default (app: Express) => {
   const middleware: RequestHandler = (req, res, next) => {
     req.isSameOrigin =
-      !req.headers.origin || req.headers.origin === process.env.ROOT_URL;
+      !req.headers.origin ||
+      req.headers.origin === process.env.ROOT_URL ||
+      req.headers.origin === process.env.NEXT_PUBLIC_CFS_URL;
     next();
   };
   app.use(middleware);

@@ -45,7 +45,10 @@
     "config": {
       "tags": []
     },
-    "data": {
+    "db": {
+      "tags": []
+    },
+    "graphql": {
       "tags": []
     },
     "helper": {

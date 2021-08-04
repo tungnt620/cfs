@@ -44,7 +44,7 @@ let errorPageTemplate: TemplateExecutor;
 function getErrorPage({ message }: ParsedError) {
   if (!errorPageTemplate || isDev) {
     errorPageTemplate = template(
-      fs.readFileSync(resolve(__dirname, "../../error.html"), "utf8")
+      fs.readFileSync(resolve(__dirname, "./assets/error.html"), "utf8")
     );
   }
 

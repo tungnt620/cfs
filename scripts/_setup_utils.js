@@ -100,28 +100,6 @@ exports.updateDotenv = function updateDotenv(add, answers) {
 # IMPORTANT: must NOT end with a slash`
   );
 
-  add(
-    "GITHUB_KEY",
-    null,
-    `\
-# To enable login with GitHub, create a GitHub application by visiting
-# https://github.com/settings/applications/new and then enter the Client
-# ID/Secret below
-#
-#   Name: PostGraphile Starter (Dev)
-#   Homepage URL: http://localhost:5678
-#   Authorization callback URL: http://localhost:5678/auth/github/callback
-#
-# Client ID:`
-  );
-
-  add(
-    "GITHUB_SECRET",
-    null,
-    `\
-# Client Secret:`
-  );
-
   const nodeVersion = parseInt(
     process.version.replace(/\..*$/, "").replace(/[^0-9]/g, ""),
     10

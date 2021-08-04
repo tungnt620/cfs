@@ -1,25 +1,25 @@
-import express, { Express } from "express";
-import { Server } from "http";
-import { Middleware } from "postgraphile";
+import express, { Express } from 'express';
+import { Server } from 'http';
+import { Middleware } from 'postgraphile';
 
-import { cloudflareIps } from "./cloudflare";
-import * as middleware from "./middleware";
-import { makeShutdownActions, ShutdownAction } from "./shutdownActions";
-import { sanitizeEnv } from "./utils";
+import { cloudflareIps } from './cloudflare';
+import * as middleware from './middleware';
+import { makeShutdownActions, ShutdownAction } from './shutdownActions';
+import { sanitizeEnv } from './utils';
 
 // Server may not always be supplied, e.g. where mounting on a sub-route
 export function getHttpServer(app: Express): Server | void {
-  return app.get("httpServer");
+  return app.get('httpServer');
 }
 
 export function getShutdownActions(app: Express): ShutdownAction[] {
-  return app.get("shutdownActions");
+  return app.get('shutdownActions');
 }
 
 export function getWebsocketMiddlewares(
   app: Express
 ): Middleware<express.Request, express.Response>[] {
-  return app.get("websocketMiddlewares");
+  return app.get('websocketMiddlewares');
 }
 
 export async function makeApp({
@@ -29,14 +29,15 @@ export async function makeApp({
 } = {}): Promise<Express> {
   sanitizeEnv();
 
-  const isTest = process.env.NODE_ENV === "test";
-  const isDev = process.env.NODE_ENV === "development";
+  const isTest = process.env.NODE_ENV === 'test';
+  const isDev = process.env.NODE_ENV === 'development';
 
   const shutdownActions = makeShutdownActions();
 
   if (isDev) {
     shutdownActions.push(() => {
-      require("inspector").close();
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      require('inspector').close();
     });
   }
 
@@ -44,6 +45,23 @@ export async function makeApp({
    * Our Express server
    */
   const app = express();
+
+  app.use((req, res, next) => {
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', process.env.NEXT_PUBLIC_CFS_URL);
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', 'true')
+    // Pass to next layer of middleware
+    next();
+  })
 
   /*
    * In production, we may need to enable the 'trust proxy' setting so that the
@@ -62,12 +80,12 @@ export async function makeApp({
       and a special `TRUST_PROXY=cloudflare` setting you can use to use them.
     */
     app.set(
-      "trust proxy",
-      process.env.TRUST_PROXY === "1"
+      'trust proxy',
+      process.env.TRUST_PROXY === '1'
         ? true
-        : process.env.TRUST_PROXY === "cloudflare"
-        ? ["loopback", "linklocal", "uniquelocal", ...cloudflareIps]
-        : process.env.TRUST_PROXY.split(",")
+        : process.env.TRUST_PROXY === 'cloudflare'
+        ? ['loopback', 'linklocal', 'uniquelocal', ...cloudflareIps]
+        : process.env.TRUST_PROXY.split(',')
     );
   }
 
@@ -75,21 +93,23 @@ export async function makeApp({
    * Getting access to the HTTP server directly means that we can do things
    * with websockets if we need to (e.g. GraphQL subscriptions).
    */
-  app.set("httpServer", httpServer);
+  app.set('httpServer', httpServer);
 
   /*
    * For a clean nodemon shutdown, we need to close all our sockets otherwise
    * we might not come up cleanly again (inside nodemon).
    */
-  app.set("shutdownActions", shutdownActions);
+  app.set('shutdownActions', shutdownActions);
 
   /*
    * When we're using websockets, we may want them to have access to
    * sessions/etc for authentication.
    */
-  const websocketMiddlewares: Middleware<express.Request, express.Response>[] =
-    [];
-  app.set("websocketMiddlewares", websocketMiddlewares);
+  const websocketMiddlewares: Middleware<
+    express.Request,
+    express.Response
+  >[] = [];
+  app.set('websocketMiddlewares', websocketMiddlewares);
 
   /*
    * Middleware is installed from the /server/middleware directory. These
@@ -102,7 +122,6 @@ export async function makeApp({
   await middleware.installHelmet(app);
   await middleware.installSameOrigin(app);
   await middleware.installSession(app);
-  await middleware.installCSRFProtection(app);
   await middleware.installPassport(app);
   await middleware.installLogging(app);
   if (process.env.FORCE_SSL) {
@@ -114,7 +133,6 @@ export async function makeApp({
     await middleware.installCypressServerCommand(app);
   }
   await middleware.installPostGraphile(app);
-  await middleware.installSSR(app);
 
   /*
    * Error handling middleware

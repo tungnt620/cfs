@@ -1,19 +1,29 @@
 import App from 'next/app';
 import React from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
-import withApolloClient from '../shared/withApolloClient';
 import { DefaultSeo } from 'next-seo';
 import Head from 'next/head';
 import defaultSEOPropsConfigs from '../shared/seo/nextSEODefault.config';
 import '../../../libs/ui/src/lib/styles/global.scss';
 import MainLayout from '../components/Layout';
+import { withApollo } from '@cfs/helper';
 
 const noLayoutComponents = ['NewCfs'];
 
 class MyApp extends App {
+  static async getInitialProps({ Component, ctx }) {
+    let pageProps = {};
+
+    if (Component.getInitialProps) {
+      pageProps = await Component.getInitialProps(ctx);
+    }
+
+    return { pageProps };
+  }
+
   render() {
-    const { Component, pageProps, apolloClient } = this.props;
-    
+    const { Component, pageProps, apollo } = this.props;
+
     return (
       <>
         <Head>
@@ -22,7 +32,7 @@ class MyApp extends App {
             content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
           />
         </Head>
-        <ApolloProvider client={apolloClient}>
+        <ApolloProvider client={apollo}>
           <DefaultSeo {...defaultSEOPropsConfigs} />
           {noLayoutComponents.includes(Component.name) ? (
             <Component {...pageProps} />
@@ -37,4 +47,4 @@ class MyApp extends App {
   }
 }
 
-export default withApolloClient(MyApp);
+export default withApollo(MyApp);

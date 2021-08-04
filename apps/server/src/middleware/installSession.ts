@@ -61,9 +61,9 @@ export default (app: Express) => {
     resave: false,
     cookie: {
       maxAge: MAXIMUM_SESSION_DURATION_IN_MILLISECONDS,
-      httpOnly: true, // default
+      secure: true, // May need to app.set('trust proxy') for this to work.
+      httpOnly: true,
       sameSite: "lax", // Cannot be 'strict' otherwise OAuth won't work.
-      secure: "auto", // May need to app.set('trust proxy') for this to work.
     },
     store,
     secret: SECRET,

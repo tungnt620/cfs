@@ -4,12 +4,38 @@ import { MenuOpen, MenuClose } from '@cfs/ui/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button, Menu } from 'antd';
+import LoginPopup from '../LoginPopup';
+import {
+  useLogoutMutation,
+  useSharedQuery,
+} from '@cfs/graphql';
+import { useApolloClient } from '@apollo/react-hooks';
 
 const HeaderUI = () => {
   const [menuOpened, setMenuOpened] = useState(false);
+  const [loginPopupVisible, setLoginPopupVisible] = useState(false);
+  const client = useApolloClient();
+  const [logout] = useLogoutMutation();
+  const { data: shareData } = useSharedQuery({ ssr: false });
+
+  const handleLogout = useCallback(() => {
+    const reset = async () => {
+      try {
+        await logout();
+        await client.resetStore();
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    reset();
+  }, [client, logout]);
 
   const toggleMenu = useCallback(() => {
     setMenuOpened((prev) => !prev);
+  }, []);
+
+  const toggleLoginPopupVisible = useCallback(() => {
+    setLoginPopupVisible((prev) => !prev);
   }, []);
 
   return (
@@ -38,11 +64,27 @@ const HeaderUI = () => {
           </a>
         </Link>
 
-        <Link href="/new">
-          <a>
-            <Button type="primary">Viết bài</Button>
-          </a>
-        </Link>
+        <div>
+          <Link href="/new">
+            <a>
+              <Button type="primary">Viết bài</Button>
+            </a>
+          </Link>
+
+          {shareData?.currentUser?.id ? (
+            <Button onClick={handleLogout} type="link">
+              Đăng xuất
+            </Button>
+          ) : (
+            <Button onClick={toggleLoginPopupVisible} type="link">
+              Đăng nhập
+            </Button>
+          )}
+
+          {loginPopupVisible && (
+            <LoginPopup toggleVisible={toggleLoginPopupVisible} />
+          )}
+        </div>
       </div>
       <nav
         className={`${

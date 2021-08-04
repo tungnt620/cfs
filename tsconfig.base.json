@@ -10,6 +10,7 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
+    "typeRoots": ["node_modules/@types"],
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
@@ -17,10 +18,11 @@
     "esModuleInterop": true,
     "paths": {
       "@cfs/common": ["libs/common/src/index.js"],
+      "@cfs/config": ["libs/config/src/index.ts"],
+      "@cfs/helper": ["libs/helper/src/index.tsx"],
       "@cfs/ui": ["libs/ui/src/index.js"],
       "@cfs/ui/icons": ["libs/ui/src/lib/icons/index.js"],
-      "@cfs/config": ["libs/config/src/index.ts"],
-      "@cfs/helper": ["libs/helper/src/index.ts"]
+      "@cfs/graphql": ["libs/graphql/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

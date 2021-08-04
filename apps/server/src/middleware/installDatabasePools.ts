@@ -1,8 +1,8 @@
-import { Pool } from "pg";
+import { Pool } from 'pg';
 
 import { getShutdownActions } from "../app";
 
-export function getRootPgPool(app) {
+export function getRootPgPool(app):Pool {
   return app.get("rootPgPool");
 }
 export function getAuthPgPool(app) {
@@ -19,6 +19,7 @@ export function getAuthPgPool(app) {
  * TODO: log this to an error reporting service.
  */
 function swallowPoolError(_error) {
+  console.log(_error)
   /* noop */
 }
 

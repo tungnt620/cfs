@@ -137,19 +137,19 @@
         }
       }
     },
-    "data": {
-      "root": "apps/data",
-      "sourceRoot": "apps/data/src",
+    "db": {
+      "root": "apps/db",
+      "sourceRoot": "apps/db/src",
       "projectType": "application",
       "targets": {
         "build": {
           "executor": "@nrwl/node:build",
           "outputs": ["{options.outputPath}"],
           "options": {
-            "outputPath": "dist/apps/data",
-            "main": "apps/data/src/main.ts",
-            "tsConfig": "apps/data/tsconfig.app.json",
-            "assets": ["apps/data/src/assets"]
+            "outputPath": "dist/apps/db",
+            "main": "apps/db/src/main.ts",
+            "tsConfig": "apps/db/tsconfig.app.json",
+            "assets": ["apps/db/src/assets"]
           },
           "configurations": {
             "production": {
@@ -158,30 +158,92 @@
               "inspect": false,
               "fileReplacements": [
                 {
-                  "replace": "apps/data/src/environments/environment.ts",
-                  "with": "apps/data/src/environments/environment.prod.ts"
+                  "replace": "apps/db/src/environments/environment.ts",
+                  "with": "apps/db/src/environments/environment.prod.ts"
                 }
               ]
             }
           }
         },
-        "serve": {
-          "executor": "@nrwl/node:execute",
+        "migrate": {
+          "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "buildTarget": "data:build"
+            "command": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS -r ../../libs/config/env\" graphile-migrate migrate",
+            "cwd": "apps/db"
+          }
+        },
+        "watch": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS -r ../../libs/config/env\" graphile-migrate watch",
+            "cwd": "apps/db"
+          }
+        },
+        "commit": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphile-migrate commit",
+            "cwd": "apps/db"
+          }
+        },
+        "uncommit": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphile-migrate uncommit",
+            "cwd": "apps/db"
+          }
+        },
+        "reset": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphile-migrate reset",
+            "cwd": "apps/db"
+          }
+        },
+        "dump": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "graphile-migrate migrate",
+              "graphile-migrate reset --shadow --erase",
+              "graphile-migrate migrate --shadow --forceActions"
+            ],
+            "parallel": false,
+            "cwd": "apps/db"
           }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/data/**/*.ts"]
+            "lintFilePatterns": ["apps/db/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/data"],
+          "outputs": ["coverage/apps/db"],
           "options": {
-            "jestConfig": "apps/data/jest.config.js",
+            "jestConfig": "apps/db/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "graphql": {
+      "root": "libs/graphql",
+      "sourceRoot": "libs/graphql/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/graphql/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/graphql"],
+          "options": {
+            "jestConfig": "libs/graphql/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -239,7 +301,8 @@
         "serve": {
           "executor": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "server:build"
+            "buildTarget": "server:build",
+            "runtimeArgs": ["-r", "./libs/config/env"]
           }
         },
         "lint": {
@@ -319,7 +382,7 @@
           "executor": "@nrwl/node:build",
           "outputs": ["{options.outputPath}"],
           "options": {
-            "outputPath": "dist/apps/worker",
+            "outputPath": "apps/worker/dist",
             "main": "apps/worker/src/main.ts",
             "tsConfig": "apps/worker/tsconfig.app.json",
             "assets": ["apps/worker/src/assets"]
@@ -339,9 +402,29 @@
           }
         },
         "serve": {
-          "executor": "@nrwl/node:execute",
+          "executor": "@nrwl/workspace:run-commands",
           "options": {
+            "command": "graphile-worker --crontab ./crontab",
+            "cwd": "apps/worker/dist",
             "buildTarget": "worker:build"
+          }
+        },
+        "dev": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphile-worker --crontab ../crontab --watch",
+            "cwd": "apps/worker/dist",
+            "buildTarget": "worker:build"
+          }
+        },
+        "install-db-schema": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "mkdirp dist",
+              "graphile-worker --crontab ../crontab --schema-only"
+            ],
+            "cwd": "apps/worker"
           }
         },
         "lint": {
