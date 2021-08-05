@@ -7,26 +7,27 @@ import { Avatar, Button, Dropdown, Menu } from 'antd';
 import LoginPopup from '../LoginPopup';
 import { useLogoutMutation, useSharedQuery } from '@cfs/graphql';
 import { useApolloClient, useReactiveVar } from '@apollo/react-hooks';
-import { preventDefault, setIsLoggedIn } from '@cfs/helper';
+import { preventDefault } from '@cfs/helper';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
+import { setCurrentUser } from '../../../../libs/helper/src/reactiveVars';
 
 const HeaderUI = () => {
   const [menuOpened, setMenuOpened] = useState(false);
   const [loginPopupVisible, setLoginPopupVisible] = useState(false);
   const client = useApolloClient();
   const [logout] = useLogoutMutation();
-  const { data: shareData } = useSharedQuery({ ssr: false });
-  const isLoggedIn = useReactiveVar(setIsLoggedIn);
+  const{ data: shareData } = useSharedQuery();
+  const currentUser = useReactiveVar(setCurrentUser);
 
   useEffect(() => {
-    setIsLoggedIn(!!shareData?.currentUser?.id);
-  }, [shareData?.currentUser?.id]);
+    if (shareData?.currentUser) setCurrentUser(shareData.currentUser);
+  }, [shareData?.currentUser]);
 
   const handleLogout = useCallback(() => {
     const reset = async () => {
       try {
         await logout();
-        setIsLoggedIn(false);
+        setCurrentUser({});
         await client.resetStore();
       } catch (e) {
         console.error(e);
@@ -76,7 +77,7 @@ const HeaderUI = () => {
             </a>
           </Link>
 
-          {isLoggedIn ? (
+          {currentUser?.id ? (
             <div className="flex ml-4 items-center">
               <Avatar size={32} icon={<UserOutlined />} className="mr-1" />
               <Dropdown
@@ -91,7 +92,7 @@ const HeaderUI = () => {
                 }
               >
                 <a className="ant-dropdown-link" onClick={preventDefault}>
-                  {shareData.currentUser.username} <DownOutlined />
+                  {currentUser?.username} <DownOutlined />
                 </a>
               </Dropdown>
             </div>

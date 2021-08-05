@@ -4,7 +4,7 @@ import { useForm } from 'antd/lib/form/Form';
 import { extractError, getCodeFromError } from '@cfs/helper';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useLoginMutation } from '@cfs/graphql';
-import { setIsLoggedIn } from '@cfs/helper';
+import { setCurrentUser } from '../../../../libs/helper/src/reactiveVars';
 
 function hasErrors(fieldsError) {
   return Object.keys(fieldsError).some((field) => fieldsError[field]);
@@ -16,17 +16,18 @@ const LoginPopup = ({ toggleVisible }) => {
   const [login] = useLoginMutation({});
 
   const [submitDisabled, setSubmitDisabled] = useState(false);
+
   const handleSubmit = useCallback(
     async (values) => {
       setError(null);
       try {
-        await login({
+        const loginResp = await login({
           variables: {
             username: values.username,
             password: values.password,
           },
         });
-        setIsLoggedIn(true);
+        setCurrentUser(loginResp.data.login.user);
         notification.success({
           message: `Đăng nhập thành công`,
           placement: 'bottomRight',
