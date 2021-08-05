@@ -3,7 +3,7 @@ import { Alert, Button, Form, Input, Modal, notification } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { extractError, getCodeFromError } from '@cfs/helper';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { useLoginMutation } from '@cfs/graphql';
+import { useRegisterMutation } from '@cfs/graphql';
 import {
   setCurrentUser,
   showLoginPopup,
@@ -14,10 +14,10 @@ function hasErrors(fieldsError) {
   return Object.keys(fieldsError).some((field) => fieldsError[field]);
 }
 
-const LoginPopup = () => {
+const RegisterPopup = () => {
   const [error, setError] = useState(undefined);
   const [form] = useForm();
-  const [login] = useLoginMutation({});
+  const [register] = useRegisterMutation({});
 
   const [submitDisabled, setSubmitDisabled] = useState(false);
 
@@ -25,27 +25,37 @@ const LoginPopup = () => {
     async (values) => {
       setError(null);
       try {
-        const loginResp = await login({
+        const registerResp = await register({
           variables: {
             username: values.username,
             password: values.password,
+            email: `${values.username}@b.c`,
           },
         });
-        setCurrentUser(loginResp.data.login.user);
+        setCurrentUser(registerResp.data.register.user);
         notification.success({
-          message: `Đăng nhập thành công`,
+          message: `Đăng kí tài khoản thành công`,
           placement: 'bottomRight',
           duration: 3,
         });
-        showLoginPopup(false);
+        showRegisterPopup(false);
       } catch (e) {
         const code = getCodeFromError(e);
-        if (code === 'CREDS') {
+        if (code === 'NUNIQ') {
+          form.setFields([
+            {
+              name: 'username',
+              value: form.getFieldValue('username'),
+              errors: ['Tên đăng nhập đã tồn tại'],
+            },
+          ]);
+          setSubmitDisabled(true);
+        } else if (code === 'WEAKP') {
           form.setFields([
             {
               name: 'password',
               value: form.getFieldValue('password'),
-              errors: ['Tên đăng nhập hoặc mật khẩu không đúng'],
+              errors: ['Mật khẩu phải có ít nhất 8 kí tự'],
             },
           ]);
           setSubmitDisabled(true);
@@ -54,13 +64,11 @@ const LoginPopup = () => {
         }
       }
     },
-    [form, login]
+    [form, register]
   );
 
   const focusElement = useRef(null);
-  useEffect(() => void (focusElement.current && focusElement.current.focus()), [
-    focusElement,
-  ]);
+  useEffect(() => focusElement.current?.focus(), [focusElement]);
 
   const handleValuesChange = useCallback(() => {
     setSubmitDisabled(hasErrors(form.getFieldsError().length !== 0));
@@ -70,9 +78,9 @@ const LoginPopup = () => {
 
   return (
     <Modal
-      title="Đăng nhập"
+      title="Đăng kí tài khoản"
       visible={true}
-      onCancel={() => showLoginPopup(false)}
+      onCancel={() => showRegisterPopup(false)}
       footer={null}
     >
       <Form
@@ -113,7 +121,7 @@ const LoginPopup = () => {
           <Form.Item>
             <Alert
               type="error"
-              message={`Đăng nhập thất bại`}
+              message={`Đăng kí tài khoản thất bại`}
               description={
                 <span>
                   {extractError(error).message}
@@ -129,16 +137,16 @@ const LoginPopup = () => {
         ) : null}
         <Form.Item className="mt-4">
           <Button type="primary" htmlType="submit" disabled={submitDisabled}>
-            Đăng nhập
+            Đăng kí
           </Button>
           <Button
             type="link"
             onClick={() => {
-              showRegisterPopup(true);
-              showLoginPopup(false);
+              showRegisterPopup(false);
+              showLoginPopup(true);
             }}
           >
-            Đăng ký
+            Đăng nhập
           </Button>
         </Form.Item>
       </Form>
@@ -146,4 +154,4 @@ const LoginPopup = () => {
   );
 };
 
-export default LoginPopup;
+export default RegisterPopup;

@@ -9,15 +9,21 @@ import { useLogoutMutation, useSharedQuery } from '@cfs/graphql';
 import { useApolloClient, useReactiveVar } from '@apollo/react-hooks';
 import { preventDefault } from '@cfs/helper';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
-import { setCurrentUser } from '../../../../libs/helper/src/reactiveVars';
+import {
+  setCurrentUser,
+  showLoginPopup,
+  showRegisterPopup,
+} from '../../../../libs/helper/src/reactiveVars';
+import RegisterPopup from '../RegisterPopup';
 
 const HeaderUI = () => {
   const [menuOpened, setMenuOpened] = useState(false);
-  const [loginPopupVisible, setLoginPopupVisible] = useState(false);
   const client = useApolloClient();
   const [logout] = useLogoutMutation();
-  const{ data: shareData } = useSharedQuery();
+  const { data: shareData } = useSharedQuery();
   const currentUser = useReactiveVar(setCurrentUser);
+  const loginPopupVisible = useReactiveVar(showLoginPopup);
+  const registerPopupVisible = useReactiveVar(showRegisterPopup);
 
   useEffect(() => {
     if (shareData?.currentUser) setCurrentUser(shareData.currentUser);
@@ -40,9 +46,7 @@ const HeaderUI = () => {
     setMenuOpened((prev) => !prev);
   }, []);
 
-  const toggleLoginPopupVisible = useCallback(() => {
-    setLoginPopupVisible((prev) => !prev);
-  }, []);
+  const openLoginPopup = useCallback(() => showLoginPopup(true), []);
 
   return (
     <nav className="header-height select-none header-shadow">
@@ -97,14 +101,13 @@ const HeaderUI = () => {
               </Dropdown>
             </div>
           ) : (
-            <Button onClick={toggleLoginPopupVisible} type="link">
+            <Button onClick={openLoginPopup} type="link">
               Đăng nhập
             </Button>
           )}
 
-          {loginPopupVisible && (
-            <LoginPopup toggleVisible={toggleLoginPopupVisible} />
-          )}
+          {loginPopupVisible && <LoginPopup />}
+          {registerPopupVisible && <RegisterPopup />}
         </div>
       </div>
       <nav
