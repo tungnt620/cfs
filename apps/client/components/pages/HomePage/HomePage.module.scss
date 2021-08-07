@@ -2,15 +2,11 @@
   white-space: nowrap;
   overflow-y: hidden;
   overflow-x: auto;
-  order: 4;
-  margin: 0.5rem -0.5rem 0;
-  padding-top: 0.5rem;
-  border-top: 1px solid #f3f3f4;
+  max-width: 900px;
+  margin: 0 auto;
+}
 
-  @media only screen and (min-width: 768px) {
-    order: 2;
-    border-top: none;
-    margin: unset;
-    padding: unset;
-  }
+.homePageListMenu {
+  max-width: 900px;
+  margin: 0 auto;
 }
