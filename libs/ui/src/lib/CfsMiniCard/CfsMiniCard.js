@@ -3,11 +3,11 @@ import CardActions from './CardActions';
 import CardContent from './CardContent';
 import CardHeader from './CardHeader';
 
-const CfsMiniCard = () => {
+const CfsMiniCard = ({ cfs }) => {
   return (
     <article className="bg-white">
       <CardHeader />
-      <CardContent />
+      <CardContent cfs={cfs} />
       <CardActions />
     </article>
   );

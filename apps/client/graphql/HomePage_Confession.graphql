@@ -1,0 +1,7 @@
+fragment HomePage_Confession on Confession {
+  id
+  slug
+  title
+  image
+  createdAt
+}

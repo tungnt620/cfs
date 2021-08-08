@@ -2,6 +2,7 @@ import React from 'react';
 import { CfsList, Dropdown } from '@cfs/ui';
 import styles from './HomePage.module.scss';
 import { Tabs } from 'antd';
+import { useHomePageQuery } from '@cfs/graphql';
 
 const { TabPane } = Tabs;
 
@@ -33,6 +34,9 @@ const categories = [
 ];
 
 const HomePage = () => {
+  const { data: queryData } = useHomePageQuery({ offset: 0 });
+  const confessions = queryData?.confessions?.nodes ?? [];
+
   return (
     <div className="ml-4 mr-4 mb-6 bg-color1">
       <div className="block mt-4 bg-white pb-4">
@@ -43,7 +47,7 @@ const HomePage = () => {
           <Tabs defaultActiveKey="1">
             {categories.map((cat) => (
               <TabPane tab={cat.name} key={cat.id}>
-                <CfsList cfsList={Array(10).fill(1)} />
+                <CfsList cfsList={confessions} />
               </TabPane>
             ))}
           </Tabs>

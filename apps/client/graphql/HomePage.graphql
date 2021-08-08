@@ -1,0 +1,7 @@
+query HomePage($offset: Int = 0, $orderBy: [ConfessionsOrderBy!] = [ID_DESC]) {
+  confessions(offset: $offset, orderBy: $orderBy, first: 10) {
+    nodes {
+      ...HomePage_Confession
+    }
+  }
+}
