@@ -182,21 +182,21 @@
         "commit": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "graphile-migrate commit",
+            "command": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS -r ../../libs/config/env\" graphile-migrate commit",
             "cwd": "apps/db"
           }
         },
         "uncommit": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "graphile-migrate uncommit",
+            "command": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS -r ../../libs/config/env\" graphile-migrate uncommit",
             "cwd": "apps/db"
           }
         },
         "reset": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "graphile-migrate reset",
+            "command": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS -r ../../libs/config/env\" graphile-migrate reset",
             "cwd": "apps/db"
           }
         },
@@ -204,9 +204,9 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "graphile-migrate migrate",
-              "graphile-migrate reset --shadow --erase",
-              "graphile-migrate migrate --shadow --forceActions"
+              "cross-env NODE_OPTIONS=\"$NODE_OPTIONS -r ../../libs/config/env\" graphile-migrate migrate",
+              "cross-env NODE_OPTIONS=\"$NODE_OPTIONS -r ../../libs/config/env\" graphile-migrate reset --shadow --erase",
+              "cross-env NODE_OPTIONS=\"$NODE_OPTIONS -r ../../libs/config/env\" graphile-migrate migrate --shadow --forceActions"
             ],
             "parallel": false,
             "cwd": "apps/db"

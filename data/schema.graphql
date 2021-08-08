@@ -1,26 +1,103 @@
-"""All input for the `acceptInvitationToOrganization` mutation."""
-input AcceptInvitationToOrganizationInput {
+"""
+A signed eight-byte integer. The upper big integer values are greater than the
+max value for a JavaScript number. Therefore all big integers will be output as
+strings and not numbers.
+"""
+scalar BigInt
+
+"""A connection to a list of `Category` values."""
+type CategoriesConnection {
   """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
+  A list of edges which contains the `Category` and cursor to aid in pagination.
   """
-  clientMutationId: String
-  code: String
-  invitationId: UUID!
+  edges: [CategoriesEdge!]!
+
+  """A list of `Category` objects."""
+  nodes: [Category!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Category` you could get from the connection."""
+  totalCount: Int!
 }
 
-"""The output of our `acceptInvitationToOrganization` mutation."""
-type AcceptInvitationToOrganizationPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
+"""A `Category` edge in the connection."""
+type CategoriesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
 
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
+  """The `Category` at the end of the edge."""
+  node: Category!
+}
+
+"""Methods to use when ordering `Category`."""
+enum CategoriesOrderBy {
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type Category {
+  """Reads and enables pagination through a set of `ConfessionCategory`."""
+  confessionCategories(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ConfessionCategoryCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `ConfessionCategory`."""
+    orderBy: [ConfessionCategoriesOrderBy!] = [NATURAL]
+  ): ConfessionCategoriesConnection!
+  id: Int!
+  image: String
+  name: String
+  slug: String
+}
+
+"""
+A condition to be used against `Category` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input CategoryCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: Int
+}
+
+"""An input for mutations affecting `Category`"""
+input CategoryInput {
+  image: String
+  name: String
+  slug: String
+}
+
+"""
+Represents an update to a `Category`. Fields that are set will be updated.
+"""
+input CategoryPatch {
+  image: String
+  name: String
+  slug: String
 }
 
 """All input for the `changePassword` mutation."""
@@ -49,6 +126,300 @@ type ChangePasswordPayload {
   success: Boolean
 }
 
+type Comment {
+  author: String
+  authorName: String
+
+  """Reads a single `Confession` that is related to this `Comment`."""
+  confession: Confession
+  confessionId: Int
+  content: String
+  createdAt: BigInt
+  id: Int!
+  image: String
+  parent: BigInt
+}
+
+"""
+A condition to be used against `Comment` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input CommentCondition {
+  """Checks for equality with the object’s `confessionId` field."""
+  confessionId: Int
+
+  """Checks for equality with the object’s `id` field."""
+  id: Int
+}
+
+"""An input for mutations affecting `Comment`"""
+input CommentInput {
+  author: String
+  authorName: String
+  confessionId: Int
+  content: String
+  image: String
+  parent: BigInt
+}
+
+"""
+Represents an update to a `Comment`. Fields that are set will be updated.
+"""
+input CommentPatch {
+  author: String
+  authorName: String
+  confessionId: Int
+  content: String
+  image: String
+  parent: BigInt
+}
+
+"""A connection to a list of `Comment` values."""
+type CommentsConnection {
+  """
+  A list of edges which contains the `Comment` and cursor to aid in pagination.
+  """
+  edges: [CommentsEdge!]!
+
+  """A list of `Comment` objects."""
+  nodes: [Comment!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Comment` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Comment` edge in the connection."""
+type CommentsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Comment` at the end of the edge."""
+  node: Comment!
+}
+
+"""Methods to use when ordering `Comment`."""
+enum CommentsOrderBy {
+  CONFESSION_ID_ASC
+  CONFESSION_ID_DESC
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type Confession {
+  """Reads and enables pagination through a set of `Comment`."""
+  comments(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: CommentCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Comment`."""
+    orderBy: [CommentsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CommentsConnection!
+
+  """Reads and enables pagination through a set of `ConfessionCategory`."""
+  confessionCategories(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ConfessionCategoryCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `ConfessionCategory`."""
+    orderBy: [ConfessionCategoriesOrderBy!] = [NATURAL]
+  ): ConfessionCategoriesConnection!
+  content: String
+  createdAt: BigInt
+  id: Int!
+  image: String
+  isPublic: Boolean
+  slug: String
+  sourceId: BigInt
+  thumbnail: String
+  title: String
+  updatedAt: BigInt
+}
+
+"""A connection to a list of `ConfessionCategory` values."""
+type ConfessionCategoriesConnection {
+  """
+  A list of edges which contains the `ConfessionCategory` and cursor to aid in pagination.
+  """
+  edges: [ConfessionCategoriesEdge!]!
+
+  """A list of `ConfessionCategory` objects."""
+  nodes: [ConfessionCategory!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `ConfessionCategory` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+"""A `ConfessionCategory` edge in the connection."""
+type ConfessionCategoriesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `ConfessionCategory` at the end of the edge."""
+  node: ConfessionCategory!
+}
+
+"""Methods to use when ordering `ConfessionCategory`."""
+enum ConfessionCategoriesOrderBy {
+  CATEGORY_ID_ASC
+  CATEGORY_ID_DESC
+  CONFESSION_ID_ASC
+  CONFESSION_ID_DESC
+  NATURAL
+}
+
+type ConfessionCategory {
+  """
+  Reads a single `Category` that is related to this `ConfessionCategory`.
+  """
+  category: Category
+  categoryId: Int!
+
+  """
+  Reads a single `Confession` that is related to this `ConfessionCategory`.
+  """
+  confession: Confession
+  confessionId: Int!
+}
+
+"""
+A condition to be used against `ConfessionCategory` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input ConfessionCategoryCondition {
+  """Checks for equality with the object’s `categoryId` field."""
+  categoryId: Int
+
+  """Checks for equality with the object’s `confessionId` field."""
+  confessionId: Int
+}
+
+"""An input for mutations affecting `ConfessionCategory`"""
+input ConfessionCategoryInput {
+  categoryId: Int!
+  confessionId: Int!
+}
+
+"""
+A condition to be used against `Confession` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input ConfessionCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: Int
+
+  """Checks for equality with the object’s `slug` field."""
+  slug: String
+}
+
+"""An input for mutations affecting `Confession`"""
+input ConfessionInput {
+  content: String
+  image: String
+  isPublic: Boolean
+  slug: String
+  thumbnail: String
+  title: String
+}
+
+"""
+Represents an update to a `Confession`. Fields that are set will be updated.
+"""
+input ConfessionPatch {
+  content: String
+  image: String
+  isPublic: Boolean
+  slug: String
+  thumbnail: String
+  title: String
+}
+
+"""A connection to a list of `Confession` values."""
+type ConfessionsConnection {
+  """
+  A list of edges which contains the `Confession` and cursor to aid in pagination.
+  """
+  edges: [ConfessionsEdge!]!
+
+  """A list of `Confession` objects."""
+  nodes: [Confession!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Confession` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Confession` edge in the connection."""
+type ConfessionsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Confession` at the end of the edge."""
+  node: Confession!
+}
+
+"""Methods to use when ordering `Confession`."""
+enum ConfessionsOrderBy {
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  SLUG_ASC
+  SLUG_DESC
+}
+
 """All input for the `confirmAccountDeletion` mutation."""
 input ConfirmAccountDeletionInput {
   """
@@ -74,31 +445,34 @@ type ConfirmAccountDeletionPayload {
   success: Boolean
 }
 
-"""All input for the `createOrganization` mutation."""
-input CreateOrganizationInput {
+"""All input for the create `Category` mutation."""
+input CreateCategoryInput {
+  """The `Category` to be created by this mutation."""
+  category: CategoryInput!
+
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-  name: String!
-  slug: String!
 }
 
-"""The output of our `createOrganization` mutation."""
-type CreateOrganizationPayload {
+"""The output of our create `Category` mutation."""
+type CreateCategoryPayload {
+  """The `Category` that was created by this mutation."""
+  category: Category
+
+  """An edge for our `Category`. May be used by Relay 1."""
+  categoryEdge(
+    """The method to use when ordering `Category`."""
+    orderBy: [CategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CategoriesEdge
+
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
-  organization: Organization
-
-  """An edge for our `Organization`. May be used by Relay 1."""
-  organizationEdge(
-    """The method to use when ordering `Organization`."""
-    orderBy: [OrganizationsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): OrganizationsEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -106,22 +480,62 @@ type CreateOrganizationPayload {
   query: Query
 }
 
-"""All input for the create `Post` mutation."""
-input CreatePostInput {
+"""All input for the create `Comment` mutation."""
+input CreateCommentInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
 
-  """The `Post` to be created by this mutation."""
-  post: PostInput!
+  """The `Comment` to be created by this mutation."""
+  comment: CommentInput!
 }
 
-"""The output of our create `Post` mutation."""
-type CreatePostPayload {
-  """Reads a single `User` that is related to this `Post`."""
-  author: User
+"""The output of our create `Comment` mutation."""
+type CreateCommentPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Comment` that was created by this mutation."""
+  comment: Comment
+
+  """An edge for our `Comment`. May be used by Relay 1."""
+  commentEdge(
+    """The method to use when ordering `Comment`."""
+    orderBy: [CommentsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CommentsEdge
+
+  """Reads a single `Confession` that is related to this `Comment`."""
+  confession: Confession
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the create `ConfessionCategory` mutation."""
+input CreateConfessionCategoryInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `ConfessionCategory` to be created by this mutation."""
+  confessionCategory: ConfessionCategoryInput!
+}
+
+"""The output of our create `ConfessionCategory` mutation."""
+type CreateConfessionCategoryPayload {
+  """
+  Reads a single `Category` that is related to this `ConfessionCategory`.
+  """
+  category: Category
 
   """
   The exact same `clientMutationId` that was provided in the mutation input,
@@ -129,14 +543,54 @@ type CreatePostPayload {
   """
   clientMutationId: String
 
-  """The `Post` that was created by this mutation."""
-  post: Post
+  """
+  Reads a single `Confession` that is related to this `ConfessionCategory`.
+  """
+  confession: Confession
 
-  """An edge for our `Post`. May be used by Relay 1."""
-  postEdge(
-    """The method to use when ordering `Post`."""
-    orderBy: [PostsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PostsEdge
+  """The `ConfessionCategory` that was created by this mutation."""
+  confessionCategory: ConfessionCategory
+
+  """An edge for our `ConfessionCategory`. May be used by Relay 1."""
+  confessionCategoryEdge(
+    """The method to use when ordering `ConfessionCategory`."""
+    orderBy: [ConfessionCategoriesOrderBy!] = [NATURAL]
+  ): ConfessionCategoriesEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the create `Confession` mutation."""
+input CreateConfessionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Confession` to be created by this mutation."""
+  confession: ConfessionInput!
+}
+
+"""The output of our create `Confession` mutation."""
+type CreateConfessionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Confession` that was created by this mutation."""
+  confession: Confession
+
+  """An edge for our `Confession`. May be used by Relay 1."""
+  confessionEdge(
+    """The method to use when ordering `Confession`."""
+    orderBy: [ConfessionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ConfessionsEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -191,23 +645,33 @@ A point in time as described by the [ISO
 """
 scalar Datetime
 
-"""All input for the `deleteOrganization` mutation."""
-input DeleteOrganizationInput {
+"""All input for the `deleteCategory` mutation."""
+input DeleteCategoryInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-  organizationId: UUID!
+  id: Int!
 }
 
-"""The output of our `deleteOrganization` mutation."""
-type DeleteOrganizationPayload {
+"""The output of our delete `Category` mutation."""
+type DeleteCategoryPayload {
+  """The `Category` that was deleted by this mutation."""
+  category: Category
+
+  """An edge for our `Category`. May be used by Relay 1."""
+  categoryEdge(
+    """The method to use when ordering `Category`."""
+    orderBy: [CategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CategoriesEdge
+
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
+  deletedCategoryNodeId: ID
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -215,38 +679,70 @@ type DeleteOrganizationPayload {
   query: Query
 }
 
-"""All input for the `deletePost` mutation."""
-input DeletePostInput {
+"""All input for the `deleteComment` mutation."""
+input DeleteCommentInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """The primary key for the `Post`."""
   id: Int!
 }
 
-"""The output of our delete `Post` mutation."""
-type DeletePostPayload {
-  """Reads a single `User` that is related to this `Post`."""
-  author: User
-
+"""The output of our delete `Comment` mutation."""
+type DeleteCommentPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
-  deletedPostNodeId: ID
 
-  """The `Post` that was deleted by this mutation."""
-  post: Post
+  """The `Comment` that was deleted by this mutation."""
+  comment: Comment
 
-  """An edge for our `Post`. May be used by Relay 1."""
-  postEdge(
-    """The method to use when ordering `Post`."""
-    orderBy: [PostsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PostsEdge
+  """An edge for our `Comment`. May be used by Relay 1."""
+  commentEdge(
+    """The method to use when ordering `Comment`."""
+    orderBy: [CommentsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CommentsEdge
+
+  """Reads a single `Confession` that is related to this `Comment`."""
+  confession: Confession
+  deletedCommentNodeId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the `deleteConfession` mutation."""
+input DeleteConfessionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+}
+
+"""The output of our delete `Confession` mutation."""
+type DeleteConfessionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Confession` that was deleted by this mutation."""
+  confession: Confession
+
+  """An edge for our `Confession`. May be used by Relay 1."""
+  confessionEdge(
+    """The method to use when ordering `Confession`."""
+    orderBy: [ConfessionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ConfessionsEdge
+  deletedConfessionNodeId: ID
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -346,32 +842,6 @@ type ForgotPasswordPayload {
   query: Query
 }
 
-"""All input for the `inviteToOrganization` mutation."""
-input InviteToOrganizationInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  email: String
-  organizationId: UUID!
-  username: String
-}
-
-"""The output of our `inviteToOrganization` mutation."""
-type InviteToOrganizationPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
 input LoginInput {
   password: String!
   username: String!
@@ -423,16 +893,6 @@ type MakeEmailPrimaryPayload {
 The root mutation type which contains root level fields which mutate data.
 """
 type Mutation {
-  """
-  If someone invited you by your email address then you must include the code that was emailed to you, otherwise you may accept the invitation directly using the UUID. If successful, you will be a member of the organization.
-  """
-  acceptInvitationToOrganization(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: AcceptInvitationToOrganizationInput!
-  ): AcceptInvitationToOrganizationPayload
-
   """Enter your old password and a new password to change your password."""
   changePassword(
     """
@@ -451,23 +911,37 @@ type Mutation {
     input: ConfirmAccountDeletionInput!
   ): ConfirmAccountDeletionPayload
 
-  """
-  An `Organization` is a great way of sharing access to resources between multiple users without compromising security. When you create an organization you will have the 'owner' and 'billing contact' roles. You may invite other users and redistribute these roles.
-  """
-  createOrganization(
+  """Creates a single `Category`."""
+  createCategory(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: CreateOrganizationInput!
-  ): CreateOrganizationPayload
+    input: CreateCategoryInput!
+  ): CreateCategoryPayload
 
-  """Creates a single `Post`."""
-  createPost(
+  """Creates a single `Comment`."""
+  createComment(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: CreatePostInput!
-  ): CreatePostPayload
+    input: CreateCommentInput!
+  ): CreateCommentPayload
+
+  """Creates a single `Confession`."""
+  createConfession(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateConfessionInput!
+  ): CreateConfessionPayload
+
+  """Creates a single `ConfessionCategory`."""
+  createConfessionCategory(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateConfessionCategoryInput!
+  ): CreateConfessionCategoryPayload
 
   """Creates a single `UserEmail`."""
   createUserEmail(
@@ -477,23 +951,29 @@ type Mutation {
     input: CreateUserEmailInput!
   ): CreateUserEmailPayload
 
-  """
-  Only the 'owner' may delete an organization. This operation cannot be undone, so be sure that it is what you intend.
-  """
-  deleteOrganization(
+  """Deletes a single `Category` using a unique key."""
+  deleteCategory(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeleteOrganizationInput!
-  ): DeleteOrganizationPayload
+    input: DeleteCategoryInput!
+  ): DeleteCategoryPayload
 
-  """Deletes a single `Post` using a unique key."""
-  deletePost(
+  """Deletes a single `Comment` using a unique key."""
+  deleteComment(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeletePostInput!
-  ): DeletePostPayload
+    input: DeleteCommentInput!
+  ): DeleteCommentPayload
+
+  """Deletes a single `Confession` using a unique key."""
+  deleteConfession(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteConfessionInput!
+  ): DeleteConfessionPayload
 
   """Deletes a single `UserAuthentication` using a unique key."""
   deleteUserAuthentication(
@@ -520,16 +1000,6 @@ type Mutation {
     """
     input: ForgotPasswordInput!
   ): ForgotPasswordPayload
-
-  """
-  You may invite a user to your organization either by their username (only for verified users) or by their email. If you opt to invite by email then an email will be sent to this person containing a code that they need to accept the invitation. If the person doesn't already have an account they will be instructed to create one; their account need not have the email address that you invited listed as the secret code is confirmation enough.
-  """
-  inviteToOrganization(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: InviteToOrganizationInput!
-  ): InviteToOrganizationPayload
 
   """
   Use this mutation to log in to your account; this login uses sessions so you do not need to take further action.
@@ -566,16 +1036,6 @@ type Mutation {
     input: RegisterInput!
   ): RegisterPayload
 
-  """
-  The owner of an `Organization` may remove an `OrganizationMember` with this mutation.
-  """
-  removeFromOrganization(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: RemoveFromOrganizationInput!
-  ): RemoveFromOrganizationPayload
-
   """Begin the account deletion flow by requesting the confirmation email"""
   requestAccountDeletion(
     """
@@ -604,41 +1064,29 @@ type Mutation {
     input: ResetPasswordInput!
   ): ResetPasswordPayload
 
-  """
-  The owner of an `Organization` may use this mutation to make any organization member the billing contact.
-  """
-  transferOrganizationBillingContact(
+  """Updates a single `Category` using a unique key and a patch."""
+  updateCategory(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: TransferOrganizationBillingContactInput!
-  ): TransferOrganizationBillingContactPayload
+    input: UpdateCategoryInput!
+  ): UpdateCategoryPayload
 
-  """
-  The owner of an `Organization` may use this mutation to transfer ownership to a different organization member. Take care, if you assign ownership to someone who cannot or will not access their account then you may need to contact support to have ownership reassigned.
-  """
-  transferOrganizationOwnership(
+  """Updates a single `Comment` using a unique key and a patch."""
+  updateComment(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: TransferOrganizationOwnershipInput!
-  ): TransferOrganizationOwnershipPayload
+    input: UpdateCommentInput!
+  ): UpdateCommentPayload
 
-  """Updates a single `Organization` using a unique key and a patch."""
-  updateOrganization(
+  """Updates a single `Confession` using a unique key and a patch."""
+  updateConfession(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateOrganizationInput!
-  ): UpdateOrganizationPayload
-
-  """Updates a single `Post` using a unique key and a patch."""
-  updatePost(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePostInput!
-  ): UpdatePostPayload
+    input: UpdateConfessionInput!
+  ): UpdateConfessionPayload
 
   """Updates a single `User` using a unique key and a patch."""
   updateUser(
@@ -659,180 +1107,6 @@ type Mutation {
   ): VerifyEmailPayload
 }
 
-type Organization {
-  createdAt: Datetime!
-  currentUserIsBillingContact: Boolean
-  currentUserIsOwner: Boolean
-  id: UUID!
-  name: String!
-
-  """
-  Reads and enables pagination through a set of `OrganizationMembership`.
-  """
-  organizationMemberships(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OrganizationMembershipCondition
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `OrganizationMembership`."""
-    orderBy: [OrganizationMembershipsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): OrganizationMembershipsConnection!
-  slug: String!
-}
-
-"""
-A condition to be used against `Organization` object types. All fields are
-tested for equality and combined with a logical ‘and.’
-"""
-input OrganizationCondition {
-  """Checks for equality with the object’s `id` field."""
-  id: UUID
-
-  """Checks for equality with the object’s `slug` field."""
-  slug: String
-}
-
-type OrganizationMembership {
-  createdAt: Datetime!
-  id: UUID!
-  isBillingContact: Boolean!
-  isOwner: Boolean!
-
-  """
-  Reads a single `Organization` that is related to this `OrganizationMembership`.
-  """
-  organization: Organization
-  organizationId: UUID!
-
-  """
-  Reads a single `User` that is related to this `OrganizationMembership`.
-  """
-  user: User
-  userId: UUID!
-}
-
-"""
-A condition to be used against `OrganizationMembership` object types. All fields
-are tested for equality and combined with a logical ‘and.’
-"""
-input OrganizationMembershipCondition {
-  """Checks for equality with the object’s `id` field."""
-  id: UUID
-
-  """Checks for equality with the object’s `organizationId` field."""
-  organizationId: UUID
-
-  """Checks for equality with the object’s `userId` field."""
-  userId: UUID
-}
-
-"""A connection to a list of `OrganizationMembership` values."""
-type OrganizationMembershipsConnection {
-  """
-  A list of edges which contains the `OrganizationMembership` and cursor to aid in pagination.
-  """
-  edges: [OrganizationMembershipsEdge!]!
-
-  """A list of `OrganizationMembership` objects."""
-  nodes: [OrganizationMembership!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """
-  The count of *all* `OrganizationMembership` you could get from the connection.
-  """
-  totalCount: Int!
-}
-
-"""A `OrganizationMembership` edge in the connection."""
-type OrganizationMembershipsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `OrganizationMembership` at the end of the edge."""
-  node: OrganizationMembership!
-}
-
-"""Methods to use when ordering `OrganizationMembership`."""
-enum OrganizationMembershipsOrderBy {
-  ID_ASC
-  ID_DESC
-  MEMBER_NAME_ASC
-  MEMBER_NAME_DESC
-  NATURAL
-  ORGANIZATION_ID_ASC
-  ORGANIZATION_ID_DESC
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  USER_ID_ASC
-  USER_ID_DESC
-}
-
-"""
-Represents an update to a `Organization`. Fields that are set will be updated.
-"""
-input OrganizationPatch {
-  name: String
-  slug: String
-}
-
-"""A connection to a list of `Organization` values."""
-type OrganizationsConnection {
-  """
-  A list of edges which contains the `Organization` and cursor to aid in pagination.
-  """
-  edges: [OrganizationsEdge!]!
-
-  """A list of `Organization` objects."""
-  nodes: [Organization!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* `Organization` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A `Organization` edge in the connection."""
-type OrganizationsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `Organization` at the end of the edge."""
-  node: Organization!
-}
-
-"""Methods to use when ordering `Organization`."""
-enum OrganizationsOrderBy {
-  ID_ASC
-  ID_DESC
-  NATURAL
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  SLUG_ASC
-  SLUG_DESC
-}
-
 """Information about pagination in a connection."""
 type PageInfo {
   """When paginating forwards, the cursor to continue."""
@@ -848,244 +1122,135 @@ type PageInfo {
   startCursor: Cursor
 }
 
-"""A forum post written by a `User`."""
-type Post {
-  """Reads a single `User` that is related to this `Post`."""
-  author: User
-
-  """The id of the author `User`."""
-  authorId: UUID
-
-  """The main body text of our `Post`."""
-  body: String
-
-  """The time this `Post` was created."""
-  createdAt: Datetime!
-
-  """The title written by the `User`."""
-  headline: String!
-
-  """The primary key for the `Post`."""
-  id: Int!
-
-  """The `Topic` this has been posted in."""
-  topic: String!
-
-  """The time this `Post` was last modified (or created)."""
-  updatedAt: Datetime!
-
-  """Reads and enables pagination through a set of `UserFeedPost`."""
-  userFeedPosts(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: UserFeedPostCondition
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `UserFeedPost`."""
-    orderBy: [UserFeedPostsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): UserFeedPostsConnection!
-}
-
-"""
-A condition to be used against `Post` object types. All fields are tested for equality and combined with a logical ‘and.’
-"""
-input PostCondition {
-  """Checks for equality with the object’s `authorId` field."""
-  authorId: UUID
-
-  """Checks for equality with the object’s `id` field."""
-  id: Int
-
-  """Checks for equality with the object’s `topic` field."""
-  topic: String
-}
-
-"""An input for mutations affecting `Post`"""
-input PostInput {
-  """The main body text of our `Post`."""
-  body: String
-
-  """The title written by the `User`."""
-  headline: String!
-
-  """The `Topic` this has been posted in."""
-  topic: String!
-}
-
-"""Represents an update to a `Post`. Fields that are set will be updated."""
-input PostPatch {
-  """The main body text of our `Post`."""
-  body: String
-
-  """The title written by the `User`."""
-  headline: String
-
-  """The `Topic` this has been posted in."""
-  topic: String
-}
-
-"""A connection to a list of `Post` values."""
-type PostsConnection {
-  """
-  A list of edges which contains the `Post` and cursor to aid in pagination.
-  """
-  edges: [PostsEdge!]!
-
-  """A list of `Post` objects."""
-  nodes: [Post!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* `Post` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A `Post` edge in the connection."""
-type PostsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `Post` at the end of the edge."""
-  node: Post!
-}
-
-"""Methods to use when ordering `Post`."""
-enum PostsOrderBy {
-  AUTHOR_ID_ASC
-  AUTHOR_ID_DESC
-  ID_ASC
-  ID_DESC
-  NATURAL
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  TOPIC_ASC
-  TOPIC_DESC
-}
-
 """The root query type which gives access points into the data universe."""
 type Query {
+  """Reads and enables pagination through a set of `Category`."""
+  categories(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: CategoryCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Category`."""
+    orderBy: [CategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CategoriesConnection
+  category(id: Int!): Category
+  comment(id: Int!): Comment
+
+  """Reads and enables pagination through a set of `Comment`."""
+  comments(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: CommentCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Comment`."""
+    orderBy: [CommentsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CommentsConnection
+  confession(id: Int!): Confession
+  confessionBySlug(slug: String!): Confession
+
+  """Reads and enables pagination through a set of `ConfessionCategory`."""
+  confessionCategories(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ConfessionCategoryCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `ConfessionCategory`."""
+    orderBy: [ConfessionCategoriesOrderBy!] = [NATURAL]
+  ): ConfessionCategoriesConnection
+  confessionCategoryByConfessionIdAndCategoryId(categoryId: Int!, confessionId: Int!): ConfessionCategory
+
+  """Reads and enables pagination through a set of `Confession`."""
+  confessions(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ConfessionCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Confession`."""
+    orderBy: [ConfessionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ConfessionsConnection
+
   """The currently logged in user (or null if not logged in)."""
   currentUser: User
-  organization(id: UUID!): Organization
-  organizationBySlug(slug: String!): Organization
-
-  """
-  Given an invitation UUID (and, if required, the code that was emailed to you), retrieves the `Organization` that you were invited to.
-  """
-  organizationForInvitation(code: String, invitationId: UUID!): Organization
-  organizationMembership(id: UUID!): OrganizationMembership
-
-  """Reads and enables pagination through a set of `Organization`."""
-  organizations(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OrganizationCondition
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `Organization`."""
-    orderBy: [OrganizationsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): OrganizationsConnection
-  post(id: Int!): Post
-
-  """Reads and enables pagination through a set of `Post`."""
-  posts(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: PostCondition
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `Post`."""
-    orderBy: [PostsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PostsConnection
   user(id: UUID!): User
   userAuthentication(id: UUID!): UserAuthentication
   userByUsername(username: String!): User
   userEmail(id: UUID!): UserEmail
-  userFeedPost(id: Int!): UserFeedPost
-
-  """Reads and enables pagination through a set of `UserFeedPost`."""
-  userFeedPosts(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: UserFeedPostCondition
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `UserFeedPost`."""
-    orderBy: [UserFeedPostsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): UserFeedPostsConnection
 }
 
 input RegisterInput {
@@ -1098,31 +1263,6 @@ input RegisterInput {
 
 type RegisterPayload {
   user: User!
-}
-
-"""All input for the `removeFromOrganization` mutation."""
-input RemoveFromOrganizationInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  organizationId: UUID!
-  userId: UUID!
-}
-
-"""The output of our `removeFromOrganization` mutation."""
-type RemoveFromOrganizationPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
 }
 
 """All input for the `requestAccountDeletion` mutation."""
@@ -1209,106 +1349,42 @@ type Subscription {
   currentUserUpdated: UserSubscriptionPayload
 }
 
-"""All input for the `transferOrganizationBillingContact` mutation."""
-input TransferOrganizationBillingContactInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  organizationId: UUID!
-  userId: UUID!
-}
-
-"""The output of our `transferOrganizationBillingContact` mutation."""
-type TransferOrganizationBillingContactPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-  organization: Organization
-
-  """An edge for our `Organization`. May be used by Relay 1."""
-  organizationEdge(
-    """The method to use when ordering `Organization`."""
-    orderBy: [OrganizationsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): OrganizationsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the `transferOrganizationOwnership` mutation."""
-input TransferOrganizationOwnershipInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  organizationId: UUID!
-  userId: UUID!
-}
-
-"""The output of our `transferOrganizationOwnership` mutation."""
-type TransferOrganizationOwnershipPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-  organization: Organization
-
-  """An edge for our `Organization`. May be used by Relay 1."""
-  organizationEdge(
-    """The method to use when ordering `Organization`."""
-    orderBy: [OrganizationsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): OrganizationsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
 """
 A universally unique identifier as defined by [RFC 4122](https://tools.ietf.org/html/rfc4122).
 """
 scalar UUID
 
-"""All input for the `updateOrganization` mutation."""
-input UpdateOrganizationInput {
+"""All input for the `updateCategory` mutation."""
+input UpdateCategoryInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-  id: UUID!
+  id: Int!
 
   """
-  An object where the defined keys will be set on the `Organization` being updated.
+  An object where the defined keys will be set on the `Category` being updated.
   """
-  patch: OrganizationPatch!
+  patch: CategoryPatch!
 }
 
-"""The output of our update `Organization` mutation."""
-type UpdateOrganizationPayload {
+"""The output of our update `Category` mutation."""
+type UpdateCategoryPayload {
+  """The `Category` that was updated by this mutation."""
+  category: Category
+
+  """An edge for our `Category`. May be used by Relay 1."""
+  categoryEdge(
+    """The method to use when ordering `Category`."""
+    orderBy: [CategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CategoriesEdge
+
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
-
-  """The `Organization` that was updated by this mutation."""
-  organization: Organization
-
-  """An edge for our `Organization`. May be used by Relay 1."""
-  organizationEdge(
-    """The method to use when ordering `Organization`."""
-    orderBy: [OrganizationsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): OrganizationsEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -1316,42 +1392,78 @@ type UpdateOrganizationPayload {
   query: Query
 }
 
-"""All input for the `updatePost` mutation."""
-input UpdatePostInput {
+"""All input for the `updateComment` mutation."""
+input UpdateCommentInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """The primary key for the `Post`."""
   id: Int!
 
   """
-  An object where the defined keys will be set on the `Post` being updated.
+  An object where the defined keys will be set on the `Comment` being updated.
   """
-  patch: PostPatch!
+  patch: CommentPatch!
 }
 
-"""The output of our update `Post` mutation."""
-type UpdatePostPayload {
-  """Reads a single `User` that is related to this `Post`."""
-  author: User
-
+"""The output of our update `Comment` mutation."""
+type UpdateCommentPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
 
-  """The `Post` that was updated by this mutation."""
-  post: Post
+  """The `Comment` that was updated by this mutation."""
+  comment: Comment
 
-  """An edge for our `Post`. May be used by Relay 1."""
-  postEdge(
-    """The method to use when ordering `Post`."""
-    orderBy: [PostsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PostsEdge
+  """An edge for our `Comment`. May be used by Relay 1."""
+  commentEdge(
+    """The method to use when ordering `Comment`."""
+    orderBy: [CommentsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CommentsEdge
+
+  """Reads a single `Confession` that is related to this `Comment`."""
+  confession: Confession
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the `updateConfession` mutation."""
+input UpdateConfessionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+
+  """
+  An object where the defined keys will be set on the `Confession` being updated.
+  """
+  patch: ConfessionPatch!
+}
+
+"""The output of our update `Confession` mutation."""
+type UpdateConfessionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Confession` that was updated by this mutation."""
+  confession: Confession
+
+  """An edge for our `Confession`. May be used by Relay 1."""
+  confessionEdge(
+    """The method to use when ordering `Confession`."""
+    orderBy: [ConfessionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ConfessionsEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -1401,35 +1513,6 @@ type UpdateUserPayload {
 
 """A user who can log in to the application."""
 type User {
-  """Reads and enables pagination through a set of `Post`."""
-  authoredPosts(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: PostCondition
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `Post`."""
-    orderBy: [PostsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PostsConnection!
-
   """Optional avatar URL."""
   avatarUrl: String
   createdAt: Datetime!
@@ -1444,37 +1527,6 @@ type User {
 
   """Public-facing name (or pseudonym) of the user."""
   name: String
-
-  """
-  Reads and enables pagination through a set of `OrganizationMembership`.
-  """
-  organizationMemberships(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OrganizationMembershipCondition
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `OrganizationMembership`."""
-    orderBy: [OrganizationMembershipsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): OrganizationMembershipsConnection!
   updatedAt: Datetime!
 
   """Reads and enables pagination through a set of `UserAuthentication`."""
@@ -1522,35 +1574,6 @@ type User {
     """The method to use when ordering `UserEmail`."""
     orderBy: [UserEmailsOrderBy!] = [PRIMARY_KEY_ASC]
   ): UserEmailsConnection!
-
-  """Reads and enables pagination through a set of `UserFeedPost`."""
-  userFeedPosts(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: UserFeedPostCondition
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `UserFeedPost`."""
-    orderBy: [UserFeedPostsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): UserFeedPostsConnection!
 
   """Public-facing username (or 'handle') of the user."""
   username: String!
@@ -1677,77 +1700,6 @@ enum UserEmailsOrderBy {
   IS_PRIMARY_ASC
   IS_PRIMARY_DESC
   NATURAL
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  USER_ID_ASC
-  USER_ID_DESC
-}
-
-"""A feed of `Post`s relevant to a particular `User`."""
-type UserFeedPost {
-  """The time this feed item was added."""
-  createdAt: Datetime!
-
-  """An identifier for this entry in the feed."""
-  id: Int!
-
-  """Reads a single `Post` that is related to this `UserFeedPost`."""
-  post: Post
-  postId: Int!
-
-  """Reads a single `User` that is related to this `UserFeedPost`."""
-  user: User
-  userId: UUID!
-}
-
-"""
-A condition to be used against `UserFeedPost` object types. All fields are
-tested for equality and combined with a logical ‘and.’
-"""
-input UserFeedPostCondition {
-  """Checks for equality with the object’s `id` field."""
-  id: Int
-
-  """Checks for equality with the object’s `postId` field."""
-  postId: Int
-
-  """Checks for equality with the object’s `userId` field."""
-  userId: UUID
-}
-
-"""A connection to a list of `UserFeedPost` values."""
-type UserFeedPostsConnection {
-  """
-  A list of edges which contains the `UserFeedPost` and cursor to aid in pagination.
-  """
-  edges: [UserFeedPostsEdge!]!
-
-  """A list of `UserFeedPost` objects."""
-  nodes: [UserFeedPost!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* `UserFeedPost` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A `UserFeedPost` edge in the connection."""
-type UserFeedPostsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `UserFeedPost` at the end of the edge."""
-  node: UserFeedPost!
-}
-
-"""Methods to use when ordering `UserFeedPost`."""
-enum UserFeedPostsOrderBy {
-  ID_ASC
-  ID_DESC
-  NATURAL
-  POST_ID_ASC
-  POST_ID_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
   USER_ID_ASC

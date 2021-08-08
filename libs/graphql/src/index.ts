@@ -23,29 +23,6 @@ export type Scalars = {
   UUID: any;
 };
 
-/** All input for the `acceptInvitationToOrganization` mutation. */
-export type AcceptInvitationToOrganizationInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  code?: Maybe<Scalars['String']>;
-  invitationId: Scalars['UUID'];
-};
-
-/** The output of our `acceptInvitationToOrganization` mutation. */
-export type AcceptInvitationToOrganizationPayload = {
-  __typename?: 'AcceptInvitationToOrganizationPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
-};
-
 /** All input for the `changePassword` mutation. */
 export type ChangePasswordInput = {
   /**
@@ -93,73 +70,6 @@ export type ConfirmAccountDeletionPayload = {
   success?: Maybe<Scalars['Boolean']>;
 };
 
-/** All input for the `createOrganization` mutation. */
-export type CreateOrganizationInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  slug: Scalars['String'];
-};
-
-/** The output of our `createOrganization` mutation. */
-export type CreateOrganizationPayload = {
-  __typename?: 'CreateOrganizationPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  organization?: Maybe<Organization>;
-  /** An edge for our `Organization`. May be used by Relay 1. */
-  organizationEdge?: Maybe<OrganizationsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
-};
-
-
-/** The output of our `createOrganization` mutation. */
-export type CreateOrganizationPayloadOrganizationEdgeArgs = {
-  orderBy?: Maybe<Array<OrganizationsOrderBy>>;
-};
-
-/** All input for the create `Post` mutation. */
-export type CreatePostInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  /** The `Post` to be created by this mutation. */
-  post: PostInput;
-};
-
-/** The output of our create `Post` mutation. */
-export type CreatePostPayload = {
-  __typename?: 'CreatePostPayload';
-  /** Reads a single `User` that is related to this `Post`. */
-  author?: Maybe<User>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  /** The `Post` that was created by this mutation. */
-  post?: Maybe<Post>;
-  /** An edge for our `Post`. May be used by Relay 1. */
-  postEdge?: Maybe<PostsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
-};
-
-
-/** The output of our create `Post` mutation. */
-export type CreatePostPayloadPostEdgeArgs = {
-  orderBy?: Maybe<Array<PostsOrderBy>>;
-};
-
 /** All input for the create `UserEmail` mutation. */
 export type CreateUserEmailInput = {
   /**
@@ -196,64 +106,6 @@ export type CreateUserEmailPayloadUserEmailEdgeArgs = {
 };
 
 
-
-/** All input for the `deleteOrganization` mutation. */
-export type DeleteOrganizationInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  organizationId: Scalars['UUID'];
-};
-
-/** The output of our `deleteOrganization` mutation. */
-export type DeleteOrganizationPayload = {
-  __typename?: 'DeleteOrganizationPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
-};
-
-/** All input for the `deletePost` mutation. */
-export type DeletePostInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  /** The primary key for the `Post`. */
-  id: Scalars['Int'];
-};
-
-/** The output of our delete `Post` mutation. */
-export type DeletePostPayload = {
-  __typename?: 'DeletePostPayload';
-  /** Reads a single `User` that is related to this `Post`. */
-  author?: Maybe<User>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  deletedPostNodeId?: Maybe<Scalars['ID']>;
-  /** The `Post` that was deleted by this mutation. */
-  post?: Maybe<Post>;
-  /** An edge for our `Post`. May be used by Relay 1. */
-  postEdge?: Maybe<PostsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
-};
-
-
-/** The output of our delete `Post` mutation. */
-export type DeletePostPayloadPostEdgeArgs = {
-  orderBy?: Maybe<Array<PostsOrderBy>>;
-};
 
 /** All input for the `deleteUserAuthentication` mutation. */
 export type DeleteUserAuthenticationInput = {
@@ -339,30 +191,6 @@ export type ForgotPasswordPayload = {
   query?: Maybe<Query>;
 };
 
-/** All input for the `inviteToOrganization` mutation. */
-export type InviteToOrganizationInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  organizationId: Scalars['UUID'];
-  username?: Maybe<Scalars['String']>;
-};
-
-/** The output of our `inviteToOrganization` mutation. */
-export type InviteToOrganizationPayload = {
-  __typename?: 'InviteToOrganizationPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
-};
-
 export type LoginInput = {
   password: Scalars['String'];
   username: Scalars['String'];
@@ -414,30 +242,18 @@ export type MakeEmailPrimaryPayloadUserEmailEdgeArgs = {
 /** The root mutation type which contains root level fields which mutate data. */
 export type Mutation = {
   __typename?: 'Mutation';
-  /** If someone invited you by your email address then you must include the code that was emailed to you, otherwise you may accept the invitation directly using the UUID. If successful, you will be a member of the organization. */
-  acceptInvitationToOrganization?: Maybe<AcceptInvitationToOrganizationPayload>;
   /** Enter your old password and a new password to change your password. */
   changePassword?: Maybe<ChangePasswordPayload>;
   /** If you're certain you want to delete your account, use `requestAccountDeletion` to request an account deletion token, and then supply the token through this mutation to complete account deletion. */
   confirmAccountDeletion?: Maybe<ConfirmAccountDeletionPayload>;
-  /** An `Organization` is a great way of sharing access to resources between multiple users without compromising security. When you create an organization you will have the 'owner' and 'billing contact' roles. You may invite other users and redistribute these roles. */
-  createOrganization?: Maybe<CreateOrganizationPayload>;
-  /** Creates a single `Post`. */
-  createPost?: Maybe<CreatePostPayload>;
   /** Creates a single `UserEmail`. */
   createUserEmail?: Maybe<CreateUserEmailPayload>;
-  /** Only the 'owner' may delete an organization. This operation cannot be undone, so be sure that it is what you intend. */
-  deleteOrganization?: Maybe<DeleteOrganizationPayload>;
-  /** Deletes a single `Post` using a unique key. */
-  deletePost?: Maybe<DeletePostPayload>;
   /** Deletes a single `UserAuthentication` using a unique key. */
   deleteUserAuthentication?: Maybe<DeleteUserAuthenticationPayload>;
   /** Deletes a single `UserEmail` using a unique key. */
   deleteUserEmail?: Maybe<DeleteUserEmailPayload>;
   /** If you've forgotten your password, give us one of your email addresses and we'll send you a reset token. Note this only works if you have added an email address! */
   forgotPassword?: Maybe<ForgotPasswordPayload>;
-  /** You may invite a user to your organization either by their username (only for verified users) or by their email. If you opt to invite by email then an email will be sent to this person containing a code that they need to accept the invitation. If the person doesn't already have an account they will be instructed to create one; their account need not have the email address that you invited listed as the secret code is confirmation enough. */
-  inviteToOrganization?: Maybe<InviteToOrganizationPayload>;
   /** Use this mutation to log in to your account; this login uses sessions so you do not need to take further action. */
   login?: Maybe<LoginPayload>;
   /** Use this mutation to logout from your account. Don't forget to clear the client state! */
@@ -446,32 +262,16 @@ export type Mutation = {
   makeEmailPrimary?: Maybe<MakeEmailPrimaryPayload>;
   /** Use this mutation to create an account on our system. This may only be used if you are logged out. */
   register?: Maybe<RegisterPayload>;
-  /** The owner of an `Organization` may remove an `OrganizationMember` with this mutation. */
-  removeFromOrganization?: Maybe<RemoveFromOrganizationPayload>;
   /** Begin the account deletion flow by requesting the confirmation email */
   requestAccountDeletion?: Maybe<RequestAccountDeletionPayload>;
   /** If you didn't receive the verification code for this email, we can resend it. We silently cap the rate of resends on the backend, so calls to this function may not result in another email being sent if it has been called recently. */
   resendEmailVerificationCode?: Maybe<ResendEmailVerificationCodePayload>;
   /** After triggering forgotPassword, you'll be sent a reset token. Combine this with your user ID and a new password to reset your password. */
   resetPassword?: Maybe<ResetPasswordPayload>;
-  /** The owner of an `Organization` may use this mutation to make any organization member the billing contact. */
-  transferOrganizationBillingContact?: Maybe<TransferOrganizationBillingContactPayload>;
-  /** The owner of an `Organization` may use this mutation to transfer ownership to a different organization member. Take care, if you assign ownership to someone who cannot or will not access their account then you may need to contact support to have ownership reassigned. */
-  transferOrganizationOwnership?: Maybe<TransferOrganizationOwnershipPayload>;
-  /** Updates a single `Organization` using a unique key and a patch. */
-  updateOrganization?: Maybe<UpdateOrganizationPayload>;
-  /** Updates a single `Post` using a unique key and a patch. */
-  updatePost?: Maybe<UpdatePostPayload>;
   /** Updates a single `User` using a unique key and a patch. */
   updateUser?: Maybe<UpdateUserPayload>;
   /** Once you have received a verification token for your email, you may call this mutation with that token to make your email verified. */
   verifyEmail?: Maybe<VerifyEmailPayload>;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationAcceptInvitationToOrganizationArgs = {
-  input: AcceptInvitationToOrganizationInput;
 };
 
 
@@ -488,32 +288,8 @@ export type MutationConfirmAccountDeletionArgs = {
 
 
 /** The root mutation type which contains root level fields which mutate data. */
-export type MutationCreateOrganizationArgs = {
-  input: CreateOrganizationInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationCreatePostArgs = {
-  input: CreatePostInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
 export type MutationCreateUserEmailArgs = {
   input: CreateUserEmailInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteOrganizationArgs = {
-  input: DeleteOrganizationInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeletePostArgs = {
-  input: DeletePostInput;
 };
 
 
@@ -536,12 +312,6 @@ export type MutationForgotPasswordArgs = {
 
 
 /** The root mutation type which contains root level fields which mutate data. */
-export type MutationInviteToOrganizationArgs = {
-  input: InviteToOrganizationInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
 export type MutationLoginArgs = {
   input: LoginInput;
 };
@@ -556,12 +326,6 @@ export type MutationMakeEmailPrimaryArgs = {
 /** The root mutation type which contains root level fields which mutate data. */
 export type MutationRegisterArgs = {
   input: RegisterInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationRemoveFromOrganizationArgs = {
-  input: RemoveFromOrganizationInput;
 };
 
 
@@ -584,30 +348,6 @@ export type MutationResetPasswordArgs = {
 
 
 /** The root mutation type which contains root level fields which mutate data. */
-export type MutationTransferOrganizationBillingContactArgs = {
-  input: TransferOrganizationBillingContactInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationTransferOrganizationOwnershipArgs = {
-  input: TransferOrganizationOwnershipInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateOrganizationArgs = {
-  input: UpdateOrganizationInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdatePostArgs = {
-  input: UpdatePostInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
 export type MutationUpdateUserArgs = {
   input: UpdateUserInput;
 };
@@ -617,143 +357,6 @@ export type MutationUpdateUserArgs = {
 export type MutationVerifyEmailArgs = {
   input: VerifyEmailInput;
 };
-
-export type Organization = {
-  __typename?: 'Organization';
-  createdAt: Scalars['Datetime'];
-  currentUserIsBillingContact?: Maybe<Scalars['Boolean']>;
-  currentUserIsOwner?: Maybe<Scalars['Boolean']>;
-  id: Scalars['UUID'];
-  name: Scalars['String'];
-  /** Reads and enables pagination through a set of `OrganizationMembership`. */
-  organizationMemberships: OrganizationMembershipsConnection;
-  slug: Scalars['String'];
-};
-
-
-export type OrganizationOrganizationMembershipsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  condition?: Maybe<OrganizationMembershipCondition>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Array<OrganizationMembershipsOrderBy>>;
-};
-
-/**
- * A condition to be used against `Organization` object types. All fields are
- * tested for equality and combined with a logical ‘and.’
- */
-export type OrganizationCondition = {
-  /** Checks for equality with the object’s `id` field. */
-  id?: Maybe<Scalars['UUID']>;
-  /** Checks for equality with the object’s `slug` field. */
-  slug?: Maybe<Scalars['String']>;
-};
-
-export type OrganizationMembership = {
-  __typename?: 'OrganizationMembership';
-  createdAt: Scalars['Datetime'];
-  id: Scalars['UUID'];
-  isBillingContact: Scalars['Boolean'];
-  isOwner: Scalars['Boolean'];
-  /** Reads a single `Organization` that is related to this `OrganizationMembership`. */
-  organization?: Maybe<Organization>;
-  organizationId: Scalars['UUID'];
-  /** Reads a single `User` that is related to this `OrganizationMembership`. */
-  user?: Maybe<User>;
-  userId: Scalars['UUID'];
-};
-
-/**
- * A condition to be used against `OrganizationMembership` object types. All fields
- * are tested for equality and combined with a logical ‘and.’
- */
-export type OrganizationMembershipCondition = {
-  /** Checks for equality with the object’s `id` field. */
-  id?: Maybe<Scalars['UUID']>;
-  /** Checks for equality with the object’s `organizationId` field. */
-  organizationId?: Maybe<Scalars['UUID']>;
-  /** Checks for equality with the object’s `userId` field. */
-  userId?: Maybe<Scalars['UUID']>;
-};
-
-/** A connection to a list of `OrganizationMembership` values. */
-export type OrganizationMembershipsConnection = {
-  __typename?: 'OrganizationMembershipsConnection';
-  /** A list of edges which contains the `OrganizationMembership` and cursor to aid in pagination. */
-  edges: Array<OrganizationMembershipsEdge>;
-  /** A list of `OrganizationMembership` objects. */
-  nodes: Array<OrganizationMembership>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `OrganizationMembership` you could get from the connection. */
-  totalCount: Scalars['Int'];
-};
-
-/** A `OrganizationMembership` edge in the connection. */
-export type OrganizationMembershipsEdge = {
-  __typename?: 'OrganizationMembershipsEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']>;
-  /** The `OrganizationMembership` at the end of the edge. */
-  node: OrganizationMembership;
-};
-
-/** Methods to use when ordering `OrganizationMembership`. */
-export enum OrganizationMembershipsOrderBy {
-  IdAsc = 'ID_ASC',
-  IdDesc = 'ID_DESC',
-  MemberNameAsc = 'MEMBER_NAME_ASC',
-  MemberNameDesc = 'MEMBER_NAME_DESC',
-  Natural = 'NATURAL',
-  OrganizationIdAsc = 'ORGANIZATION_ID_ASC',
-  OrganizationIdDesc = 'ORGANIZATION_ID_DESC',
-  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  UserIdAsc = 'USER_ID_ASC',
-  UserIdDesc = 'USER_ID_DESC'
-}
-
-/** Represents an update to a `Organization`. Fields that are set will be updated. */
-export type OrganizationPatch = {
-  name?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
-};
-
-/** A connection to a list of `Organization` values. */
-export type OrganizationsConnection = {
-  __typename?: 'OrganizationsConnection';
-  /** A list of edges which contains the `Organization` and cursor to aid in pagination. */
-  edges: Array<OrganizationsEdge>;
-  /** A list of `Organization` objects. */
-  nodes: Array<Organization>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Organization` you could get from the connection. */
-  totalCount: Scalars['Int'];
-};
-
-/** A `Organization` edge in the connection. */
-export type OrganizationsEdge = {
-  __typename?: 'OrganizationsEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']>;
-  /** The `Organization` at the end of the edge. */
-  node: Organization;
-};
-
-/** Methods to use when ordering `Organization`. */
-export enum OrganizationsOrderBy {
-  IdAsc = 'ID_ASC',
-  IdDesc = 'ID_DESC',
-  Natural = 'NATURAL',
-  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  SlugAsc = 'SLUG_ASC',
-  SlugDesc = 'SLUG_DESC'
-}
 
 /** Information about pagination in a connection. */
 export type PageInfo = {
@@ -768,183 +371,15 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['Cursor']>;
 };
 
-/** A forum post written by a `User`. */
-export type Post = {
-  __typename?: 'Post';
-  /** Reads a single `User` that is related to this `Post`. */
-  author?: Maybe<User>;
-  /** The id of the author `User`. */
-  authorId?: Maybe<Scalars['UUID']>;
-  /** The main body text of our `Post`. */
-  body?: Maybe<Scalars['String']>;
-  /** The time this `Post` was created. */
-  createdAt: Scalars['Datetime'];
-  /** The title written by the `User`. */
-  headline: Scalars['String'];
-  /** The primary key for the `Post`. */
-  id: Scalars['Int'];
-  /** The `Topic` this has been posted in. */
-  topic: Scalars['String'];
-  /** The time this `Post` was last modified (or created). */
-  updatedAt: Scalars['Datetime'];
-  /** Reads and enables pagination through a set of `UserFeedPost`. */
-  userFeedPosts: UserFeedPostsConnection;
-};
-
-
-/** A forum post written by a `User`. */
-export type PostUserFeedPostsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  condition?: Maybe<UserFeedPostCondition>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Array<UserFeedPostsOrderBy>>;
-};
-
-/** A condition to be used against `Post` object types. All fields are tested for equality and combined with a logical ‘and.’ */
-export type PostCondition = {
-  /** Checks for equality with the object’s `authorId` field. */
-  authorId?: Maybe<Scalars['UUID']>;
-  /** Checks for equality with the object’s `id` field. */
-  id?: Maybe<Scalars['Int']>;
-  /** Checks for equality with the object’s `topic` field. */
-  topic?: Maybe<Scalars['String']>;
-};
-
-/** An input for mutations affecting `Post` */
-export type PostInput = {
-  /** The main body text of our `Post`. */
-  body?: Maybe<Scalars['String']>;
-  /** The title written by the `User`. */
-  headline: Scalars['String'];
-  /** The `Topic` this has been posted in. */
-  topic: Scalars['String'];
-};
-
-/** Represents an update to a `Post`. Fields that are set will be updated. */
-export type PostPatch = {
-  /** The main body text of our `Post`. */
-  body?: Maybe<Scalars['String']>;
-  /** The title written by the `User`. */
-  headline?: Maybe<Scalars['String']>;
-  /** The `Topic` this has been posted in. */
-  topic?: Maybe<Scalars['String']>;
-};
-
-/** A connection to a list of `Post` values. */
-export type PostsConnection = {
-  __typename?: 'PostsConnection';
-  /** A list of edges which contains the `Post` and cursor to aid in pagination. */
-  edges: Array<PostsEdge>;
-  /** A list of `Post` objects. */
-  nodes: Array<Post>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Post` you could get from the connection. */
-  totalCount: Scalars['Int'];
-};
-
-/** A `Post` edge in the connection. */
-export type PostsEdge = {
-  __typename?: 'PostsEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']>;
-  /** The `Post` at the end of the edge. */
-  node: Post;
-};
-
-/** Methods to use when ordering `Post`. */
-export enum PostsOrderBy {
-  AuthorIdAsc = 'AUTHOR_ID_ASC',
-  AuthorIdDesc = 'AUTHOR_ID_DESC',
-  IdAsc = 'ID_ASC',
-  IdDesc = 'ID_DESC',
-  Natural = 'NATURAL',
-  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  TopicAsc = 'TOPIC_ASC',
-  TopicDesc = 'TOPIC_DESC'
-}
-
 /** The root query type which gives access points into the data universe. */
 export type Query = {
   __typename?: 'Query';
   /** The currently logged in user (or null if not logged in). */
   currentUser?: Maybe<User>;
-  organization?: Maybe<Organization>;
-  organizationBySlug?: Maybe<Organization>;
-  /** Given an invitation UUID (and, if required, the code that was emailed to you), retrieves the `Organization` that you were invited to. */
-  organizationForInvitation?: Maybe<Organization>;
-  organizationMembership?: Maybe<OrganizationMembership>;
-  /** Reads and enables pagination through a set of `Organization`. */
-  organizations?: Maybe<OrganizationsConnection>;
-  post?: Maybe<Post>;
-  /** Reads and enables pagination through a set of `Post`. */
-  posts?: Maybe<PostsConnection>;
   user?: Maybe<User>;
   userAuthentication?: Maybe<UserAuthentication>;
   userByUsername?: Maybe<User>;
   userEmail?: Maybe<UserEmail>;
-  userFeedPost?: Maybe<UserFeedPost>;
-  /** Reads and enables pagination through a set of `UserFeedPost`. */
-  userFeedPosts?: Maybe<UserFeedPostsConnection>;
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryOrganizationArgs = {
-  id: Scalars['UUID'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryOrganizationBySlugArgs = {
-  slug: Scalars['String'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryOrganizationForInvitationArgs = {
-  code?: Maybe<Scalars['String']>;
-  invitationId: Scalars['UUID'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryOrganizationMembershipArgs = {
-  id: Scalars['UUID'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryOrganizationsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  condition?: Maybe<OrganizationCondition>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Array<OrganizationsOrderBy>>;
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryPostArgs = {
-  id: Scalars['Int'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryPostsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  condition?: Maybe<PostCondition>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Array<PostsOrderBy>>;
 };
 
 
@@ -971,24 +406,6 @@ export type QueryUserEmailArgs = {
   id: Scalars['UUID'];
 };
 
-
-/** The root query type which gives access points into the data universe. */
-export type QueryUserFeedPostArgs = {
-  id: Scalars['Int'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryUserFeedPostsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  condition?: Maybe<UserFeedPostCondition>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Array<UserFeedPostsOrderBy>>;
-};
-
 export type RegisterInput = {
   avatarUrl?: Maybe<Scalars['String']>;
   email: Scalars['String'];
@@ -1000,29 +417,6 @@ export type RegisterInput = {
 export type RegisterPayload = {
   __typename?: 'RegisterPayload';
   user: User;
-};
-
-/** All input for the `removeFromOrganization` mutation. */
-export type RemoveFromOrganizationInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  organizationId: Scalars['UUID'];
-  userId: Scalars['UUID'];
-};
-
-/** The output of our `removeFromOrganization` mutation. */
-export type RemoveFromOrganizationPayload = {
-  __typename?: 'RemoveFromOrganizationPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
 };
 
 /** All input for the `requestAccountDeletion` mutation. */
@@ -1102,141 +496,6 @@ export type Subscription = {
   currentUserUpdated?: Maybe<UserSubscriptionPayload>;
 };
 
-/** All input for the `transferOrganizationBillingContact` mutation. */
-export type TransferOrganizationBillingContactInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  organizationId: Scalars['UUID'];
-  userId: Scalars['UUID'];
-};
-
-/** The output of our `transferOrganizationBillingContact` mutation. */
-export type TransferOrganizationBillingContactPayload = {
-  __typename?: 'TransferOrganizationBillingContactPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  organization?: Maybe<Organization>;
-  /** An edge for our `Organization`. May be used by Relay 1. */
-  organizationEdge?: Maybe<OrganizationsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
-};
-
-
-/** The output of our `transferOrganizationBillingContact` mutation. */
-export type TransferOrganizationBillingContactPayloadOrganizationEdgeArgs = {
-  orderBy?: Maybe<Array<OrganizationsOrderBy>>;
-};
-
-/** All input for the `transferOrganizationOwnership` mutation. */
-export type TransferOrganizationOwnershipInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  organizationId: Scalars['UUID'];
-  userId: Scalars['UUID'];
-};
-
-/** The output of our `transferOrganizationOwnership` mutation. */
-export type TransferOrganizationOwnershipPayload = {
-  __typename?: 'TransferOrganizationOwnershipPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  organization?: Maybe<Organization>;
-  /** An edge for our `Organization`. May be used by Relay 1. */
-  organizationEdge?: Maybe<OrganizationsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
-};
-
-
-/** The output of our `transferOrganizationOwnership` mutation. */
-export type TransferOrganizationOwnershipPayloadOrganizationEdgeArgs = {
-  orderBy?: Maybe<Array<OrganizationsOrderBy>>;
-};
-
-
-/** All input for the `updateOrganization` mutation. */
-export type UpdateOrganizationInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  /** An object where the defined keys will be set on the `Organization` being updated. */
-  patch: OrganizationPatch;
-};
-
-/** The output of our update `Organization` mutation. */
-export type UpdateOrganizationPayload = {
-  __typename?: 'UpdateOrganizationPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  /** The `Organization` that was updated by this mutation. */
-  organization?: Maybe<Organization>;
-  /** An edge for our `Organization`. May be used by Relay 1. */
-  organizationEdge?: Maybe<OrganizationsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
-};
-
-
-/** The output of our update `Organization` mutation. */
-export type UpdateOrganizationPayloadOrganizationEdgeArgs = {
-  orderBy?: Maybe<Array<OrganizationsOrderBy>>;
-};
-
-/** All input for the `updatePost` mutation. */
-export type UpdatePostInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  /** The primary key for the `Post`. */
-  id: Scalars['Int'];
-  /** An object where the defined keys will be set on the `Post` being updated. */
-  patch: PostPatch;
-};
-
-/** The output of our update `Post` mutation. */
-export type UpdatePostPayload = {
-  __typename?: 'UpdatePostPayload';
-  /** Reads a single `User` that is related to this `Post`. */
-  author?: Maybe<User>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  /** The `Post` that was updated by this mutation. */
-  post?: Maybe<Post>;
-  /** An edge for our `Post`. May be used by Relay 1. */
-  postEdge?: Maybe<PostsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
-};
-
-
-/** The output of our update `Post` mutation. */
-export type UpdatePostPayloadPostEdgeArgs = {
-  orderBy?: Maybe<Array<PostsOrderBy>>;
-};
 
 /** All input for the `updateUser` mutation. */
 export type UpdateUserInput = {
@@ -1276,8 +535,6 @@ export type UpdateUserPayloadUserEdgeArgs = {
 /** A user who can log in to the application. */
 export type User = {
   __typename?: 'User';
-  /** Reads and enables pagination through a set of `Post`. */
-  authoredPosts: PostsConnection;
   /** Optional avatar URL. */
   avatarUrl?: Maybe<Scalars['String']>;
   createdAt: Scalars['Datetime'];
@@ -1289,41 +546,13 @@ export type User = {
   isVerified: Scalars['Boolean'];
   /** Public-facing name (or pseudonym) of the user. */
   name?: Maybe<Scalars['String']>;
-  /** Reads and enables pagination through a set of `OrganizationMembership`. */
-  organizationMemberships: OrganizationMembershipsConnection;
   updatedAt: Scalars['Datetime'];
   /** Reads and enables pagination through a set of `UserAuthentication`. */
   userAuthenticationsList: Array<UserAuthentication>;
   /** Reads and enables pagination through a set of `UserEmail`. */
   userEmails: UserEmailsConnection;
-  /** Reads and enables pagination through a set of `UserFeedPost`. */
-  userFeedPosts: UserFeedPostsConnection;
   /** Public-facing username (or 'handle') of the user. */
   username: Scalars['String'];
-};
-
-
-/** A user who can log in to the application. */
-export type UserAuthoredPostsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  condition?: Maybe<PostCondition>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Array<PostsOrderBy>>;
-};
-
-
-/** A user who can log in to the application. */
-export type UserOrganizationMembershipsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  condition?: Maybe<OrganizationMembershipCondition>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Array<OrganizationMembershipsOrderBy>>;
 };
 
 
@@ -1345,18 +574,6 @@ export type UserUserEmailsArgs = {
   last?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<UserEmailsOrderBy>>;
-};
-
-
-/** A user who can log in to the application. */
-export type UserUserFeedPostsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  condition?: Maybe<UserFeedPostCondition>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Array<UserFeedPostsOrderBy>>;
 };
 
 /** Contains information about the login providers this user has used, so that they may disconnect them should they wish. */
@@ -1470,69 +687,6 @@ export enum UserEmailsOrderBy {
   UserIdDesc = 'USER_ID_DESC'
 }
 
-/** A feed of `Post`s relevant to a particular `User`. */
-export type UserFeedPost = {
-  __typename?: 'UserFeedPost';
-  /** The time this feed item was added. */
-  createdAt: Scalars['Datetime'];
-  /** An identifier for this entry in the feed. */
-  id: Scalars['Int'];
-  /** Reads a single `Post` that is related to this `UserFeedPost`. */
-  post?: Maybe<Post>;
-  postId: Scalars['Int'];
-  /** Reads a single `User` that is related to this `UserFeedPost`. */
-  user?: Maybe<User>;
-  userId: Scalars['UUID'];
-};
-
-/**
- * A condition to be used against `UserFeedPost` object types. All fields are
- * tested for equality and combined with a logical ‘and.’
- */
-export type UserFeedPostCondition = {
-  /** Checks for equality with the object’s `id` field. */
-  id?: Maybe<Scalars['Int']>;
-  /** Checks for equality with the object’s `postId` field. */
-  postId?: Maybe<Scalars['Int']>;
-  /** Checks for equality with the object’s `userId` field. */
-  userId?: Maybe<Scalars['UUID']>;
-};
-
-/** A connection to a list of `UserFeedPost` values. */
-export type UserFeedPostsConnection = {
-  __typename?: 'UserFeedPostsConnection';
-  /** A list of edges which contains the `UserFeedPost` and cursor to aid in pagination. */
-  edges: Array<UserFeedPostsEdge>;
-  /** A list of `UserFeedPost` objects. */
-  nodes: Array<UserFeedPost>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `UserFeedPost` you could get from the connection. */
-  totalCount: Scalars['Int'];
-};
-
-/** A `UserFeedPost` edge in the connection. */
-export type UserFeedPostsEdge = {
-  __typename?: 'UserFeedPostsEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']>;
-  /** The `UserFeedPost` at the end of the edge. */
-  node: UserFeedPost;
-};
-
-/** Methods to use when ordering `UserFeedPost`. */
-export enum UserFeedPostsOrderBy {
-  IdAsc = 'ID_ASC',
-  IdDesc = 'ID_DESC',
-  Natural = 'NATURAL',
-  PostIdAsc = 'POST_ID_ASC',
-  PostIdDesc = 'POST_ID_DESC',
-  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  UserIdAsc = 'USER_ID_ASC',
-  UserIdDesc = 'USER_ID_DESC'
-}
-
 /** Represents an update to a `User`. Fields that are set will be updated. */
 export type UserPatch = {
   /** Optional avatar URL. */
@@ -1593,20 +747,6 @@ export type VerifyEmailPayload = {
   success?: Maybe<Scalars['Boolean']>;
 };
 
-export type AcceptOrganizationInviteMutationVariables = Exact<{
-  id: Scalars['UUID'];
-  code?: Maybe<Scalars['String']>;
-}>;
-
-
-export type AcceptOrganizationInviteMutation = (
-  { __typename?: 'Mutation' }
-  & { acceptInvitationToOrganization?: Maybe<(
-    { __typename?: 'AcceptInvitationToOrganizationPayload' }
-    & Pick<AcceptInvitationToOrganizationPayload, 'clientMutationId'>
-  )> }
-);
-
 export type AddEmailMutationVariables = Exact<{
   email: Scalars['String'];
 }>;
@@ -1655,36 +795,6 @@ export type ConfirmAccountDeletionMutation = (
   & { confirmAccountDeletion?: Maybe<(
     { __typename?: 'ConfirmAccountDeletionPayload' }
     & Pick<ConfirmAccountDeletionPayload, 'success'>
-  )> }
-);
-
-export type CreatedOrganizationFragment = (
-  { __typename?: 'Organization' }
-  & Pick<Organization, 'id' | 'name' | 'slug'>
-);
-
-export type CreateOrganizationMutationVariables = Exact<{
-  name: Scalars['String'];
-  slug: Scalars['String'];
-}>;
-
-
-export type CreateOrganizationMutation = (
-  { __typename?: 'Mutation' }
-  & { createOrganization?: Maybe<(
-    { __typename?: 'CreateOrganizationPayload' }
-    & { organization?: Maybe<(
-      { __typename?: 'Organization' }
-      & Pick<Organization, 'id'>
-      & CreatedOrganizationFragment
-    )>, query?: Maybe<(
-      { __typename?: 'Query' }
-      & { organizationBySlug?: Maybe<(
-        { __typename?: 'Organization' }
-        & Pick<Organization, 'id'>
-        & CreatedOrganizationFragment
-      )> }
-    )> }
   )> }
 );
 
@@ -1742,19 +852,6 @@ export type DeleteEmailMutation = (
   )> }
 );
 
-export type DeleteOrganizationMutationVariables = Exact<{
-  organizationId: Scalars['UUID'];
-}>;
-
-
-export type DeleteOrganizationMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteOrganization?: Maybe<(
-    { __typename?: 'DeleteOrganizationPayload' }
-    & Pick<DeleteOrganizationPayload, 'clientMutationId'>
-  )> }
-);
-
 export type EmailsForm_UserFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id'>
@@ -1783,36 +880,6 @@ export type ForgotPasswordMutation = (
   & { forgotPassword?: Maybe<(
     { __typename?: 'ForgotPasswordPayload' }
     & Pick<ForgotPasswordPayload, 'clientMutationId'>
-  )> }
-);
-
-export type InvitationDetailQueryVariables = Exact<{
-  id: Scalars['UUID'];
-  code?: Maybe<Scalars['String']>;
-}>;
-
-
-export type InvitationDetailQuery = (
-  { __typename?: 'Query' }
-  & { organizationForInvitation?: Maybe<(
-    { __typename?: 'Organization' }
-    & Pick<Organization, 'id' | 'name' | 'slug'>
-  )> }
-  & SharedLayout_QueryFragment
-);
-
-export type InviteToOrganizationMutationVariables = Exact<{
-  organizationId: Scalars['UUID'];
-  email?: Maybe<Scalars['String']>;
-  username?: Maybe<Scalars['String']>;
-}>;
-
-
-export type InviteToOrganizationMutation = (
-  { __typename?: 'Mutation' }
-  & { inviteToOrganization?: Maybe<(
-    { __typename?: 'InviteToOrganizationPayload' }
-    & Pick<InviteToOrganizationPayload, 'clientMutationId'>
   )> }
 );
 
@@ -1867,84 +934,6 @@ export type MakeEmailPrimaryMutation = (
   )> }
 );
 
-export type OrganizationBySlugQueryVariables = Exact<{
-  slug: Scalars['String'];
-}>;
-
-
-export type OrganizationBySlugQuery = (
-  { __typename?: 'Query' }
-  & { organizationBySlug?: Maybe<(
-    { __typename?: 'Organization' }
-    & Pick<Organization, 'id' | 'name' | 'slug'>
-  )> }
-);
-
-export type OrganizationMembers_MembershipFragment = (
-  { __typename?: 'OrganizationMembership' }
-  & Pick<OrganizationMembership, 'id' | 'createdAt' | 'isOwner' | 'isBillingContact'>
-  & { user?: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'name'>
-  )> }
-);
-
-export type OrganizationMembers_OrganizationFragment = (
-  { __typename?: 'Organization' }
-  & Pick<Organization, 'id' | 'name' | 'slug'>
-  & { organizationMemberships: (
-    { __typename?: 'OrganizationMembershipsConnection' }
-    & Pick<OrganizationMembershipsConnection, 'totalCount'>
-    & { nodes: Array<(
-      { __typename?: 'OrganizationMembership' }
-      & Pick<OrganizationMembership, 'id'>
-      & OrganizationMembers_MembershipFragment
-    )> }
-  ) }
-  & OrganizationPage_OrganizationFragment
-);
-
-export type OrganizationMembersQueryVariables = Exact<{
-  slug: Scalars['String'];
-  offset?: Maybe<Scalars['Int']>;
-}>;
-
-
-export type OrganizationMembersQuery = (
-  { __typename?: 'Query' }
-  & { organizationBySlug?: Maybe<(
-    { __typename?: 'Organization' }
-    & Pick<Organization, 'id'>
-    & OrganizationMembers_OrganizationFragment
-  )> }
-  & OrganizationPage_QueryFragment
-);
-
-export type OrganizationPageQueryVariables = Exact<{
-  slug: Scalars['String'];
-}>;
-
-
-export type OrganizationPageQuery = (
-  { __typename?: 'Query' }
-  & OrganizationPage_QueryFragment
-);
-
-export type OrganizationPage_OrganizationFragment = (
-  { __typename?: 'Organization' }
-  & Pick<Organization, 'id' | 'name' | 'slug' | 'currentUserIsOwner' | 'currentUserIsBillingContact'>
-);
-
-export type OrganizationPage_QueryFragment = (
-  { __typename?: 'Query' }
-  & { organizationBySlug?: Maybe<(
-    { __typename?: 'Organization' }
-    & Pick<Organization, 'id'>
-    & OrganizationPage_OrganizationFragment
-  )> }
-  & SharedLayout_QueryFragment
-);
-
 export type ProfileSettingsForm_UserFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'name' | 'username' | 'avatarUrl'>
@@ -1966,20 +955,6 @@ export type RegisterMutation = (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username' | 'name'>
     ) }
-  )> }
-);
-
-export type RemoveFromOrganizationMutationVariables = Exact<{
-  organizationId: Scalars['UUID'];
-  userId: Scalars['UUID'];
-}>;
-
-
-export type RemoveFromOrganizationMutation = (
-  { __typename?: 'Mutation' }
-  & { removeFromOrganization?: Maybe<(
-    { __typename?: 'RemoveFromOrganizationPayload' }
-    & Pick<RemoveFromOrganizationPayload, 'clientMutationId'>
   )> }
 );
 
@@ -2086,51 +1061,6 @@ export type SharedLayout_QueryFragment = (
 export type SharedLayout_UserFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'name' | 'username' | 'avatarUrl' | 'isAdmin' | 'isVerified'>
-  & { organizationMemberships: (
-    { __typename?: 'OrganizationMembershipsConnection' }
-    & { nodes: Array<(
-      { __typename?: 'OrganizationMembership' }
-      & Pick<OrganizationMembership, 'id' | 'isOwner' | 'isBillingContact'>
-      & { organization?: Maybe<(
-        { __typename?: 'Organization' }
-        & Pick<Organization, 'id' | 'name' | 'slug'>
-      )> }
-    )> }
-  ) }
-);
-
-export type TransferOrganizationBillingContactMutationVariables = Exact<{
-  organizationId: Scalars['UUID'];
-  userId: Scalars['UUID'];
-}>;
-
-
-export type TransferOrganizationBillingContactMutation = (
-  { __typename?: 'Mutation' }
-  & { transferOrganizationBillingContact?: Maybe<(
-    { __typename?: 'TransferOrganizationBillingContactPayload' }
-    & { organization?: Maybe<(
-      { __typename?: 'Organization' }
-      & Pick<Organization, 'id' | 'currentUserIsBillingContact'>
-    )> }
-  )> }
-);
-
-export type TransferOrganizationOwnershipMutationVariables = Exact<{
-  organizationId: Scalars['UUID'];
-  userId: Scalars['UUID'];
-}>;
-
-
-export type TransferOrganizationOwnershipMutation = (
-  { __typename?: 'Mutation' }
-  & { transferOrganizationOwnership?: Maybe<(
-    { __typename?: 'TransferOrganizationOwnershipPayload' }
-    & { organization?: Maybe<(
-      { __typename?: 'Organization' }
-      & Pick<Organization, 'id' | 'currentUserIsOwner'>
-    )> }
-  )> }
 );
 
 export type UnlinkUserAuthenticationMutationVariables = Exact<{
@@ -2149,22 +1079,6 @@ export type UnlinkUserAuthenticationMutation = (
         { __typename?: 'UserAuthentication' }
         & Pick<UserAuthentication, 'id' | 'identifier' | 'service' | 'createdAt'>
       )> }
-    )> }
-  )> }
-);
-
-export type UpdateOrganizationMutationVariables = Exact<{
-  input: UpdateOrganizationInput;
-}>;
-
-
-export type UpdateOrganizationMutation = (
-  { __typename?: 'Mutation' }
-  & { updateOrganization?: Maybe<(
-    { __typename?: 'UpdateOrganizationPayload' }
-    & { organization?: Maybe<(
-      { __typename?: 'Organization' }
-      & Pick<Organization, 'id' | 'slug' | 'name'>
     )> }
   )> }
 );
@@ -2208,13 +1122,6 @@ export type VerifyEmailMutation = (
   )> }
 );
 
-export const CreatedOrganizationFragmentDoc = gql`
-    fragment CreatedOrganization on Organization {
-  id
-  name
-  slug
-}
-    `;
 export const EmailsForm_UserEmailFragmentDoc = gql`
     fragment EmailsForm_UserEmail on UserEmail {
   id
@@ -2237,44 +1144,14 @@ export const EmailsForm_UserFragmentDoc = gql`
   }
 }
     ${EmailsForm_UserEmailFragmentDoc}`;
-export const OrganizationPage_OrganizationFragmentDoc = gql`
-    fragment OrganizationPage_Organization on Organization {
+export const ProfileSettingsForm_UserFragmentDoc = gql`
+    fragment ProfileSettingsForm_User on User {
   id
   name
-  slug
-  currentUserIsOwner
-  currentUserIsBillingContact
+  username
+  avatarUrl
 }
     `;
-export const OrganizationMembers_MembershipFragmentDoc = gql`
-    fragment OrganizationMembers_Membership on OrganizationMembership {
-  id
-  createdAt
-  isOwner
-  isBillingContact
-  user {
-    id
-    username
-    name
-  }
-}
-    `;
-export const OrganizationMembers_OrganizationFragmentDoc = gql`
-    fragment OrganizationMembers_Organization on Organization {
-  id
-  ...OrganizationPage_Organization
-  name
-  slug
-  organizationMemberships(first: 10, offset: $offset, orderBy: [MEMBER_NAME_ASC]) {
-    nodes {
-      id
-      ...OrganizationMembers_Membership
-    }
-    totalCount
-  }
-}
-    ${OrganizationPage_OrganizationFragmentDoc}
-${OrganizationMembers_MembershipFragmentDoc}`;
 export const SharedLayout_UserFragmentDoc = gql`
     fragment SharedLayout_User on User {
   id
@@ -2283,18 +1160,6 @@ export const SharedLayout_UserFragmentDoc = gql`
   avatarUrl
   isAdmin
   isVerified
-  organizationMemberships(first: 20) {
-    nodes {
-      id
-      isOwner
-      isBillingContact
-      organization {
-        id
-        name
-        slug
-      }
-    }
-  }
 }
     `;
 export const SharedLayout_QueryFragmentDoc = gql`
@@ -2305,58 +1170,6 @@ export const SharedLayout_QueryFragmentDoc = gql`
   }
 }
     ${SharedLayout_UserFragmentDoc}`;
-export const OrganizationPage_QueryFragmentDoc = gql`
-    fragment OrganizationPage_Query on Query {
-  ...SharedLayout_Query
-  organizationBySlug(slug: $slug) {
-    id
-    ...OrganizationPage_Organization
-  }
-}
-    ${SharedLayout_QueryFragmentDoc}
-${OrganizationPage_OrganizationFragmentDoc}`;
-export const ProfileSettingsForm_UserFragmentDoc = gql`
-    fragment ProfileSettingsForm_User on User {
-  id
-  name
-  username
-  avatarUrl
-}
-    `;
-export const AcceptOrganizationInviteDocument = gql`
-    mutation AcceptOrganizationInvite($id: UUID!, $code: String) {
-  acceptInvitationToOrganization(input: {invitationId: $id, code: $code}) {
-    clientMutationId
-  }
-}
-    `;
-export type AcceptOrganizationInviteMutationFn = Apollo.MutationFunction<AcceptOrganizationInviteMutation, AcceptOrganizationInviteMutationVariables>;
-
-/**
- * __useAcceptOrganizationInviteMutation__
- *
- * To run a mutation, you first call `useAcceptOrganizationInviteMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAcceptOrganizationInviteMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [acceptOrganizationInviteMutation, { data, loading, error }] = useAcceptOrganizationInviteMutation({
- *   variables: {
- *      id: // value for 'id'
- *      code: // value for 'code'
- *   },
- * });
- */
-export function useAcceptOrganizationInviteMutation(baseOptions?: Apollo.MutationHookOptions<AcceptOrganizationInviteMutation, AcceptOrganizationInviteMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AcceptOrganizationInviteMutation, AcceptOrganizationInviteMutationVariables>(AcceptOrganizationInviteDocument, options);
-      }
-export type AcceptOrganizationInviteMutationHookResult = ReturnType<typeof useAcceptOrganizationInviteMutation>;
-export type AcceptOrganizationInviteMutationResult = Apollo.MutationResult<AcceptOrganizationInviteMutation>;
-export type AcceptOrganizationInviteMutationOptions = Apollo.BaseMutationOptions<AcceptOrganizationInviteMutation, AcceptOrganizationInviteMutationVariables>;
 export const AddEmailDocument = gql`
     mutation AddEmail($email: String!) {
   createUserEmail(input: {userEmail: {email: $email}}) {
@@ -2465,49 +1278,6 @@ export function useConfirmAccountDeletionMutation(baseOptions?: Apollo.MutationH
 export type ConfirmAccountDeletionMutationHookResult = ReturnType<typeof useConfirmAccountDeletionMutation>;
 export type ConfirmAccountDeletionMutationResult = Apollo.MutationResult<ConfirmAccountDeletionMutation>;
 export type ConfirmAccountDeletionMutationOptions = Apollo.BaseMutationOptions<ConfirmAccountDeletionMutation, ConfirmAccountDeletionMutationVariables>;
-export const CreateOrganizationDocument = gql`
-    mutation CreateOrganization($name: String!, $slug: String!) {
-  createOrganization(input: {name: $name, slug: $slug}) {
-    organization {
-      id
-      ...CreatedOrganization
-    }
-    query {
-      organizationBySlug(slug: $slug) {
-        id
-        ...CreatedOrganization
-      }
-    }
-  }
-}
-    ${CreatedOrganizationFragmentDoc}`;
-export type CreateOrganizationMutationFn = Apollo.MutationFunction<CreateOrganizationMutation, CreateOrganizationMutationVariables>;
-
-/**
- * __useCreateOrganizationMutation__
- *
- * To run a mutation, you first call `useCreateOrganizationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateOrganizationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createOrganizationMutation, { data, loading, error }] = useCreateOrganizationMutation({
- *   variables: {
- *      name: // value for 'name'
- *      slug: // value for 'slug'
- *   },
- * });
- */
-export function useCreateOrganizationMutation(baseOptions?: Apollo.MutationHookOptions<CreateOrganizationMutation, CreateOrganizationMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateOrganizationMutation, CreateOrganizationMutationVariables>(CreateOrganizationDocument, options);
-      }
-export type CreateOrganizationMutationHookResult = ReturnType<typeof useCreateOrganizationMutation>;
-export type CreateOrganizationMutationResult = Apollo.MutationResult<CreateOrganizationMutation>;
-export type CreateOrganizationMutationOptions = Apollo.BaseMutationOptions<CreateOrganizationMutation, CreateOrganizationMutationVariables>;
 export const CurrentUserAuthenticationsDocument = gql`
     query CurrentUserAuthentications {
   currentUser {
@@ -2626,39 +1396,6 @@ export function useDeleteEmailMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DeleteEmailMutationHookResult = ReturnType<typeof useDeleteEmailMutation>;
 export type DeleteEmailMutationResult = Apollo.MutationResult<DeleteEmailMutation>;
 export type DeleteEmailMutationOptions = Apollo.BaseMutationOptions<DeleteEmailMutation, DeleteEmailMutationVariables>;
-export const DeleteOrganizationDocument = gql`
-    mutation DeleteOrganization($organizationId: UUID!) {
-  deleteOrganization(input: {organizationId: $organizationId}) {
-    clientMutationId
-  }
-}
-    `;
-export type DeleteOrganizationMutationFn = Apollo.MutationFunction<DeleteOrganizationMutation, DeleteOrganizationMutationVariables>;
-
-/**
- * __useDeleteOrganizationMutation__
- *
- * To run a mutation, you first call `useDeleteOrganizationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteOrganizationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteOrganizationMutation, { data, loading, error }] = useDeleteOrganizationMutation({
- *   variables: {
- *      organizationId: // value for 'organizationId'
- *   },
- * });
- */
-export function useDeleteOrganizationMutation(baseOptions?: Apollo.MutationHookOptions<DeleteOrganizationMutation, DeleteOrganizationMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteOrganizationMutation, DeleteOrganizationMutationVariables>(DeleteOrganizationDocument, options);
-      }
-export type DeleteOrganizationMutationHookResult = ReturnType<typeof useDeleteOrganizationMutation>;
-export type DeleteOrganizationMutationResult = Apollo.MutationResult<DeleteOrganizationMutation>;
-export type DeleteOrganizationMutationOptions = Apollo.BaseMutationOptions<DeleteOrganizationMutation, DeleteOrganizationMutationVariables>;
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
   forgotPassword(input: {email: $email}) {
@@ -2692,82 +1429,6 @@ export function useForgotPasswordMutation(baseOptions?: Apollo.MutationHookOptio
 export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
 export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordMutation>;
 export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
-export const InvitationDetailDocument = gql`
-    query InvitationDetail($id: UUID!, $code: String) {
-  ...SharedLayout_Query
-  organizationForInvitation(invitationId: $id, code: $code) {
-    id
-    name
-    slug
-  }
-}
-    ${SharedLayout_QueryFragmentDoc}`;
-
-/**
- * __useInvitationDetailQuery__
- *
- * To run a query within a React component, call `useInvitationDetailQuery` and pass it any options that fit your needs.
- * When your component renders, `useInvitationDetailQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useInvitationDetailQuery({
- *   variables: {
- *      id: // value for 'id'
- *      code: // value for 'code'
- *   },
- * });
- */
-export function useInvitationDetailQuery(baseOptions: Apollo.QueryHookOptions<InvitationDetailQuery, InvitationDetailQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<InvitationDetailQuery, InvitationDetailQueryVariables>(InvitationDetailDocument, options);
-      }
-export function useInvitationDetailLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InvitationDetailQuery, InvitationDetailQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<InvitationDetailQuery, InvitationDetailQueryVariables>(InvitationDetailDocument, options);
-        }
-export type InvitationDetailQueryHookResult = ReturnType<typeof useInvitationDetailQuery>;
-export type InvitationDetailLazyQueryHookResult = ReturnType<typeof useInvitationDetailLazyQuery>;
-export type InvitationDetailQueryResult = Apollo.QueryResult<InvitationDetailQuery, InvitationDetailQueryVariables>;
-export const InviteToOrganizationDocument = gql`
-    mutation InviteToOrganization($organizationId: UUID!, $email: String, $username: String) {
-  inviteToOrganization(
-    input: {organizationId: $organizationId, email: $email, username: $username}
-  ) {
-    clientMutationId
-  }
-}
-    `;
-export type InviteToOrganizationMutationFn = Apollo.MutationFunction<InviteToOrganizationMutation, InviteToOrganizationMutationVariables>;
-
-/**
- * __useInviteToOrganizationMutation__
- *
- * To run a mutation, you first call `useInviteToOrganizationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInviteToOrganizationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [inviteToOrganizationMutation, { data, loading, error }] = useInviteToOrganizationMutation({
- *   variables: {
- *      organizationId: // value for 'organizationId'
- *      email: // value for 'email'
- *      username: // value for 'username'
- *   },
- * });
- */
-export function useInviteToOrganizationMutation(baseOptions?: Apollo.MutationHookOptions<InviteToOrganizationMutation, InviteToOrganizationMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InviteToOrganizationMutation, InviteToOrganizationMutationVariables>(InviteToOrganizationDocument, options);
-      }
-export type InviteToOrganizationMutationHookResult = ReturnType<typeof useInviteToOrganizationMutation>;
-export type InviteToOrganizationMutationResult = Apollo.MutationResult<InviteToOrganizationMutation>;
-export type InviteToOrganizationMutationOptions = Apollo.BaseMutationOptions<InviteToOrganizationMutation, InviteToOrganizationMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
   login(input: {username: $username, password: $password}) {
@@ -2879,115 +1540,6 @@ export function useMakeEmailPrimaryMutation(baseOptions?: Apollo.MutationHookOpt
 export type MakeEmailPrimaryMutationHookResult = ReturnType<typeof useMakeEmailPrimaryMutation>;
 export type MakeEmailPrimaryMutationResult = Apollo.MutationResult<MakeEmailPrimaryMutation>;
 export type MakeEmailPrimaryMutationOptions = Apollo.BaseMutationOptions<MakeEmailPrimaryMutation, MakeEmailPrimaryMutationVariables>;
-export const OrganizationBySlugDocument = gql`
-    query OrganizationBySlug($slug: String!) {
-  organizationBySlug(slug: $slug) {
-    id
-    name
-    slug
-  }
-}
-    `;
-
-/**
- * __useOrganizationBySlugQuery__
- *
- * To run a query within a React component, call `useOrganizationBySlugQuery` and pass it any options that fit your needs.
- * When your component renders, `useOrganizationBySlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useOrganizationBySlugQuery({
- *   variables: {
- *      slug: // value for 'slug'
- *   },
- * });
- */
-export function useOrganizationBySlugQuery(baseOptions: Apollo.QueryHookOptions<OrganizationBySlugQuery, OrganizationBySlugQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<OrganizationBySlugQuery, OrganizationBySlugQueryVariables>(OrganizationBySlugDocument, options);
-      }
-export function useOrganizationBySlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OrganizationBySlugQuery, OrganizationBySlugQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<OrganizationBySlugQuery, OrganizationBySlugQueryVariables>(OrganizationBySlugDocument, options);
-        }
-export type OrganizationBySlugQueryHookResult = ReturnType<typeof useOrganizationBySlugQuery>;
-export type OrganizationBySlugLazyQueryHookResult = ReturnType<typeof useOrganizationBySlugLazyQuery>;
-export type OrganizationBySlugQueryResult = Apollo.QueryResult<OrganizationBySlugQuery, OrganizationBySlugQueryVariables>;
-export const OrganizationMembersDocument = gql`
-    query OrganizationMembers($slug: String!, $offset: Int = 0) {
-  ...OrganizationPage_Query
-  organizationBySlug(slug: $slug) {
-    id
-    ...OrganizationMembers_Organization
-  }
-}
-    ${OrganizationPage_QueryFragmentDoc}
-${OrganizationMembers_OrganizationFragmentDoc}`;
-
-/**
- * __useOrganizationMembersQuery__
- *
- * To run a query within a React component, call `useOrganizationMembersQuery` and pass it any options that fit your needs.
- * When your component renders, `useOrganizationMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useOrganizationMembersQuery({
- *   variables: {
- *      slug: // value for 'slug'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useOrganizationMembersQuery(baseOptions: Apollo.QueryHookOptions<OrganizationMembersQuery, OrganizationMembersQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<OrganizationMembersQuery, OrganizationMembersQueryVariables>(OrganizationMembersDocument, options);
-      }
-export function useOrganizationMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OrganizationMembersQuery, OrganizationMembersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<OrganizationMembersQuery, OrganizationMembersQueryVariables>(OrganizationMembersDocument, options);
-        }
-export type OrganizationMembersQueryHookResult = ReturnType<typeof useOrganizationMembersQuery>;
-export type OrganizationMembersLazyQueryHookResult = ReturnType<typeof useOrganizationMembersLazyQuery>;
-export type OrganizationMembersQueryResult = Apollo.QueryResult<OrganizationMembersQuery, OrganizationMembersQueryVariables>;
-export const OrganizationPageDocument = gql`
-    query OrganizationPage($slug: String!) {
-  ...OrganizationPage_Query
-}
-    ${OrganizationPage_QueryFragmentDoc}`;
-
-/**
- * __useOrganizationPageQuery__
- *
- * To run a query within a React component, call `useOrganizationPageQuery` and pass it any options that fit your needs.
- * When your component renders, `useOrganizationPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useOrganizationPageQuery({
- *   variables: {
- *      slug: // value for 'slug'
- *   },
- * });
- */
-export function useOrganizationPageQuery(baseOptions: Apollo.QueryHookOptions<OrganizationPageQuery, OrganizationPageQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<OrganizationPageQuery, OrganizationPageQueryVariables>(OrganizationPageDocument, options);
-      }
-export function useOrganizationPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OrganizationPageQuery, OrganizationPageQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<OrganizationPageQuery, OrganizationPageQueryVariables>(OrganizationPageDocument, options);
-        }
-export type OrganizationPageQueryHookResult = ReturnType<typeof useOrganizationPageQuery>;
-export type OrganizationPageLazyQueryHookResult = ReturnType<typeof useOrganizationPageLazyQuery>;
-export type OrganizationPageQueryResult = Apollo.QueryResult<OrganizationPageQuery, OrganizationPageQueryVariables>;
 export const RegisterDocument = gql`
     mutation Register($username: String!, $password: String!, $email: String!, $name: String) {
   register(
@@ -3030,42 +1582,6 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
-export const RemoveFromOrganizationDocument = gql`
-    mutation RemoveFromOrganization($organizationId: UUID!, $userId: UUID!) {
-  removeFromOrganization(
-    input: {organizationId: $organizationId, userId: $userId}
-  ) {
-    clientMutationId
-  }
-}
-    `;
-export type RemoveFromOrganizationMutationFn = Apollo.MutationFunction<RemoveFromOrganizationMutation, RemoveFromOrganizationMutationVariables>;
-
-/**
- * __useRemoveFromOrganizationMutation__
- *
- * To run a mutation, you first call `useRemoveFromOrganizationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveFromOrganizationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeFromOrganizationMutation, { data, loading, error }] = useRemoveFromOrganizationMutation({
- *   variables: {
- *      organizationId: // value for 'organizationId'
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useRemoveFromOrganizationMutation(baseOptions?: Apollo.MutationHookOptions<RemoveFromOrganizationMutation, RemoveFromOrganizationMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RemoveFromOrganizationMutation, RemoveFromOrganizationMutationVariables>(RemoveFromOrganizationDocument, options);
-      }
-export type RemoveFromOrganizationMutationHookResult = ReturnType<typeof useRemoveFromOrganizationMutation>;
-export type RemoveFromOrganizationMutationResult = Apollo.MutationResult<RemoveFromOrganizationMutation>;
-export type RemoveFromOrganizationMutationOptions = Apollo.BaseMutationOptions<RemoveFromOrganizationMutation, RemoveFromOrganizationMutationVariables>;
 export const RequestAccountDeletionDocument = gql`
     mutation RequestAccountDeletion {
   requestAccountDeletion(input: {}) {
@@ -3316,84 +1832,6 @@ export function useSharedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Sha
 export type SharedQueryHookResult = ReturnType<typeof useSharedQuery>;
 export type SharedLazyQueryHookResult = ReturnType<typeof useSharedLazyQuery>;
 export type SharedQueryResult = Apollo.QueryResult<SharedQuery, SharedQueryVariables>;
-export const TransferOrganizationBillingContactDocument = gql`
-    mutation TransferOrganizationBillingContact($organizationId: UUID!, $userId: UUID!) {
-  transferOrganizationBillingContact(
-    input: {organizationId: $organizationId, userId: $userId}
-  ) {
-    organization {
-      id
-      currentUserIsBillingContact
-    }
-  }
-}
-    `;
-export type TransferOrganizationBillingContactMutationFn = Apollo.MutationFunction<TransferOrganizationBillingContactMutation, TransferOrganizationBillingContactMutationVariables>;
-
-/**
- * __useTransferOrganizationBillingContactMutation__
- *
- * To run a mutation, you first call `useTransferOrganizationBillingContactMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useTransferOrganizationBillingContactMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [transferOrganizationBillingContactMutation, { data, loading, error }] = useTransferOrganizationBillingContactMutation({
- *   variables: {
- *      organizationId: // value for 'organizationId'
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useTransferOrganizationBillingContactMutation(baseOptions?: Apollo.MutationHookOptions<TransferOrganizationBillingContactMutation, TransferOrganizationBillingContactMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<TransferOrganizationBillingContactMutation, TransferOrganizationBillingContactMutationVariables>(TransferOrganizationBillingContactDocument, options);
-      }
-export type TransferOrganizationBillingContactMutationHookResult = ReturnType<typeof useTransferOrganizationBillingContactMutation>;
-export type TransferOrganizationBillingContactMutationResult = Apollo.MutationResult<TransferOrganizationBillingContactMutation>;
-export type TransferOrganizationBillingContactMutationOptions = Apollo.BaseMutationOptions<TransferOrganizationBillingContactMutation, TransferOrganizationBillingContactMutationVariables>;
-export const TransferOrganizationOwnershipDocument = gql`
-    mutation TransferOrganizationOwnership($organizationId: UUID!, $userId: UUID!) {
-  transferOrganizationOwnership(
-    input: {organizationId: $organizationId, userId: $userId}
-  ) {
-    organization {
-      id
-      currentUserIsOwner
-    }
-  }
-}
-    `;
-export type TransferOrganizationOwnershipMutationFn = Apollo.MutationFunction<TransferOrganizationOwnershipMutation, TransferOrganizationOwnershipMutationVariables>;
-
-/**
- * __useTransferOrganizationOwnershipMutation__
- *
- * To run a mutation, you first call `useTransferOrganizationOwnershipMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useTransferOrganizationOwnershipMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [transferOrganizationOwnershipMutation, { data, loading, error }] = useTransferOrganizationOwnershipMutation({
- *   variables: {
- *      organizationId: // value for 'organizationId'
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useTransferOrganizationOwnershipMutation(baseOptions?: Apollo.MutationHookOptions<TransferOrganizationOwnershipMutation, TransferOrganizationOwnershipMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<TransferOrganizationOwnershipMutation, TransferOrganizationOwnershipMutationVariables>(TransferOrganizationOwnershipDocument, options);
-      }
-export type TransferOrganizationOwnershipMutationHookResult = ReturnType<typeof useTransferOrganizationOwnershipMutation>;
-export type TransferOrganizationOwnershipMutationResult = Apollo.MutationResult<TransferOrganizationOwnershipMutation>;
-export type TransferOrganizationOwnershipMutationOptions = Apollo.BaseMutationOptions<TransferOrganizationOwnershipMutation, TransferOrganizationOwnershipMutationVariables>;
 export const UnlinkUserAuthenticationDocument = gql`
     mutation UnlinkUserAuthentication($id: UUID!) {
   deleteUserAuthentication(input: {id: $id}) {
@@ -3435,43 +1873,6 @@ export function useUnlinkUserAuthenticationMutation(baseOptions?: Apollo.Mutatio
 export type UnlinkUserAuthenticationMutationHookResult = ReturnType<typeof useUnlinkUserAuthenticationMutation>;
 export type UnlinkUserAuthenticationMutationResult = Apollo.MutationResult<UnlinkUserAuthenticationMutation>;
 export type UnlinkUserAuthenticationMutationOptions = Apollo.BaseMutationOptions<UnlinkUserAuthenticationMutation, UnlinkUserAuthenticationMutationVariables>;
-export const UpdateOrganizationDocument = gql`
-    mutation UpdateOrganization($input: UpdateOrganizationInput!) {
-  updateOrganization(input: $input) {
-    organization {
-      id
-      slug
-      name
-    }
-  }
-}
-    `;
-export type UpdateOrganizationMutationFn = Apollo.MutationFunction<UpdateOrganizationMutation, UpdateOrganizationMutationVariables>;
-
-/**
- * __useUpdateOrganizationMutation__
- *
- * To run a mutation, you first call `useUpdateOrganizationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateOrganizationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateOrganizationMutation, { data, loading, error }] = useUpdateOrganizationMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateOrganizationMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOrganizationMutation, UpdateOrganizationMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateOrganizationMutation, UpdateOrganizationMutationVariables>(UpdateOrganizationDocument, options);
-      }
-export type UpdateOrganizationMutationHookResult = ReturnType<typeof useUpdateOrganizationMutation>;
-export type UpdateOrganizationMutationResult = Apollo.MutationResult<UpdateOrganizationMutation>;
-export type UpdateOrganizationMutationOptions = Apollo.BaseMutationOptions<UpdateOrganizationMutation, UpdateOrganizationMutationVariables>;
 export const UpdateUserDocument = gql`
     mutation UpdateUser($id: UUID!, $patch: UserPatch!) {
   updateUser(input: {id: $id, patch: $patch}) {

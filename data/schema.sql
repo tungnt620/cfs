@@ -724,30 +724,6 @@ COMMENT ON FUNCTION app_private.tg_user_secrets__insert_with_user() IS 'Ensures 
 
 
 --
--- Name: accept_invitation_to_organization(uuid, text); Type: FUNCTION; Schema: app_public; Owner: -
---
-
-CREATE FUNCTION app_public.accept_invitation_to_organization(invitation_id uuid, code text DEFAULT NULL::text) RETURNS void
-    LANGUAGE plpgsql SECURITY DEFINER
-    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
-    AS $$
-declare
-  v_organization app_public.organizations;
-begin
-  v_organization = app_public.organization_for_invitation(invitation_id, code);
-
-  -- Accept the user into the organization
-  insert into app_public.organization_memberships (organization_id, user_id)
-    values(v_organization.id, app_public.current_user_id())
-    on conflict do nothing;
-
-  -- Delete the invitation
-  delete from app_public.organization_invitations where id = invitation_id;
-end;
-$$;
-
-
---
 -- Name: change_password(text, text); Type: FUNCTION; Schema: app_public; Owner: -
 --
 
@@ -851,40 +827,6 @@ COMMENT ON FUNCTION app_public.confirm_account_deletion(token text) IS 'If you''
 
 
 --
--- Name: organizations; Type: TABLE; Schema: app_public; Owner: -
---
-
-CREATE TABLE app_public.organizations (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    slug public.citext NOT NULL,
-    name text NOT NULL,
-    created_at timestamp with time zone DEFAULT now() NOT NULL
-);
-
-
---
--- Name: create_organization(public.citext, text); Type: FUNCTION; Schema: app_public; Owner: -
---
-
-CREATE FUNCTION app_public.create_organization(slug public.citext, name text) RETURNS app_public.organizations
-    LANGUAGE plpgsql SECURITY DEFINER
-    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
-    AS $$
-declare
-  v_org app_public.organizations;
-begin
-  if app_public.current_user_id() is null then
-    raise exception 'You must log in to create an organization' using errcode = 'LOGIN';
-  end if;
-  insert into app_public.organizations (slug, name) values (slug, name) returning * into v_org;
-  insert into app_public.organization_memberships (organization_id, user_id, is_owner, is_billing_contact)
-    values(v_org.id, app_public.current_user_id(), true, true);
-  return v_org;
-end;
-$$;
-
-
---
 -- Name: current_session_id(); Type: FUNCTION; Schema: app_public; Owner: -
 --
 
@@ -937,54 +879,6 @@ $$;
 --
 
 COMMENT ON FUNCTION app_public.current_user_id() IS 'Handy method to get the current user ID for use in RLS policies, etc; in GraphQL, use `currentUser{id}` instead.';
-
-
---
--- Name: current_user_invited_organization_ids(); Type: FUNCTION; Schema: app_public; Owner: -
---
-
-CREATE FUNCTION app_public.current_user_invited_organization_ids() RETURNS SETOF uuid
-    LANGUAGE sql STABLE SECURITY DEFINER
-    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
-    AS $$
-  select organization_id from app_public.organization_invitations
-    where user_id = app_public.current_user_id();
-$$;
-
-
---
--- Name: current_user_member_organization_ids(); Type: FUNCTION; Schema: app_public; Owner: -
---
-
-CREATE FUNCTION app_public.current_user_member_organization_ids() RETURNS SETOF uuid
-    LANGUAGE sql STABLE SECURITY DEFINER
-    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
-    AS $$
-  select organization_id from app_public.organization_memberships
-    where user_id = app_public.current_user_id();
-$$;
-
-
---
--- Name: delete_organization(uuid); Type: FUNCTION; Schema: app_public; Owner: -
---
-
-CREATE FUNCTION app_public.delete_organization(organization_id uuid) RETURNS void
-    LANGUAGE plpgsql SECURITY DEFINER
-    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
-    AS $$
-begin
-  if exists(
-    select 1
-    from app_public.organization_memberships
-    where user_id = app_public.current_user_id()
-    and organization_memberships.organization_id = delete_organization.organization_id
-    and is_owner is true
-  ) then
-    delete from app_public.organizations where id = organization_id;
-  end if;
-end;
-$$;
 
 
 --
@@ -1091,63 +985,6 @@ COMMENT ON FUNCTION app_public.forgot_password(email public.citext) IS 'If you''
 
 
 --
--- Name: invite_to_organization(uuid, public.citext, public.citext); Type: FUNCTION; Schema: app_public; Owner: -
---
-
-CREATE FUNCTION app_public.invite_to_organization(organization_id uuid, username public.citext DEFAULT NULL::public.citext, email public.citext DEFAULT NULL::public.citext) RETURNS void
-    LANGUAGE plpgsql SECURITY DEFINER
-    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
-    AS $$
-declare
-  v_code text;
-  v_user app_public.users;
-begin
-  -- Are we allowed to add this person
-  -- Are we logged in
-  if app_public.current_user_id() is null then
-    raise exception 'You must log in to invite a user' using errcode = 'LOGIN';
-  end if;
-
-  select * into v_user from app_public.users where users.username = invite_to_organization.username;
-
-  -- Are we the owner of this organization
-  if not exists(
-    select 1 from app_public.organization_memberships
-      where organization_memberships.organization_id = invite_to_organization.organization_id
-      and organization_memberships.user_id = app_public.current_user_id()
-      and is_owner is true
-  ) then
-    raise exception 'You''re not the owner of this organization' using errcode = 'DNIED';
-  end if;
-
-  if v_user.id is not null and exists(
-    select 1 from app_public.organization_memberships
-      where organization_memberships.organization_id = invite_to_organization.organization_id
-      and organization_memberships.user_id = v_user.id
-  ) then
-    raise exception 'Cannot invite someone who is already a member' using errcode = 'ISMBR';
-  end if;
-
-  if email is not null then
-    v_code = encode(gen_random_bytes(7), 'hex');
-  end if;
-
-  if v_user.id is not null and not v_user.is_verified then
-    raise exception 'The user you attempted to invite has not verified their account' using errcode = 'VRFY2';
-  end if;
-
-  if v_user.id is null and email is null then
-    raise exception 'Could not find person to invite' using errcode = 'NTFND';
-  end if;
-
-  -- Invite the user
-  insert into app_public.organization_invitations(organization_id, user_id, email, code)
-    values (invite_to_organization.organization_id, v_user.id, email, v_code);
-end;
-$$;
-
-
---
 -- Name: logout(); Type: FUNCTION; Schema: app_public; Owner: -
 --
 
@@ -1233,131 +1070,6 @@ $$;
 --
 
 COMMENT ON FUNCTION app_public.make_email_primary(email_id uuid) IS 'Your primary email is where we''ll notify of account events; other emails may be used for discovery or login. Use this when you''re changing your email address.';
-
-
---
--- Name: organization_for_invitation(uuid, text); Type: FUNCTION; Schema: app_public; Owner: -
---
-
-CREATE FUNCTION app_public.organization_for_invitation(invitation_id uuid, code text DEFAULT NULL::text) RETURNS app_public.organizations
-    LANGUAGE plpgsql STABLE SECURITY DEFINER
-    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
-    AS $$
-declare
-  v_invitation app_public.organization_invitations;
-  v_organization app_public.organizations;
-begin
-  if app_public.current_user_id() is null then
-    raise exception 'You must log in to accept an invitation' using errcode = 'LOGIN';
-  end if;
-
-  select * into v_invitation from app_public.organization_invitations where id = invitation_id;
-
-  if v_invitation is null then
-    raise exception 'We could not find that invitation' using errcode = 'NTFND';
-  end if;
-
-  if v_invitation.user_id is not null then
-    if v_invitation.user_id is distinct from app_public.current_user_id() then
-      raise exception 'That invitation is not for you' using errcode = 'DNIED';
-    end if;
-  else
-    if v_invitation.code is distinct from code then
-      raise exception 'Incorrect invitation code' using errcode = 'DNIED';
-    end if;
-  end if;
-
-  select * into v_organization from app_public.organizations where id = v_invitation.organization_id;
-
-  return v_organization;
-end;
-$$;
-
-
---
--- Name: organizations_current_user_is_billing_contact(app_public.organizations); Type: FUNCTION; Schema: app_public; Owner: -
---
-
-CREATE FUNCTION app_public.organizations_current_user_is_billing_contact(org app_public.organizations) RETURNS boolean
-    LANGUAGE sql STABLE
-    AS $$
-  select exists(
-    select 1
-    from app_public.organization_memberships
-    where organization_id = org.id
-    and user_id = app_public.current_user_id()
-    and is_billing_contact is true
-  )
-$$;
-
-
---
--- Name: organizations_current_user_is_owner(app_public.organizations); Type: FUNCTION; Schema: app_public; Owner: -
---
-
-CREATE FUNCTION app_public.organizations_current_user_is_owner(org app_public.organizations) RETURNS boolean
-    LANGUAGE sql STABLE
-    AS $$
-  select exists(
-    select 1
-    from app_public.organization_memberships
-    where organization_id = org.id
-    and user_id = app_public.current_user_id()
-    and is_owner is true
-  )
-$$;
-
-
---
--- Name: remove_from_organization(uuid, uuid); Type: FUNCTION; Schema: app_public; Owner: -
---
-
-CREATE FUNCTION app_public.remove_from_organization(organization_id uuid, user_id uuid) RETURNS void
-    LANGUAGE plpgsql SECURITY DEFINER
-    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
-    AS $$
-declare
-  v_my_membership app_public.organization_memberships;
-begin
-  select * into v_my_membership
-    from app_public.organization_memberships
-    where organization_memberships.organization_id = remove_from_organization.organization_id
-    and organization_memberships.user_id = app_public.current_user_id();
-
-  if (v_my_membership is null) then
-    -- I'm not a member of that organization
-    return;
-  elsif v_my_membership.is_owner then
-    if remove_from_organization.user_id <> app_public.current_user_id() then
-      -- Delete it
-    else
-      -- Need to transfer ownership before I can leave
-      return;
-    end if;
-  elsif v_my_membership.user_id = user_id then
-    -- Delete it
-  else
-    -- Not allowed to delete it
-    return;
-  end if;
-
-  if v_my_membership.is_billing_contact then
-    update app_public.organization_memberships
-      set is_billing_contact = false
-      where id = v_my_membership.id
-      returning * into v_my_membership;
-    update app_public.organization_memberships
-      set is_billing_contact = true
-      where organization_memberships.organization_id = remove_from_organization.organization_id
-      and organization_memberships.is_owner;
-  end if;
-
-  delete from app_public.organization_memberships
-    where organization_memberships.organization_id = remove_from_organization.organization_id
-    and organization_memberships.user_id = remove_from_organization.user_id;
-
-end;
-$$;
 
 
 --
@@ -1622,81 +1334,6 @@ $$;
 
 
 --
--- Name: transfer_organization_billing_contact(uuid, uuid); Type: FUNCTION; Schema: app_public; Owner: -
---
-
-CREATE FUNCTION app_public.transfer_organization_billing_contact(organization_id uuid, user_id uuid) RETURNS app_public.organizations
-    LANGUAGE plpgsql SECURITY DEFINER
-    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
-    AS $$
-declare
- v_org app_public.organizations;
-begin
-  if exists(
-    select 1
-    from app_public.organization_memberships
-    where organization_memberships.user_id = app_public.current_user_id()
-    and organization_memberships.organization_id = transfer_organization_billing_contact.organization_id
-    and is_owner is true
-  ) then
-    update app_public.organization_memberships
-      set is_billing_contact = true
-      where organization_memberships.organization_id = transfer_organization_billing_contact.organization_id
-      and organization_memberships.user_id = transfer_organization_billing_contact.user_id;
-    if found then
-      update app_public.organization_memberships
-        set is_billing_contact = false
-        where organization_memberships.organization_id = transfer_organization_billing_contact.organization_id
-        and organization_memberships.user_id <> transfer_organization_billing_contact.user_id
-        and is_billing_contact = true;
-
-      select * into v_org from app_public.organizations where id = organization_id;
-      return v_org;
-    end if;
-  end if;
-  return null;
-end;
-$$;
-
-
---
--- Name: transfer_organization_ownership(uuid, uuid); Type: FUNCTION; Schema: app_public; Owner: -
---
-
-CREATE FUNCTION app_public.transfer_organization_ownership(organization_id uuid, user_id uuid) RETURNS app_public.organizations
-    LANGUAGE plpgsql SECURITY DEFINER
-    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
-    AS $$
-declare
- v_org app_public.organizations;
-begin
-  if exists(
-    select 1
-    from app_public.organization_memberships
-    where organization_memberships.user_id = app_public.current_user_id()
-    and organization_memberships.organization_id = transfer_organization_ownership.organization_id
-    and is_owner is true
-  ) then
-    update app_public.organization_memberships
-      set is_owner = true
-      where organization_memberships.organization_id = transfer_organization_ownership.organization_id
-      and organization_memberships.user_id = transfer_organization_ownership.user_id;
-    if found then
-      update app_public.organization_memberships
-        set is_owner = false
-        where organization_memberships.organization_id = transfer_organization_ownership.organization_id
-        and organization_memberships.user_id = app_public.current_user_id();
-
-      select * into v_org from app_public.organizations where id = organization_id;
-      return v_org;
-    end if;
-  end if;
-  return null;
-end;
-$$;
-
-
---
 -- Name: users_has_password(app_public.users); Type: FUNCTION; Schema: app_public; Owner: -
 --
 
@@ -1845,32 +1482,119 @@ COMMENT ON TABLE app_private.user_secrets IS 'The contents of this table should 
 
 
 --
--- Name: organization_invitations; Type: TABLE; Schema: app_public; Owner: -
+-- Name: category; Type: TABLE; Schema: app_public; Owner: -
 --
 
-CREATE TABLE app_public.organization_invitations (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    organization_id uuid NOT NULL,
-    code text,
-    user_id uuid,
-    email public.citext,
-    CONSTRAINT organization_invitations_check CHECK (((user_id IS NULL) <> (email IS NULL))),
-    CONSTRAINT organization_invitations_check1 CHECK (((code IS NULL) = (email IS NULL)))
+CREATE TABLE app_public.category (
+    id integer NOT NULL,
+    name character varying(255),
+    slug character varying(50),
+    image character varying(255)
 );
 
 
 --
--- Name: organization_memberships; Type: TABLE; Schema: app_public; Owner: -
+-- Name: category_id_seq; Type: SEQUENCE; Schema: app_public; Owner: -
 --
 
-CREATE TABLE app_public.organization_memberships (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    organization_id uuid NOT NULL,
-    user_id uuid NOT NULL,
-    is_owner boolean DEFAULT false NOT NULL,
-    is_billing_contact boolean DEFAULT false NOT NULL,
-    created_at timestamp with time zone DEFAULT now() NOT NULL
+CREATE SEQUENCE app_public.category_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: category_id_seq; Type: SEQUENCE OWNED BY; Schema: app_public; Owner: -
+--
+
+ALTER SEQUENCE app_public.category_id_seq OWNED BY app_public.category.id;
+
+
+--
+-- Name: comment; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.comment (
+    id integer NOT NULL,
+    confession_id integer,
+    author_name character varying(255),
+    author character varying(255),
+    content text,
+    created_at bigint,
+    parent bigint,
+    image character varying(255)
 );
+
+
+--
+-- Name: comment_id_seq; Type: SEQUENCE; Schema: app_public; Owner: -
+--
+
+CREATE SEQUENCE app_public.comment_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: comment_id_seq; Type: SEQUENCE OWNED BY; Schema: app_public; Owner: -
+--
+
+ALTER SEQUENCE app_public.comment_id_seq OWNED BY app_public.comment.id;
+
+
+--
+-- Name: confession; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.confession (
+    id integer NOT NULL,
+    title character varying(255),
+    content text,
+    created_at bigint,
+    updated_at bigint,
+    slug character varying(120),
+    image character varying(255),
+    is_public boolean DEFAULT true,
+    thumbnail character varying(255),
+    source_id bigint
+);
+
+
+--
+-- Name: confession_category; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.confession_category (
+    confession_id integer NOT NULL,
+    category_id integer NOT NULL
+);
+
+
+--
+-- Name: confession_id_seq; Type: SEQUENCE; Schema: app_public; Owner: -
+--
+
+CREATE SEQUENCE app_public.confession_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: confession_id_seq; Type: SEQUENCE OWNED BY; Schema: app_public; Owner: -
+--
+
+ALTER SEQUENCE app_public.confession_id_seq OWNED BY app_public.confession.id;
 
 
 --
@@ -1914,6 +1638,27 @@ COMMENT ON COLUMN app_public.user_authentications.identifier IS 'A unique identi
 --
 
 COMMENT ON COLUMN app_public.user_authentications.details IS 'Additional profile details extracted from this login method';
+
+
+--
+-- Name: category id; Type: DEFAULT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.category ALTER COLUMN id SET DEFAULT nextval('app_public.category_id_seq'::regclass);
+
+
+--
+-- Name: comment id; Type: DEFAULT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.comment ALTER COLUMN id SET DEFAULT nextval('app_public.comment_id_seq'::regclass);
+
+
+--
+-- Name: confession id; Type: DEFAULT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.confession ALTER COLUMN id SET DEFAULT nextval('app_public.confession_id_seq'::regclass);
 
 
 --
@@ -1965,59 +1710,43 @@ ALTER TABLE ONLY app_private.user_secrets
 
 
 --
--- Name: organization_invitations organization_invitations_organization_id_email_key; Type: CONSTRAINT; Schema: app_public; Owner: -
+-- Name: category category_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
 --
 
-ALTER TABLE ONLY app_public.organization_invitations
-    ADD CONSTRAINT organization_invitations_organization_id_email_key UNIQUE (organization_id, email);
-
-
---
--- Name: organization_invitations organization_invitations_organization_id_user_id_key; Type: CONSTRAINT; Schema: app_public; Owner: -
---
-
-ALTER TABLE ONLY app_public.organization_invitations
-    ADD CONSTRAINT organization_invitations_organization_id_user_id_key UNIQUE (organization_id, user_id);
+ALTER TABLE ONLY app_public.category
+    ADD CONSTRAINT category_pkey PRIMARY KEY (id);
 
 
 --
--- Name: organization_invitations organization_invitations_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+-- Name: comment comment_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
 --
 
-ALTER TABLE ONLY app_public.organization_invitations
-    ADD CONSTRAINT organization_invitations_pkey PRIMARY KEY (id);
-
-
---
--- Name: organization_memberships organization_memberships_organization_id_user_id_key; Type: CONSTRAINT; Schema: app_public; Owner: -
---
-
-ALTER TABLE ONLY app_public.organization_memberships
-    ADD CONSTRAINT organization_memberships_organization_id_user_id_key UNIQUE (organization_id, user_id);
+ALTER TABLE ONLY app_public.comment
+    ADD CONSTRAINT comment_pkey PRIMARY KEY (id);
 
 
 --
--- Name: organization_memberships organization_memberships_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+-- Name: confession_category confession_category_confession_id_category_id_key; Type: CONSTRAINT; Schema: app_public; Owner: -
 --
 
-ALTER TABLE ONLY app_public.organization_memberships
-    ADD CONSTRAINT organization_memberships_pkey PRIMARY KEY (id);
-
-
---
--- Name: organizations organizations_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
---
-
-ALTER TABLE ONLY app_public.organizations
-    ADD CONSTRAINT organizations_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY app_public.confession_category
+    ADD CONSTRAINT confession_category_confession_id_category_id_key UNIQUE (confession_id, category_id);
 
 
 --
--- Name: organizations organizations_slug_key; Type: CONSTRAINT; Schema: app_public; Owner: -
+-- Name: confession confession_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
 --
 
-ALTER TABLE ONLY app_public.organizations
-    ADD CONSTRAINT organizations_slug_key UNIQUE (slug);
+ALTER TABLE ONLY app_public.confession
+    ADD CONSTRAINT confession_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: confession confession_slug_key; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.confession
+    ADD CONSTRAINT confession_slug_key UNIQUE (slug);
 
 
 --
@@ -2076,6 +1805,27 @@ CREATE INDEX sessions_user_id_idx ON app_private.sessions USING btree (user_id);
 
 
 --
+-- Name: comment_confession_id_index; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX comment_confession_id_index ON app_public.comment USING btree (confession_id);
+
+
+--
+-- Name: confession_category_category_id_index; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX confession_category_category_id_index ON app_public.confession_category USING btree (category_id);
+
+
+--
+-- Name: confession_category_confession_id_index; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX confession_category_confession_id_index ON app_public.confession_category USING btree (confession_id);
+
+
+--
 -- Name: idx_user_emails_primary; Type: INDEX; Schema: app_public; Owner: -
 --
 
@@ -2087,20 +1837,6 @@ CREATE INDEX idx_user_emails_primary ON app_public.user_emails USING btree (is_p
 --
 
 CREATE INDEX idx_user_emails_user ON app_public.user_emails USING btree (user_id);
-
-
---
--- Name: organization_invitations_user_id_idx; Type: INDEX; Schema: app_public; Owner: -
---
-
-CREATE INDEX organization_invitations_user_id_idx ON app_public.organization_invitations USING btree (user_id);
-
-
---
--- Name: organization_memberships_user_id_idx; Type: INDEX; Schema: app_public; Owner: -
---
-
-CREATE INDEX organization_memberships_user_id_idx ON app_public.organization_memberships USING btree (user_id);
 
 
 --
@@ -2209,13 +1945,6 @@ CREATE TRIGGER _500_prevent_delete_last AFTER DELETE ON app_public.user_emails R
 
 
 --
--- Name: organization_invitations _500_send_email; Type: TRIGGER; Schema: app_public; Owner: -
---
-
-CREATE TRIGGER _500_send_email AFTER INSERT ON app_public.organization_invitations FOR EACH ROW EXECUTE FUNCTION app_private.tg__add_job('organization_invitations__send_invite');
-
-
---
 -- Name: user_emails _500_verify_account_on_verified; Type: TRIGGER; Schema: app_public; Owner: -
 --
 
@@ -2262,35 +1991,27 @@ ALTER TABLE ONLY app_private.user_secrets
 
 
 --
--- Name: organization_invitations organization_invitations_organization_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+-- Name: confession_category fk_category; Type: FK CONSTRAINT; Schema: app_public; Owner: -
 --
 
-ALTER TABLE ONLY app_public.organization_invitations
-    ADD CONSTRAINT organization_invitations_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES app_public.organizations(id) ON DELETE CASCADE;
-
-
---
--- Name: organization_invitations organization_invitations_user_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
---
-
-ALTER TABLE ONLY app_public.organization_invitations
-    ADD CONSTRAINT organization_invitations_user_id_fkey FOREIGN KEY (user_id) REFERENCES app_public.users(id) ON DELETE CASCADE;
+ALTER TABLE ONLY app_public.confession_category
+    ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES app_public.category(id);
 
 
 --
--- Name: organization_memberships organization_memberships_organization_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+-- Name: confession_category fk_confession; Type: FK CONSTRAINT; Schema: app_public; Owner: -
 --
 
-ALTER TABLE ONLY app_public.organization_memberships
-    ADD CONSTRAINT organization_memberships_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES app_public.organizations(id) ON DELETE CASCADE;
+ALTER TABLE ONLY app_public.confession_category
+    ADD CONSTRAINT fk_confession FOREIGN KEY (confession_id) REFERENCES app_public.confession(id);
 
 
 --
--- Name: organization_memberships organization_memberships_user_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+-- Name: comment fk_confession; Type: FK CONSTRAINT; Schema: app_public; Owner: -
 --
 
-ALTER TABLE ONLY app_public.organization_memberships
-    ADD CONSTRAINT organization_memberships_user_id_fkey FOREIGN KEY (user_id) REFERENCES app_public.users(id) ON DELETE CASCADE;
+ALTER TABLE ONLY app_public.comment
+    ADD CONSTRAINT fk_confession FOREIGN KEY (confession_id) REFERENCES app_public.confession(id);
 
 
 --
@@ -2340,6 +2061,18 @@ ALTER TABLE app_private.user_email_secrets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE app_private.user_secrets ENABLE ROW LEVEL SECURITY;
 
 --
+-- Name: comment; Type: ROW SECURITY; Schema: app_public; Owner: -
+--
+
+ALTER TABLE app_public.comment ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: confession; Type: ROW SECURITY; Schema: app_public; Owner: -
+--
+
+ALTER TABLE app_public.confession ENABLE ROW LEVEL SECURITY;
+
+--
 -- Name: user_authentications delete_own; Type: POLICY; Schema: app_public; Owner: -
 --
 
@@ -2361,56 +2094,74 @@ CREATE POLICY insert_own ON app_public.user_emails FOR INSERT WITH CHECK ((user_
 
 
 --
--- Name: organization_invitations; Type: ROW SECURITY; Schema: app_public; Owner: -
+-- Name: category manage_as_admin; Type: POLICY; Schema: app_public; Owner: -
 --
 
-ALTER TABLE app_public.organization_invitations ENABLE ROW LEVEL SECURITY;
+CREATE POLICY manage_as_admin ON app_public.category USING ((EXISTS ( SELECT 1
+   FROM app_public.users
+  WHERE ((users.is_admin IS TRUE) AND (users.id = app_public.current_user_id())))));
+
 
 --
--- Name: organization_memberships; Type: ROW SECURITY; Schema: app_public; Owner: -
+-- Name: comment manage_as_admin; Type: POLICY; Schema: app_public; Owner: -
 --
 
-ALTER TABLE app_public.organization_memberships ENABLE ROW LEVEL SECURITY;
+CREATE POLICY manage_as_admin ON app_public.comment USING ((EXISTS ( SELECT 1
+   FROM app_public.users
+  WHERE ((users.is_admin IS TRUE) AND (users.id = app_public.current_user_id())))));
+
 
 --
--- Name: organizations; Type: ROW SECURITY; Schema: app_public; Owner: -
+-- Name: confession manage_as_admin; Type: POLICY; Schema: app_public; Owner: -
 --
 
-ALTER TABLE app_public.organizations ENABLE ROW LEVEL SECURITY;
+CREATE POLICY manage_as_admin ON app_public.confession USING ((EXISTS ( SELECT 1
+   FROM app_public.users
+  WHERE ((users.is_admin IS TRUE) AND (users.id = app_public.current_user_id())))));
+
+
+--
+-- Name: confession_category manage_as_admin; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY manage_as_admin ON app_public.confession_category USING ((EXISTS ( SELECT 1
+   FROM app_public.users
+  WHERE ((users.is_admin IS TRUE) AND (users.id = app_public.current_user_id())))));
+
+
+--
+-- Name: category select_all; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY select_all ON app_public.category FOR SELECT USING (true);
+
+
+--
+-- Name: comment select_all; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY select_all ON app_public.comment FOR SELECT USING (true);
+
+
+--
+-- Name: confession select_all; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY select_all ON app_public.confession FOR SELECT USING (true);
+
+
+--
+-- Name: confession_category select_all; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY select_all ON app_public.confession_category FOR SELECT USING (true);
+
 
 --
 -- Name: users select_all; Type: POLICY; Schema: app_public; Owner: -
 --
 
 CREATE POLICY select_all ON app_public.users FOR SELECT USING (true);
-
-
---
--- Name: organization_memberships select_invited; Type: POLICY; Schema: app_public; Owner: -
---
-
-CREATE POLICY select_invited ON app_public.organization_memberships FOR SELECT USING ((organization_id IN ( SELECT app_public.current_user_invited_organization_ids() AS current_user_invited_organization_ids)));
-
-
---
--- Name: organizations select_invited; Type: POLICY; Schema: app_public; Owner: -
---
-
-CREATE POLICY select_invited ON app_public.organizations FOR SELECT USING ((id IN ( SELECT app_public.current_user_invited_organization_ids() AS current_user_invited_organization_ids)));
-
-
---
--- Name: organization_memberships select_member; Type: POLICY; Schema: app_public; Owner: -
---
-
-CREATE POLICY select_member ON app_public.organization_memberships FOR SELECT USING ((organization_id IN ( SELECT app_public.current_user_member_organization_ids() AS current_user_member_organization_ids)));
-
-
---
--- Name: organizations select_member; Type: POLICY; Schema: app_public; Owner: -
---
-
-CREATE POLICY select_member ON app_public.organizations FOR SELECT USING ((id IN ( SELECT app_public.current_user_member_organization_ids() AS current_user_member_organization_ids)));
 
 
 --
@@ -2425,15 +2176,6 @@ CREATE POLICY select_own ON app_public.user_authentications FOR SELECT USING ((u
 --
 
 CREATE POLICY select_own ON app_public.user_emails FOR SELECT USING ((user_id = app_public.current_user_id()));
-
-
---
--- Name: organizations update_owner; Type: POLICY; Schema: app_public; Owner: -
---
-
-CREATE POLICY update_owner ON app_public.organizations FOR UPDATE USING ((EXISTS ( SELECT 1
-   FROM app_public.organization_memberships
-  WHERE ((organization_memberships.organization_id = organizations.id) AND (organization_memberships.user_id = app_public.current_user_id()) AND (organization_memberships.is_owner IS TRUE)))));
 
 
 --
@@ -2591,14 +2333,6 @@ REVOKE ALL ON FUNCTION app_private.tg_user_secrets__insert_with_user() FROM PUBL
 
 
 --
--- Name: FUNCTION accept_invitation_to_organization(invitation_id uuid, code text); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.accept_invitation_to_organization(invitation_id uuid, code text) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.accept_invitation_to_organization(invitation_id uuid, code text) TO cfs_visitor;
-
-
---
 -- Name: FUNCTION change_password(old_password text, new_password text); Type: ACL; Schema: app_public; Owner: -
 --
 
@@ -2612,35 +2346,6 @@ GRANT ALL ON FUNCTION app_public.change_password(old_password text, new_password
 
 REVOKE ALL ON FUNCTION app_public.confirm_account_deletion(token text) FROM PUBLIC;
 GRANT ALL ON FUNCTION app_public.confirm_account_deletion(token text) TO cfs_visitor;
-
-
---
--- Name: TABLE organizations; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT SELECT ON TABLE app_public.organizations TO cfs_visitor;
-
-
---
--- Name: COLUMN organizations.slug; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT UPDATE(slug) ON TABLE app_public.organizations TO cfs_visitor;
-
-
---
--- Name: COLUMN organizations.name; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT UPDATE(name) ON TABLE app_public.organizations TO cfs_visitor;
-
-
---
--- Name: FUNCTION create_organization(slug public.citext, name text); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.create_organization(slug public.citext, name text) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.create_organization(slug public.citext, name text) TO cfs_visitor;
 
 
 --
@@ -2668,43 +2373,11 @@ GRANT ALL ON FUNCTION app_public.current_user_id() TO cfs_visitor;
 
 
 --
--- Name: FUNCTION current_user_invited_organization_ids(); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.current_user_invited_organization_ids() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.current_user_invited_organization_ids() TO cfs_visitor;
-
-
---
--- Name: FUNCTION current_user_member_organization_ids(); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.current_user_member_organization_ids() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.current_user_member_organization_ids() TO cfs_visitor;
-
-
---
--- Name: FUNCTION delete_organization(organization_id uuid); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.delete_organization(organization_id uuid) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.delete_organization(organization_id uuid) TO cfs_visitor;
-
-
---
 -- Name: FUNCTION forgot_password(email public.citext); Type: ACL; Schema: app_public; Owner: -
 --
 
 REVOKE ALL ON FUNCTION app_public.forgot_password(email public.citext) FROM PUBLIC;
 GRANT ALL ON FUNCTION app_public.forgot_password(email public.citext) TO cfs_visitor;
-
-
---
--- Name: FUNCTION invite_to_organization(organization_id uuid, username public.citext, email public.citext); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.invite_to_organization(organization_id uuid, username public.citext, email public.citext) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.invite_to_organization(organization_id uuid, username public.citext, email public.citext) TO cfs_visitor;
 
 
 --
@@ -2735,38 +2408,6 @@ GRANT INSERT(email) ON TABLE app_public.user_emails TO cfs_visitor;
 
 REVOKE ALL ON FUNCTION app_public.make_email_primary(email_id uuid) FROM PUBLIC;
 GRANT ALL ON FUNCTION app_public.make_email_primary(email_id uuid) TO cfs_visitor;
-
-
---
--- Name: FUNCTION organization_for_invitation(invitation_id uuid, code text); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.organization_for_invitation(invitation_id uuid, code text) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.organization_for_invitation(invitation_id uuid, code text) TO cfs_visitor;
-
-
---
--- Name: FUNCTION organizations_current_user_is_billing_contact(org app_public.organizations); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.organizations_current_user_is_billing_contact(org app_public.organizations) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.organizations_current_user_is_billing_contact(org app_public.organizations) TO cfs_visitor;
-
-
---
--- Name: FUNCTION organizations_current_user_is_owner(org app_public.organizations); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.organizations_current_user_is_owner(org app_public.organizations) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.organizations_current_user_is_owner(org app_public.organizations) TO cfs_visitor;
-
-
---
--- Name: FUNCTION remove_from_organization(organization_id uuid, user_id uuid); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.remove_from_organization(organization_id uuid, user_id uuid) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.remove_from_organization(organization_id uuid, user_id uuid) TO cfs_visitor;
 
 
 --
@@ -2826,22 +2467,6 @@ GRANT ALL ON FUNCTION app_public.tg_users__deletion_organization_checks_and_acti
 
 
 --
--- Name: FUNCTION transfer_organization_billing_contact(organization_id uuid, user_id uuid); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.transfer_organization_billing_contact(organization_id uuid, user_id uuid) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.transfer_organization_billing_contact(organization_id uuid, user_id uuid) TO cfs_visitor;
-
-
---
--- Name: FUNCTION transfer_organization_ownership(organization_id uuid, user_id uuid); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.transfer_organization_ownership(organization_id uuid, user_id uuid) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.transfer_organization_ownership(organization_id uuid, user_id uuid) TO cfs_visitor;
-
-
---
 -- Name: FUNCTION users_has_password(u app_public.users); Type: ACL; Schema: app_public; Owner: -
 --
 
@@ -2858,10 +2483,171 @@ GRANT ALL ON FUNCTION app_public.verify_email(user_email_id uuid, token text) TO
 
 
 --
--- Name: TABLE organization_memberships; Type: ACL; Schema: app_public; Owner: -
+-- Name: TABLE category; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT ON TABLE app_public.organization_memberships TO cfs_visitor;
+GRANT SELECT,DELETE ON TABLE app_public.category TO cfs_visitor;
+
+
+--
+-- Name: COLUMN category.name; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(name),UPDATE(name) ON TABLE app_public.category TO cfs_visitor;
+
+
+--
+-- Name: COLUMN category.slug; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(slug),UPDATE(slug) ON TABLE app_public.category TO cfs_visitor;
+
+
+--
+-- Name: COLUMN category.image; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(image),UPDATE(image) ON TABLE app_public.category TO cfs_visitor;
+
+
+--
+-- Name: SEQUENCE category_id_seq; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,USAGE ON SEQUENCE app_public.category_id_seq TO cfs_visitor;
+
+
+--
+-- Name: TABLE comment; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,DELETE ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
+-- Name: COLUMN comment.confession_id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(confession_id),UPDATE(confession_id) ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
+-- Name: COLUMN comment.author_name; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(author_name),UPDATE(author_name) ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
+-- Name: COLUMN comment.author; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(author),UPDATE(author) ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
+-- Name: COLUMN comment.content; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(content),UPDATE(content) ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
+-- Name: COLUMN comment.parent; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(parent),UPDATE(parent) ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
+-- Name: COLUMN comment.image; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(image),UPDATE(image) ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
+-- Name: SEQUENCE comment_id_seq; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,USAGE ON SEQUENCE app_public.comment_id_seq TO cfs_visitor;
+
+
+--
+-- Name: TABLE confession; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,DELETE ON TABLE app_public.confession TO cfs_visitor;
+
+
+--
+-- Name: COLUMN confession.title; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(title),UPDATE(title) ON TABLE app_public.confession TO cfs_visitor;
+
+
+--
+-- Name: COLUMN confession.content; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(content),UPDATE(content) ON TABLE app_public.confession TO cfs_visitor;
+
+
+--
+-- Name: COLUMN confession.slug; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(slug),UPDATE(slug) ON TABLE app_public.confession TO cfs_visitor;
+
+
+--
+-- Name: COLUMN confession.image; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(image),UPDATE(image) ON TABLE app_public.confession TO cfs_visitor;
+
+
+--
+-- Name: COLUMN confession.is_public; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(is_public),UPDATE(is_public) ON TABLE app_public.confession TO cfs_visitor;
+
+
+--
+-- Name: COLUMN confession.thumbnail; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(thumbnail),UPDATE(thumbnail) ON TABLE app_public.confession TO cfs_visitor;
+
+
+--
+-- Name: TABLE confession_category; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,DELETE ON TABLE app_public.confession_category TO cfs_visitor;
+
+
+--
+-- Name: COLUMN confession_category.confession_id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(confession_id) ON TABLE app_public.confession_category TO cfs_visitor;
+
+
+--
+-- Name: COLUMN confession_category.category_id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(category_id) ON TABLE app_public.confession_category TO cfs_visitor;
+
+
+--
+-- Name: SEQUENCE confession_id_seq; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,USAGE ON SEQUENCE app_public.confession_id_seq TO cfs_visitor;
 
 
 --
