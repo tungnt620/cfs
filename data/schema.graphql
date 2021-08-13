@@ -269,15 +269,13 @@ type Confession {
     orderBy: [ConfessionCategoriesOrderBy!] = [NATURAL]
   ): ConfessionCategoriesConnection!
   content: String
-  createdAt: BigInt
+  createdAt: Datetime!
   id: Int!
   image: String
-  isPublic: Boolean
   slug: String
-  sourceId: BigInt
-  thumbnail: String
   title: String
-  updatedAt: BigInt
+  updatedAt: Datetime!
+  userId: UUID
 }
 
 """A connection to a list of `ConfessionCategory` values."""
@@ -365,9 +363,7 @@ input ConfessionCondition {
 input ConfessionInput {
   content: String
   image: String
-  isPublic: Boolean
   slug: String
-  thumbnail: String
   title: String
 }
 
@@ -377,9 +373,7 @@ Represents an update to a `Confession`. Fields that are set will be updated.
 input ConfessionPatch {
   content: String
   image: String
-  isPublic: Boolean
   slug: String
-  thumbnail: String
   title: String
 }
 

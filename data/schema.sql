@@ -1489,7 +1489,9 @@ CREATE TABLE app_public.category (
     id integer NOT NULL,
     name character varying(255),
     slug character varying(50),
-    image character varying(255)
+    image character varying(255),
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now()
 );
 
 
@@ -1521,11 +1523,12 @@ CREATE TABLE app_public.comment (
     id integer NOT NULL,
     confession_id integer,
     author_name character varying(255),
-    author character varying(255),
     content text,
     created_at bigint,
-    parent bigint,
-    image character varying(255)
+    parent integer,
+    image character varying(255),
+    updated_at timestamp with time zone DEFAULT now(),
+    user_id uuid DEFAULT app_public.current_user_id()
 );
 
 
@@ -1557,13 +1560,11 @@ CREATE TABLE app_public.confession (
     id integer NOT NULL,
     title character varying(255),
     content text,
-    created_at bigint,
-    updated_at bigint,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
     slug character varying(120),
     image character varying(255),
-    is_public boolean DEFAULT true,
-    thumbnail character varying(255),
-    source_id bigint
+    user_id uuid DEFAULT app_public.current_user_id()
 );
 
 
@@ -1826,6 +1827,20 @@ CREATE INDEX confession_category_confession_id_index ON app_public.confession_ca
 
 
 --
+-- Name: idx_comment_user; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX idx_comment_user ON app_public.comment USING btree (user_id);
+
+
+--
+-- Name: idx_confession_user; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX idx_confession_user ON app_public.confession USING btree (user_id);
+
+
+--
 -- Name: idx_user_emails_primary; Type: INDEX; Schema: app_public; Owner: -
 --
 
@@ -1858,6 +1873,27 @@ CREATE UNIQUE INDEX uniq_user_emails_verified_email ON app_public.user_emails US
 --
 
 CREATE INDEX user_authentications_user_id_idx ON app_public.user_authentications USING btree (user_id);
+
+
+--
+-- Name: category _100_timestamps; Type: TRIGGER; Schema: app_public; Owner: -
+--
+
+CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.category FOR EACH ROW EXECUTE FUNCTION app_private.tg__timestamps();
+
+
+--
+-- Name: comment _100_timestamps; Type: TRIGGER; Schema: app_public; Owner: -
+--
+
+CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.comment FOR EACH ROW EXECUTE FUNCTION app_private.tg__timestamps();
+
+
+--
+-- Name: confession _100_timestamps; Type: TRIGGER; Schema: app_public; Owner: -
+--
+
+CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.confession FOR EACH ROW EXECUTE FUNCTION app_private.tg__timestamps();
 
 
 --
@@ -1991,19 +2027,35 @@ ALTER TABLE ONLY app_private.user_secrets
 
 
 --
--- Name: confession_category fk_category; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+-- Name: comment comment_user_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.comment
+    ADD CONSTRAINT comment_user_id_fkey FOREIGN KEY (user_id) REFERENCES app_public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: confession_category confession_category_category_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
 --
 
 ALTER TABLE ONLY app_public.confession_category
-    ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES app_public.category(id);
+    ADD CONSTRAINT confession_category_category_id_fkey FOREIGN KEY (category_id) REFERENCES app_public.category(id) ON DELETE CASCADE;
 
 
 --
--- Name: confession_category fk_confession; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+-- Name: confession_category confession_category_confession_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
 --
 
 ALTER TABLE ONLY app_public.confession_category
-    ADD CONSTRAINT fk_confession FOREIGN KEY (confession_id) REFERENCES app_public.confession(id);
+    ADD CONSTRAINT confession_category_confession_id_fkey FOREIGN KEY (confession_id) REFERENCES app_public.confession(id) ON DELETE CASCADE;
+
+
+--
+-- Name: confession confession_user_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.confession
+    ADD CONSTRAINT confession_user_id_fkey FOREIGN KEY (user_id) REFERENCES app_public.users(id) ON DELETE CASCADE;
 
 
 --
@@ -2071,6 +2123,12 @@ ALTER TABLE app_public.comment ENABLE ROW LEVEL SECURITY;
 --
 
 ALTER TABLE app_public.confession ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: confession_category; Type: ROW SECURITY; Schema: app_public; Owner: -
+--
+
+ALTER TABLE app_public.confession_category ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: user_authentications delete_own; Type: POLICY; Schema: app_public; Owner: -
@@ -2539,13 +2597,6 @@ GRANT INSERT(author_name),UPDATE(author_name) ON TABLE app_public.comment TO cfs
 
 
 --
--- Name: COLUMN comment.author; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(author),UPDATE(author) ON TABLE app_public.comment TO cfs_visitor;
-
-
---
 -- Name: COLUMN comment.content; Type: ACL; Schema: app_public; Owner: -
 --
 
@@ -2606,20 +2657,6 @@ GRANT INSERT(slug),UPDATE(slug) ON TABLE app_public.confession TO cfs_visitor;
 --
 
 GRANT INSERT(image),UPDATE(image) ON TABLE app_public.confession TO cfs_visitor;
-
-
---
--- Name: COLUMN confession.is_public; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(is_public),UPDATE(is_public) ON TABLE app_public.confession TO cfs_visitor;
-
-
---
--- Name: COLUMN confession.thumbnail; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(thumbnail),UPDATE(thumbnail) ON TABLE app_public.confession TO cfs_visitor;
 
 
 --
