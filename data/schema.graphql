@@ -1,10 +1,3 @@
-"""
-A signed eight-byte integer. The upper big integer values are greater than the
-max value for a JavaScript number. Therefore all big integers will be output as
-strings and not numbers.
-"""
-scalar BigInt
-
 """A connection to a list of `Category` values."""
 type CategoriesConnection {
   """
@@ -69,10 +62,12 @@ type Category {
     """The method to use when ordering `ConfessionCategory`."""
     orderBy: [ConfessionCategoriesOrderBy!] = [NATURAL]
   ): ConfessionCategoriesConnection!
+  createdAt: Datetime
   id: Int!
   image: String
   name: String
   slug: String
+  updatedAt: Datetime
 }
 
 """
@@ -127,17 +122,21 @@ type ChangePasswordPayload {
 }
 
 type Comment {
-  author: String
   authorName: String
 
   """Reads a single `Confession` that is related to this `Comment`."""
   confession: Confession
   confessionId: Int
   content: String
-  createdAt: BigInt
+  createdAt: Datetime!
   id: Int!
   image: String
-  parent: BigInt
+  parentId: Int
+  updatedAt: Datetime!
+
+  """Reads a single `User` that is related to this `Comment`."""
+  user: User
+  userId: UUID
 }
 
 """
@@ -149,28 +148,27 @@ input CommentCondition {
 
   """Checks for equality with the object’s `id` field."""
   id: Int
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
 }
 
 """An input for mutations affecting `Comment`"""
 input CommentInput {
-  author: String
   authorName: String
   confessionId: Int
   content: String
   image: String
-  parent: BigInt
 }
 
 """
 Represents an update to a `Comment`. Fields that are set will be updated.
 """
 input CommentPatch {
-  author: String
   authorName: String
   confessionId: Int
   content: String
   image: String
-  parent: BigInt
 }
 
 """A connection to a list of `Comment` values."""
@@ -208,6 +206,8 @@ enum CommentsOrderBy {
   NATURAL
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
+  USER_ID_ASC
+  USER_ID_DESC
 }
 
 type Confession {
@@ -275,6 +275,9 @@ type Confession {
   slug: String
   title: String
   updatedAt: Datetime!
+
+  """Reads a single `User` that is related to this `Confession`."""
+  user: User
   userId: UUID
 }
 
@@ -357,6 +360,9 @@ input ConfessionCondition {
 
   """Checks for equality with the object’s `slug` field."""
   slug: String
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
 }
 
 """An input for mutations affecting `Confession`"""
@@ -412,6 +418,8 @@ enum ConfessionsOrderBy {
   PRIMARY_KEY_DESC
   SLUG_ASC
   SLUG_DESC
+  USER_ID_ASC
+  USER_ID_DESC
 }
 
 """All input for the `confirmAccountDeletion` mutation."""
@@ -510,6 +518,9 @@ type CreateCommentPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `Comment`."""
+  user: User
 }
 
 """All input for the create `ConfessionCategory` mutation."""
@@ -590,6 +601,9 @@ type CreateConfessionPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `Confession`."""
+  user: User
 }
 
 """All input for the create `UserEmail` mutation."""
@@ -708,6 +722,9 @@ type DeleteCommentPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `Comment`."""
+  user: User
 }
 
 """All input for the `deleteConfession` mutation."""
@@ -742,6 +759,9 @@ type DeleteConfessionPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `Confession`."""
+  user: User
 }
 
 """All input for the `deleteUserAuthentication` mutation."""
@@ -1425,6 +1445,9 @@ type UpdateCommentPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `Comment`."""
+  user: User
 }
 
 """All input for the `updateConfession` mutation."""
@@ -1463,6 +1486,9 @@ type UpdateConfessionPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `Confession`."""
+  user: User
 }
 
 """All input for the `updateUser` mutation."""
@@ -1509,6 +1535,64 @@ type UpdateUserPayload {
 type User {
   """Optional avatar URL."""
   avatarUrl: String
+
+  """Reads and enables pagination through a set of `Comment`."""
+  comments(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: CommentCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Comment`."""
+    orderBy: [CommentsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CommentsConnection!
+
+  """Reads and enables pagination through a set of `Confession`."""
+  confessions(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ConfessionCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Confession`."""
+    orderBy: [ConfessionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ConfessionsConnection!
   createdAt: Datetime!
   hasPassword: Boolean
 

@@ -1525,10 +1525,10 @@ CREATE TABLE app_public.comment (
     author_name character varying(255),
     content text,
     created_at bigint,
-    parent integer,
     image character varying(255),
     updated_at timestamp with time zone DEFAULT now(),
-    user_id uuid DEFAULT app_public.current_user_id()
+    user_id uuid DEFAULT app_public.current_user_id(),
+    parent_id integer
 );
 
 
@@ -2024,6 +2024,14 @@ ALTER TABLE ONLY app_private.user_email_secrets
 
 ALTER TABLE ONLY app_private.user_secrets
     ADD CONSTRAINT user_secrets_user_id_fkey FOREIGN KEY (user_id) REFERENCES app_public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: comment comment_parent_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.comment
+    ADD CONSTRAINT comment_parent_id_fkey FOREIGN KEY (parent_id) REFERENCES app_public.comment(id);
 
 
 --
@@ -2601,13 +2609,6 @@ GRANT INSERT(author_name),UPDATE(author_name) ON TABLE app_public.comment TO cfs
 --
 
 GRANT INSERT(content),UPDATE(content) ON TABLE app_public.comment TO cfs_visitor;
-
-
---
--- Name: COLUMN comment.parent; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(parent),UPDATE(parent) ON TABLE app_public.comment TO cfs_visitor;
 
 
 --
