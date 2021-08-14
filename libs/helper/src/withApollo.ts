@@ -7,10 +7,11 @@ import {
 import { onError } from '@apollo/client/link/error';
 import { getDataFromTree } from '@apollo/client/react/ssr';
 import withApolloBase from 'next-with-apollo';
+import { offsetLimitPagination } from '@apollo/client/utilities';
 
 const mainLink = new HttpLink({
   uri: `${process.env.NEXT_PUBLIC_API_URL}/graphql`,
-  credentials: "include",
+  credentials: 'include',
 });
 
 export const withApollo = withApolloBase(
@@ -33,6 +34,13 @@ export const withApollo = withApolloBase(
         typePolicies: {
           Query: {
             queryType: true,
+            fields: {
+              confessions: {
+                // Don't cache separate results based on
+                // any of this field's arguments.
+                keyArgs: false,
+              },
+            },
           },
         },
       }).restore(initialState || {}),

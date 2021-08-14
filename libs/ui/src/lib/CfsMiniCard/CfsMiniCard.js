@@ -6,9 +6,9 @@ import CardHeader from './CardHeader';
 const CfsMiniCard = ({ cfs }) => {
   return (
     <article className="bg-white">
-      <CardHeader />
+      <CardHeader cfs={cfs} />
       <CardContent cfs={cfs} />
-      <CardActions />
+      <CardActions cfs={cfs} />
     </article>
   );
 };

@@ -12,12 +12,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /**
-   * A signed eight-byte integer. The upper big integer values are greater than the
-   * max value for a JavaScript number. Therefore all big integers will be output as
-   * strings and not numbers.
-   */
-  BigInt: any;
   /** A location in a connection that can be used for resuming pagination. */
   Cursor: any;
   /**
@@ -28,7 +22,6 @@ export type Scalars = {
   /** A universally unique identifier as defined by [RFC 4122](https://tools.ietf.org/html/rfc4122). */
   UUID: any;
 };
-
 
 /** A connection to a list of `Category` values. */
 export type CategoriesConnection = {
@@ -65,10 +58,12 @@ export type Category = {
   __typename?: 'Category';
   /** Reads and enables pagination through a set of `ConfessionCategory`. */
   confessionCategories: ConfessionCategoriesConnection;
+  createdAt: Scalars['Datetime'];
   id: Scalars['Int'];
   image?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  slug: Scalars['String'];
+  updatedAt: Scalars['Datetime'];
 };
 
 
@@ -94,8 +89,8 @@ export type CategoryCondition = {
 /** An input for mutations affecting `Category` */
 export type CategoryInput = {
   image?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  slug: Scalars['String'];
 };
 
 /** Represents an update to a `Category`. Fields that are set will be updated. */
@@ -131,16 +126,34 @@ export type ChangePasswordPayload = {
 
 export type Comment = {
   __typename?: 'Comment';
-  author?: Maybe<Scalars['String']>;
   authorName?: Maybe<Scalars['String']>;
+  /** Reads and enables pagination through a set of `Comment`. */
+  childComments: CommentsConnection;
   /** Reads a single `Confession` that is related to this `Comment`. */
   confession?: Maybe<Confession>;
-  confessionId?: Maybe<Scalars['Int']>;
+  confessionId: Scalars['Int'];
   content?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['BigInt']>;
+  createdAt: Scalars['Datetime'];
   id: Scalars['Int'];
   image?: Maybe<Scalars['String']>;
-  parent?: Maybe<Scalars['BigInt']>;
+  /** Reads a single `Comment` that is related to this `Comment`. */
+  parent?: Maybe<Comment>;
+  parentId?: Maybe<Scalars['Int']>;
+  updatedAt: Scalars['Datetime'];
+  /** Reads a single `User` that is related to this `Comment`. */
+  user?: Maybe<User>;
+  userId?: Maybe<Scalars['UUID']>;
+};
+
+
+export type CommentChildCommentsArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  condition?: Maybe<CommentCondition>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Array<CommentsOrderBy>>;
 };
 
 /** A condition to be used against `Comment` object types. All fields are tested for equality and combined with a logical ‘and.’ */
@@ -149,26 +162,26 @@ export type CommentCondition = {
   confessionId?: Maybe<Scalars['Int']>;
   /** Checks for equality with the object’s `id` field. */
   id?: Maybe<Scalars['Int']>;
+  /** Checks for equality with the object’s `parentId` field. */
+  parentId?: Maybe<Scalars['Int']>;
+  /** Checks for equality with the object’s `userId` field. */
+  userId?: Maybe<Scalars['UUID']>;
 };
 
 /** An input for mutations affecting `Comment` */
 export type CommentInput = {
-  author?: Maybe<Scalars['String']>;
   authorName?: Maybe<Scalars['String']>;
-  confessionId?: Maybe<Scalars['Int']>;
+  confessionId: Scalars['Int'];
   content?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
-  parent?: Maybe<Scalars['BigInt']>;
 };
 
 /** Represents an update to a `Comment`. Fields that are set will be updated. */
 export type CommentPatch = {
-  author?: Maybe<Scalars['String']>;
   authorName?: Maybe<Scalars['String']>;
   confessionId?: Maybe<Scalars['Int']>;
   content?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
-  parent?: Maybe<Scalars['BigInt']>;
 };
 
 /** A connection to a list of `Comment` values. */
@@ -200,8 +213,12 @@ export enum CommentsOrderBy {
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   Natural = 'NATURAL',
+  ParentIdAsc = 'PARENT_ID_ASC',
+  ParentIdDesc = 'PARENT_ID_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  UserIdAsc = 'USER_ID_ASC',
+  UserIdDesc = 'USER_ID_DESC'
 }
 
 export type Confession = {
@@ -210,16 +227,16 @@ export type Confession = {
   comments: CommentsConnection;
   /** Reads and enables pagination through a set of `ConfessionCategory`. */
   confessionCategories: ConfessionCategoriesConnection;
-  content?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['BigInt']>;
+  content: Scalars['String'];
+  createdAt: Scalars['Datetime'];
   id: Scalars['Int'];
   image?: Maybe<Scalars['String']>;
-  isPublic?: Maybe<Scalars['Boolean']>;
-  slug?: Maybe<Scalars['String']>;
-  sourceId?: Maybe<Scalars['BigInt']>;
-  thumbnail?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['BigInt']>;
+  slug: Scalars['String'];
+  title: Scalars['String'];
+  updatedAt: Scalars['Datetime'];
+  /** Reads a single `User` that is related to this `Confession`. */
+  user?: Maybe<User>;
+  userId: Scalars['UUID'];
 };
 
 
@@ -311,25 +328,23 @@ export type ConfessionCondition = {
   id?: Maybe<Scalars['Int']>;
   /** Checks for equality with the object’s `slug` field. */
   slug?: Maybe<Scalars['String']>;
+  /** Checks for equality with the object’s `userId` field. */
+  userId?: Maybe<Scalars['UUID']>;
 };
 
 /** An input for mutations affecting `Confession` */
 export type ConfessionInput = {
-  content?: Maybe<Scalars['String']>;
+  content: Scalars['String'];
   image?: Maybe<Scalars['String']>;
-  isPublic?: Maybe<Scalars['Boolean']>;
-  slug?: Maybe<Scalars['String']>;
-  thumbnail?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
+  slug: Scalars['String'];
+  title: Scalars['String'];
 };
 
 /** Represents an update to a `Confession`. Fields that are set will be updated. */
 export type ConfessionPatch = {
   content?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
-  isPublic?: Maybe<Scalars['Boolean']>;
   slug?: Maybe<Scalars['String']>;
-  thumbnail?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
 };
 
@@ -363,7 +378,9 @@ export enum ConfessionsOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   SlugAsc = 'SLUG_ASC',
-  SlugDesc = 'SLUG_DESC'
+  SlugDesc = 'SLUG_DESC',
+  UserIdAsc = 'USER_ID_ASC',
+  UserIdDesc = 'USER_ID_DESC'
 }
 
 /** All input for the `confirmAccountDeletion` mutation. */
@@ -447,8 +464,12 @@ export type CreateCommentPayload = {
   commentEdge?: Maybe<CommentsEdge>;
   /** Reads a single `Confession` that is related to this `Comment`. */
   confession?: Maybe<Confession>;
+  /** Reads a single `Comment` that is related to this `Comment`. */
+  parent?: Maybe<Comment>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query?: Maybe<Query>;
+  /** Reads a single `User` that is related to this `Comment`. */
+  user?: Maybe<User>;
 };
 
 
@@ -519,6 +540,8 @@ export type CreateConfessionPayload = {
   confessionEdge?: Maybe<ConfessionsEdge>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query?: Maybe<Query>;
+  /** Reads a single `User` that is related to this `Confession`. */
+  user?: Maybe<User>;
 };
 
 
@@ -622,8 +645,12 @@ export type DeleteCommentPayload = {
   /** Reads a single `Confession` that is related to this `Comment`. */
   confession?: Maybe<Confession>;
   deletedCommentNodeId?: Maybe<Scalars['ID']>;
+  /** Reads a single `Comment` that is related to this `Comment`. */
+  parent?: Maybe<Comment>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query?: Maybe<Query>;
+  /** Reads a single `User` that is related to this `Comment`. */
+  user?: Maybe<User>;
 };
 
 
@@ -657,6 +684,8 @@ export type DeleteConfessionPayload = {
   deletedConfessionNodeId?: Maybe<Scalars['ID']>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query?: Maybe<Query>;
+  /** Reads a single `User` that is related to this `Confession`. */
+  user?: Maybe<User>;
 };
 
 
@@ -1287,8 +1316,12 @@ export type UpdateCommentPayload = {
   commentEdge?: Maybe<CommentsEdge>;
   /** Reads a single `Confession` that is related to this `Comment`. */
   confession?: Maybe<Confession>;
+  /** Reads a single `Comment` that is related to this `Comment`. */
+  parent?: Maybe<Comment>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query?: Maybe<Query>;
+  /** Reads a single `User` that is related to this `Comment`. */
+  user?: Maybe<User>;
 };
 
 
@@ -1323,6 +1356,8 @@ export type UpdateConfessionPayload = {
   confessionEdge?: Maybe<ConfessionsEdge>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query?: Maybe<Query>;
+  /** Reads a single `User` that is related to this `Confession`. */
+  user?: Maybe<User>;
 };
 
 
@@ -1371,6 +1406,10 @@ export type User = {
   __typename?: 'User';
   /** Optional avatar URL. */
   avatarUrl?: Maybe<Scalars['String']>;
+  /** Reads and enables pagination through a set of `Comment`. */
+  comments: CommentsConnection;
+  /** Reads and enables pagination through a set of `Confession`. */
+  confessions: ConfessionsConnection;
   createdAt: Scalars['Datetime'];
   hasPassword?: Maybe<Scalars['Boolean']>;
   /** Unique identifier for the user. */
@@ -1387,6 +1426,30 @@ export type User = {
   userEmails: UserEmailsConnection;
   /** Public-facing username (or 'handle') of the user. */
   username: Scalars['String'];
+};
+
+
+/** A user who can log in to the application. */
+export type UserCommentsArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  condition?: Maybe<CommentCondition>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Array<CommentsOrderBy>>;
+};
+
+
+/** A user who can log in to the application. */
+export type UserConfessionsArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  condition?: Maybe<ConfessionCondition>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Array<ConfessionsOrderBy>>;
 };
 
 
@@ -1737,6 +1800,19 @@ export type HomePageQuery = (
 export type HomePage_ConfessionFragment = (
   { __typename?: 'Confession' }
   & Pick<Confession, 'id' | 'slug' | 'title' | 'image' | 'createdAt'>
+  & { comments: (
+    { __typename?: 'CommentsConnection' }
+    & Pick<CommentsConnection, 'totalCount'>
+  ), confessionCategories: (
+    { __typename?: 'ConfessionCategoriesConnection' }
+    & { nodes: Array<(
+      { __typename?: 'ConfessionCategory' }
+      & { category?: Maybe<(
+        { __typename?: 'Category' }
+        & Pick<Category, 'slug' | 'image'>
+      )> }
+    )> }
+  ) }
 );
 
 export type LoginMutationVariables = Exact<{
@@ -2007,6 +2083,17 @@ export const HomePage_ConfessionFragmentDoc = gql`
   title
   image
   createdAt
+  comments {
+    totalCount
+  }
+  confessionCategories {
+    nodes {
+      category {
+        slug
+        image
+      }
+    }
+  }
 }
     `;
 export const ProfileSettingsForm_UserFragmentDoc = gql`

@@ -1813,6 +1813,13 @@ CREATE INDEX comment_confession_id_index ON app_public.comment USING btree (conf
 
 
 --
+-- Name: comment_parent_id_idx; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX comment_parent_id_idx ON app_public.comment USING btree (parent_id);
+
+
+--
 -- Name: confession_category_category_id_index; Type: INDEX; Schema: app_public; Owner: -
 --
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CfsList, Dropdown } from '@cfs/ui';
 import styles from './HomePage.module.scss';
 import { Tabs } from 'antd';
@@ -34,7 +34,10 @@ const categories = [
 ];
 
 const HomePage = () => {
-  const { data: queryData } = useHomePageQuery({ offset: 0 });
+  const { data: queryData, fetchMore } = useHomePageQuery({
+    variables: { offset: 0 },
+  });
+
   const confessions = queryData?.confessions?.nodes ?? [];
 
   return (
@@ -47,7 +50,7 @@ const HomePage = () => {
           <Tabs defaultActiveKey="1">
             {categories.map((cat) => (
               <TabPane tab={cat.name} key={cat.id}>
-                <CfsList cfsList={confessions} />
+                <CfsList cfsList={confessions} fetchMore={fetchMore} />
               </TabPane>
             ))}
           </Tabs>

@@ -4,4 +4,15 @@ fragment HomePage_Confession on Confession {
   title
   image
   createdAt
+  comments {
+    totalCount
+  }
+  confessionCategories {
+    nodes {
+      category {
+        slug
+        image
+      }
+    }
+  }
 }

@@ -5,7 +5,7 @@ import Vote from './Vote';
 import Comment from './Comment';
 import { notification } from 'antd';
 
-const CardActions = () => {
+const CardActions = ({ cfs }) => {
   const onCopy = useCallback(() => {
     notification.info({
       message: `Link đã được sao chép, bạn có thể dán ở bất kì đâu để chia sẻ`,
@@ -17,11 +17,14 @@ const CardActions = () => {
   return (
     <footer className="flex justify-between pb-2">
       <div className="flex">
-        <Vote voteNo={82} />
-        <Comment />
+        <Vote voteNo={0} />
+        <Comment
+          numberOfComment={cfs?.comments?.totalCount ?? 0}
+          url={`/${cfs?.slug ?? ''}#comments`}
+        />
       </div>
       <div className="p-2 border border-color1 rounded-full">
-        <CopyToClipboard text={'https://confession.vn/'} onCopy={onCopy}>
+        <CopyToClipboard text={`https://confession.vn/${cfs?.slug}`} onCopy={onCopy}>
           <Share className="color2 h-4 w-4 cursor-pointer" />
         </CopyToClipboard>
       </div>

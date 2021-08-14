@@ -119,6 +119,7 @@
     "@ant-design/icons": "^4.6.2",
     "@apollo/react-hooks": "^4.0.0",
     "@apollo/react-ssr": "^4.0.0",
+    "@graphile-contrib/pg-many-to-many": "^1.0.1",
     "@graphile-contrib/pg-simplify-inflector": "^6.1.0",
     "@graphile/pg-pubsub": "^4.12.1",
     "@graphile/pro": "^1.0.2",
