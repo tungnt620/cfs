@@ -156,6 +156,7 @@
     "passport-jwt": "^4.0.0",
     "pg": "^8.6.0",
     "postgraphile": "4.12.3",
+    "postgraphile-plugin-connection-filter": "^2.2.2",
     "prop-types": "^15.7.2",
     "query-string": "^6.5.0",
     "react": "17.0.2",

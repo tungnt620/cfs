@@ -6,39 +6,20 @@ import { useHomePageQuery } from '@cfs/graphql';
 
 const { TabPane } = Tabs;
 
-const categories = [
-  {
-    id: 1,
-    name: 'Tất cả',
-  },
-  {
-    id: 2,
-    name: 'NEU confession',
-  },
-  {
-    id: 3,
-    name: 'KTX ĐHQG Confessions',
-  },
-  {
-    id: 4,
-    name: 'BK Confessions',
-  },
-  {
-    id: 5,
-    name: 'Confession Ngôn Tình',
-  },
-  {
-    id: 6,
-    name: 'GOT7 Vietnamese Confessions',
-  },
-];
-
 const HomePage = () => {
+  const [selectedCat, setSelectedCat] = useState('0');
   const { data: queryData, fetchMore } = useHomePageQuery({
-    variables: { offset: 0 },
+    variables: { offset: 0, catId: 0 },
   });
 
-  const confessions = queryData?.confessions?.nodes ?? [];
+  const confessions = queryData?.getCfsByCat?.nodes ?? [];
+  const categories = [...(queryData?.categories?.nodes ?? [])];
+  categories.unshift({ id: 0, name: 'Tất cả' });
+
+  const onChangeCat = (newCat) => {
+    fetchMore({ variables: { offset: 0, catId: parseInt(newCat) } });
+    setSelectedCat(newCat);
+  };
 
   return (
     <div className="ml-4 mr-4 mb-6 bg-color1">
@@ -47,10 +28,18 @@ const HomePage = () => {
           <Dropdown btnText={'Chọn'} />
         </div>
         <div className={styles.homePageListCategories}>
-          <Tabs defaultActiveKey="1">
+          <Tabs
+            defaultActiveKey="0"
+            activeKey={selectedCat}
+            onChange={onChangeCat}
+          >
             {categories.map((cat) => (
               <TabPane tab={cat.name} key={cat.id}>
-                <CfsList cfsList={confessions} fetchMore={fetchMore} />
+                <CfsList
+                  cfsList={confessions}
+                  fetchMore={fetchMore}
+                  selectedCat={selectedCat}
+                />
               </TabPane>
             ))}
           </Tabs>

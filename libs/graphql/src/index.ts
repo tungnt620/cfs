@@ -1056,6 +1056,8 @@ export type Query = {
   confessions?: Maybe<ConfessionsConnection>;
   /** The currently logged in user (or null if not logged in). */
   currentUser?: Maybe<User>;
+  /** Reads and enables pagination through a set of `Confession`. */
+  getCfsByCat?: Maybe<ConfessionsConnection>;
   user?: Maybe<User>;
   userAuthentication?: Maybe<UserAuthentication>;
   userByUsername?: Maybe<User>;
@@ -1139,6 +1141,17 @@ export type QueryConfessionsArgs = {
   last?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<ConfessionsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryGetCfsByCatArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  catId: Scalars['Int'];
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1782,17 +1795,23 @@ export type ForgotPasswordMutation = (
 
 export type HomePageQueryVariables = Exact<{
   offset?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Array<ConfessionsOrderBy> | ConfessionsOrderBy>;
+  catId?: Maybe<Scalars['Int']>;
 }>;
 
 
 export type HomePageQuery = (
   { __typename?: 'Query' }
-  & { confessions?: Maybe<(
+  & { getCfsByCat?: Maybe<(
     { __typename?: 'ConfessionsConnection' }
     & { nodes: Array<(
       { __typename?: 'Confession' }
       & HomePage_ConfessionFragment
+    )> }
+  )>, categories?: Maybe<(
+    { __typename?: 'CategoriesConnection' }
+    & { nodes: Array<(
+      { __typename?: 'Category' }
+      & Pick<Category, 'id' | 'name'>
     )> }
   )> }
 );
@@ -2382,10 +2401,16 @@ export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswo
 export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordMutation>;
 export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
 export const HomePageDocument = gql`
-    query HomePage($offset: Int = 0, $orderBy: [ConfessionsOrderBy!] = [ID_DESC]) {
-  confessions(offset: $offset, orderBy: $orderBy, first: 10) {
+    query HomePage($offset: Int = 0, $catId: Int = 0) {
+  getCfsByCat(catId: $catId, offset: $offset, first: 10) {
     nodes {
       ...HomePage_Confession
+    }
+  }
+  categories {
+    nodes {
+      id
+      name
     }
   }
 }
@@ -2404,7 +2429,7 @@ export const HomePageDocument = gql`
  * const { data, loading, error } = useHomePageQuery({
  *   variables: {
  *      offset: // value for 'offset'
- *      orderBy: // value for 'orderBy'
+ *      catId: // value for 'catId'
  *   },
  * });
  */

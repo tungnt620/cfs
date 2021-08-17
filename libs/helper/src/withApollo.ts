@@ -35,7 +35,7 @@ export const withApollo = withApolloBase(
           Query: {
             queryType: true,
             fields: {
-              confessions: {
+              getCfsByCat: {
                 // Don't cache separate results based on
                 // any of this field's arguments.
                 keyArgs: false,

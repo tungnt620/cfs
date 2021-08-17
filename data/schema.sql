@@ -985,6 +985,41 @@ COMMENT ON FUNCTION app_public.forgot_password(email public.citext) IS 'If you''
 
 
 --
+-- Name: confession; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.confession (
+    id integer NOT NULL,
+    title character varying(255),
+    content text,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    slug character varying(120),
+    image character varying(255),
+    user_id uuid DEFAULT app_public.current_user_id()
+);
+
+
+--
+-- Name: get_cfs_by_cat(integer); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.get_cfs_by_cat(cat_id integer) RETURNS SETOF app_public.confession
+    LANGUAGE sql STABLE
+    AS $$
+	SELECT
+		c.*
+	FROM
+		app_public.confession c
+	LEFT JOIN app_public.confession_category cc ON c.id = cc.confession_id
+WHERE
+	cat_id = 0 or cc.category_id = cat_id
+ORDER BY
+	c.id DESC;
+$$;
+
+
+--
 -- Name: logout(); Type: FUNCTION; Schema: app_public; Owner: -
 --
 
@@ -1550,22 +1585,6 @@ CREATE SEQUENCE app_public.comment_id_seq
 --
 
 ALTER SEQUENCE app_public.comment_id_seq OWNED BY app_public.comment.id;
-
-
---
--- Name: confession; Type: TABLE; Schema: app_public; Owner: -
---
-
-CREATE TABLE app_public.confession (
-    id integer NOT NULL,
-    title character varying(255),
-    content text,
-    created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone DEFAULT now() NOT NULL,
-    slug character varying(120),
-    image character varying(255),
-    user_id uuid DEFAULT app_public.current_user_id()
-);
 
 
 --
@@ -2454,6 +2473,49 @@ GRANT ALL ON FUNCTION app_public.forgot_password(email public.citext) TO cfs_vis
 
 
 --
+-- Name: TABLE confession; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,DELETE ON TABLE app_public.confession TO cfs_visitor;
+
+
+--
+-- Name: COLUMN confession.title; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(title),UPDATE(title) ON TABLE app_public.confession TO cfs_visitor;
+
+
+--
+-- Name: COLUMN confession.content; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(content),UPDATE(content) ON TABLE app_public.confession TO cfs_visitor;
+
+
+--
+-- Name: COLUMN confession.slug; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(slug),UPDATE(slug) ON TABLE app_public.confession TO cfs_visitor;
+
+
+--
+-- Name: COLUMN confession.image; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(image),UPDATE(image) ON TABLE app_public.confession TO cfs_visitor;
+
+
+--
+-- Name: FUNCTION get_cfs_by_cat(cat_id integer); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.get_cfs_by_cat(cat_id integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.get_cfs_by_cat(cat_id integer) TO cfs_visitor;
+
+
+--
 -- Name: FUNCTION logout(); Type: ACL; Schema: app_public; Owner: -
 --
 
@@ -2630,41 +2692,6 @@ GRANT INSERT(image),UPDATE(image) ON TABLE app_public.comment TO cfs_visitor;
 --
 
 GRANT SELECT,USAGE ON SEQUENCE app_public.comment_id_seq TO cfs_visitor;
-
-
---
--- Name: TABLE confession; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT SELECT,DELETE ON TABLE app_public.confession TO cfs_visitor;
-
-
---
--- Name: COLUMN confession.title; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(title),UPDATE(title) ON TABLE app_public.confession TO cfs_visitor;
-
-
---
--- Name: COLUMN confession.content; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(content),UPDATE(content) ON TABLE app_public.confession TO cfs_visitor;
-
-
---
--- Name: COLUMN confession.slug; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(slug),UPDATE(slug) ON TABLE app_public.confession TO cfs_visitor;
-
-
---
--- Name: COLUMN confession.image; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(image),UPDATE(image) ON TABLE app_public.confession TO cfs_visitor;
 
 
 --

@@ -3,7 +3,7 @@ import style from './CfsList.module.scss';
 import { Button } from 'antd';
 import { CfsMiniCard } from '@cfs/ui';
 
-export const CfsList = ({ cfsList, fetchMore }) => {
+export const CfsList = ({ cfsList, fetchMore, selectedCat }) => {
   const [offset, setOffset] = useState(0);
 
   const fetchAtOffset = useCallback(
@@ -12,10 +12,11 @@ export const CfsList = ({ cfsList, fetchMore }) => {
       fetchMore({
         variables: {
           offset: newOffset,
+          catId: parseInt(selectedCat),
         },
       });
     },
-    [fetchMore]
+    [fetchMore, selectedCat]
   );
 
   const handleOnNext = useCallback(() => {
