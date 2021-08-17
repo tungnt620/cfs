@@ -15,6 +15,7 @@ import {
   showRegisterPopup,
 } from '../../../../libs/helper/src/reactiveVars';
 import RegisterPopup from '../RegisterPopup';
+import CreateNewCfs from './CreateNewCfs';
 
 const HeaderUI = () => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -50,7 +51,7 @@ const HeaderUI = () => {
 
   return (
     <nav className="header-height select-none header-shadow">
-      <div className="flex justify-between items-center h-full ml-6 mr-6">
+      <div className="flex justify-between items-center h-full mx-1 sm:mx-6">
         <MenuOpen
           onClick={toggleMenu}
           className={`${
@@ -75,11 +76,7 @@ const HeaderUI = () => {
         </Link>
 
         <div className="flex">
-          <Link href="/new">
-            <a>
-              <Button type="primary">Viết bài</Button>
-            </a>
-          </Link>
+          <CreateNewCfs />
 
           {currentUser?.id ? (
             <div className="flex ml-4 items-center">

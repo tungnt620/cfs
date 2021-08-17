@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { CfsList, Dropdown } from '@cfs/ui';
 import styles from './HomePage.module.scss';
 import { Tabs } from 'antd';
@@ -17,7 +17,7 @@ const HomePage = () => {
   categories.unshift({ id: 0, name: 'Tất cả' });
 
   const onChangeCat = (newCat) => {
-    fetchMore({ variables: { offset: 0, catId: parseInt(newCat) } });
+    fetchMore({ variables: { offset: 0, catId: parseInt(newCat) } }).then(r => console.log(r));
     setSelectedCat(newCat);
   };
 
@@ -25,7 +25,7 @@ const HomePage = () => {
     <div className="ml-4 mr-4 mb-6 bg-color1">
       <div className="block mt-4 bg-white pb-4">
         <div className={styles.homePageListMenu}>
-          <Dropdown btnText={'Chọn'} />
+          {/*<Dropdown btnText={'Chọn'} />*/}
         </div>
         <div className={styles.homePageListCategories}>
           <Tabs
