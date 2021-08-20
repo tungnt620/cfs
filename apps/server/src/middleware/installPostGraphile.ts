@@ -15,7 +15,6 @@ import {
 import { makePgSmartTagsFromFilePlugin } from "postgraphile/plugins";
 
 import { getHttpServer, getWebsocketMiddlewares } from "../app";
-import OrdersPlugin from "../plugins/Orders";
 import PassportLoginPlugin from "../plugins/PassportLoginPlugin";
 import PrimaryKeyMutationsOnlyPlugin from "../plugins/PrimaryKeyMutationsOnlyPlugin";
 import RemoveQueryQueryPlugin from "../plugins/RemoveQueryQueryPlugin";
@@ -178,9 +177,6 @@ export function getPostGraphileOptions({
 
       // Adds realtime features to our GraphQL schema
       SubscriptionsPlugin,
-
-      // Adds custom orders to our GraphQL schema
-      OrdersPlugin,
     ],
 
     /*

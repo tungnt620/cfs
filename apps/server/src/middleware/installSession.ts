@@ -10,6 +10,8 @@ import { getRootPgPool } from "./installDatabasePools";
 const RedisStore = ConnectRedis(session);
 const PgStore = ConnectPgSimple(session);
 
+const isDev = process.env.NODE_ENV === "development";
+
 const MILLISECOND = 1;
 const SECOND = 1000 * MILLISECOND;
 const MINUTE = 60 * SECOND;
@@ -61,7 +63,7 @@ export default (app: Express) => {
     resave: false,
     cookie: {
       maxAge: MAXIMUM_SESSION_DURATION_IN_MILLISECONDS,
-      secure: true, // May need to app.set('trust proxy') for this to work.
+      secure: !isDev, // May need to app.set('trust proxy') for this to work.
       httpOnly: true,
       sameSite: "lax", // Cannot be 'strict' otherwise OAuth won't work.
     },

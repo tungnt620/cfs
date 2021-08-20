@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
-import { useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { MenuOpen, MenuClose } from '@cfs/ui/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Avatar, Button, Dropdown, Menu } from 'antd';
 import LoginPopup from '../LoginPopup';
-import { useLogoutMutation, useSharedQuery } from '@cfs/graphql';
+import { useLogoutMutation, useSharedLazyQuery, useSharedQuery } from '@cfs/graphql';
 import { useApolloClient, useReactiveVar } from '@apollo/react-hooks';
 import { preventDefault } from '@cfs/helper';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
@@ -21,10 +20,14 @@ const HeaderUI = () => {
   const [menuOpened, setMenuOpened] = useState(false);
   const client = useApolloClient();
   const [logout] = useLogoutMutation();
-  const { data: shareData } = useSharedQuery();
+  const [getShareData, { data: shareData }] = useSharedLazyQuery();
   const currentUser = useReactiveVar(setCurrentUser);
   const loginPopupVisible = useReactiveVar(showLoginPopup);
   const registerPopupVisible = useReactiveVar(showRegisterPopup);
+
+  useEffect(() => {
+    getShareData()
+  }, [getShareData])
 
   useEffect(() => {
     if (shareData?.currentUser) setCurrentUser(shareData.currentUser);
