@@ -1,0 +1,8 @@
+query GetCategories {
+  categories {
+    nodes {
+      id
+      name
+    }
+  }
+}

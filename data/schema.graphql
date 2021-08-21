@@ -519,6 +519,45 @@ type CreateCategoryPayload {
   query: Query
 }
 
+"""All input for the `createCfs` mutation."""
+input CreateCfsInput {
+  catId: Int!
+
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  content: String!
+  image: String!
+  slug: String!
+  title: String!
+}
+
+"""The output of our `createCfs` mutation."""
+type CreateCfsPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  confession: Confession
+
+  """An edge for our `Confession`. May be used by Relay 1."""
+  confessionEdge(
+    """The method to use when ordering `Confession`."""
+    orderBy: [ConfessionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ConfessionsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `Confession`."""
+  user: User
+}
+
 """All input for the create `Comment` mutation."""
 input CreateCommentInput {
   """
@@ -975,6 +1014,12 @@ type Mutation {
     """
     input: CreateCategoryInput!
   ): CreateCategoryPayload
+  createCfs(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateCfsInput!
+  ): CreateCfsPayload
 
   """Creates a single `Comment`."""
   createComment(

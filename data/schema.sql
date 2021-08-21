@@ -827,6 +827,71 @@ COMMENT ON FUNCTION app_public.confirm_account_deletion(token text) IS 'If you''
 
 
 --
+-- Name: current_user_id(); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.current_user_id() RETURNS uuid
+    LANGUAGE sql STABLE SECURITY DEFINER
+    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
+    AS $$
+  select user_id from app_private.sessions where uuid = app_public.current_session_id();
+$$;
+
+
+--
+-- Name: FUNCTION current_user_id(); Type: COMMENT; Schema: app_public; Owner: -
+--
+
+COMMENT ON FUNCTION app_public.current_user_id() IS 'Handy method to get the current user ID for use in RLS policies, etc; in GraphQL, use `currentUser{id}` instead.';
+
+
+--
+-- Name: confession; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.confession (
+    id integer NOT NULL,
+    title character varying(255),
+    content text,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    slug character varying(120),
+    image character varying(255),
+    user_id uuid DEFAULT app_public.current_user_id()
+);
+
+
+--
+-- Name: create_cfs(character varying, character varying, character varying, integer, character varying); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.create_cfs(title character varying, content character varying, slug character varying, cat_id integer, image character varying) RETURNS app_public.confession
+    LANGUAGE plpgsql STRICT SECURITY DEFINER
+    AS $$
+	DECLARE
+		v_unique_slug app_public.confession.slug%type;
+		v_current_user_id app_public.users.id%type;
+		v_new_cfs app_public.confession;
+	BEGIN
+		v_unique_slug = slug || '-' || floor(random() * 100000)::VARCHAR;
+		v_current_user_id = app_public.current_user_id();
+
+    if v_current_user_id is null then
+      raise exception 'Missing current_user_id' using errcode = 'MISSING_USER';
+    end if;
+
+		insert into app_public.confession(title, slug, content, image, user_id) values
+		(title, v_unique_slug, content, image, v_current_user_id) RETURNING * INTO v_new_cfs;
+
+		INSERT into app_public.confession_category(confession_id, category_id) values
+		(v_new_cfs.id, cat_id);
+
+		return v_new_cfs;
+	end;
+	$$;
+
+
+--
 -- Name: current_session_id(); Type: FUNCTION; Schema: app_public; Owner: -
 --
 
@@ -860,25 +925,6 @@ $$;
 --
 
 COMMENT ON FUNCTION app_public."current_user"() IS 'The currently logged in user (or null if not logged in).';
-
-
---
--- Name: current_user_id(); Type: FUNCTION; Schema: app_public; Owner: -
---
-
-CREATE FUNCTION app_public.current_user_id() RETURNS uuid
-    LANGUAGE sql STABLE SECURITY DEFINER
-    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
-    AS $$
-  select user_id from app_private.sessions where uuid = app_public.current_session_id();
-$$;
-
-
---
--- Name: FUNCTION current_user_id(); Type: COMMENT; Schema: app_public; Owner: -
---
-
-COMMENT ON FUNCTION app_public.current_user_id() IS 'Handy method to get the current user ID for use in RLS policies, etc; in GraphQL, use `currentUser{id}` instead.';
 
 
 --
@@ -982,22 +1028,6 @@ $$;
 --
 
 COMMENT ON FUNCTION app_public.forgot_password(email public.citext) IS 'If you''ve forgotten your password, give us one of your email addresses and we''ll send you a reset token. Note this only works if you have added an email address!';
-
-
---
--- Name: confession; Type: TABLE; Schema: app_public; Owner: -
---
-
-CREATE TABLE app_public.confession (
-    id integer NOT NULL,
-    title character varying(255),
-    content text,
-    created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone DEFAULT now() NOT NULL,
-    slug character varying(120),
-    image character varying(255),
-    user_id uuid DEFAULT app_public.current_user_id()
-);
 
 
 --
@@ -2179,6 +2209,29 @@ CREATE POLICY delete_own ON app_public.user_emails FOR DELETE USING ((user_id = 
 
 
 --
+-- Name: comment insert_own; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY insert_own ON app_public.comment FOR INSERT WITH CHECK ((user_id = app_public.current_user_id()));
+
+
+--
+-- Name: confession insert_own; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY insert_own ON app_public.confession FOR INSERT WITH CHECK ((user_id = app_public.current_user_id()));
+
+
+--
+-- Name: confession_category insert_own; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY insert_own ON app_public.confession_category FOR INSERT WITH CHECK ((EXISTS ( SELECT confession.id
+   FROM app_public.confession
+  WHERE ((confession.id = confession_category.confession_id) AND (confession.user_id = app_public.current_user_id())))));
+
+
+--
 -- Name: user_emails insert_own; Type: POLICY; Schema: app_public; Owner: -
 --
 
@@ -2268,6 +2321,29 @@ CREATE POLICY select_own ON app_public.user_authentications FOR SELECT USING ((u
 --
 
 CREATE POLICY select_own ON app_public.user_emails FOR SELECT USING ((user_id = app_public.current_user_id()));
+
+
+--
+-- Name: comment update_own; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY update_own ON app_public.comment FOR UPDATE USING ((user_id = app_public.current_user_id()));
+
+
+--
+-- Name: confession update_own; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY update_own ON app_public.confession FOR UPDATE USING ((user_id = app_public.current_user_id()));
+
+
+--
+-- Name: confession_category update_own; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY update_own ON app_public.confession_category FOR UPDATE USING ((EXISTS ( SELECT confession.id
+   FROM app_public.confession
+  WHERE ((confession.id = confession_category.confession_id) AND (confession.user_id = app_public.current_user_id())))));
 
 
 --
@@ -2441,35 +2517,11 @@ GRANT ALL ON FUNCTION app_public.confirm_account_deletion(token text) TO cfs_vis
 
 
 --
--- Name: FUNCTION current_session_id(); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.current_session_id() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.current_session_id() TO cfs_visitor;
-
-
---
--- Name: FUNCTION "current_user"(); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public."current_user"() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public."current_user"() TO cfs_visitor;
-
-
---
 -- Name: FUNCTION current_user_id(); Type: ACL; Schema: app_public; Owner: -
 --
 
 REVOKE ALL ON FUNCTION app_public.current_user_id() FROM PUBLIC;
 GRANT ALL ON FUNCTION app_public.current_user_id() TO cfs_visitor;
-
-
---
--- Name: FUNCTION forgot_password(email public.citext); Type: ACL; Schema: app_public; Owner: -
---
-
-REVOKE ALL ON FUNCTION app_public.forgot_password(email public.citext) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.forgot_password(email public.citext) TO cfs_visitor;
 
 
 --
@@ -2505,6 +2557,38 @@ GRANT INSERT(slug),UPDATE(slug) ON TABLE app_public.confession TO cfs_visitor;
 --
 
 GRANT INSERT(image),UPDATE(image) ON TABLE app_public.confession TO cfs_visitor;
+
+
+--
+-- Name: FUNCTION create_cfs(title character varying, content character varying, slug character varying, cat_id integer, image character varying); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.create_cfs(title character varying, content character varying, slug character varying, cat_id integer, image character varying) FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.create_cfs(title character varying, content character varying, slug character varying, cat_id integer, image character varying) TO cfs_visitor;
+
+
+--
+-- Name: FUNCTION current_session_id(); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.current_session_id() FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.current_session_id() TO cfs_visitor;
+
+
+--
+-- Name: FUNCTION "current_user"(); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public."current_user"() FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public."current_user"() TO cfs_visitor;
+
+
+--
+-- Name: FUNCTION forgot_password(email public.citext); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.forgot_password(email public.citext) FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.forgot_password(email public.citext) TO cfs_visitor;
 
 
 --

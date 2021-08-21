@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import { CfsList, Dropdown } from '@cfs/ui';
+import React, { useEffect, useState } from 'react';
+import { CfsList } from '@cfs/ui';
 import styles from './HomePage.module.scss';
 import { Tabs } from 'antd';
 import { useHomePageQuery } from '@cfs/graphql';
+import { useReactiveVar } from '@apollo/react-hooks';
+import { setNewCfsCreatedByMe } from '../../../../../libs/helper/src/reactiveVars';
 
 const { TabPane } = Tabs;
 
 const HomePage = () => {
   const [selectedCat, setSelectedCat] = useState('0');
+  const newCfsCreatedByMe = useReactiveVar(setNewCfsCreatedByMe);
   const { data: queryData, fetchMore } = useHomePageQuery({
     variables: { offset: 0, catId: 0 },
   });
@@ -17,9 +20,16 @@ const HomePage = () => {
   categories.unshift({ id: 0, name: 'Tất cả' });
 
   const onChangeCat = (newCat) => {
-    fetchMore({ variables: { offset: 0, catId: parseInt(newCat) } }).then(r => console.log(r));
+    fetchMore({ variables: { offset: 0, catId: parseInt(newCat) } });
     setSelectedCat(newCat);
   };
+
+  useEffect(() => {
+    if (newCfsCreatedByMe) {
+      setSelectedCat('0');
+      fetchMore({ variables: { offset: 0, catId: 0 } });
+    }
+  }, [fetchMore, newCfsCreatedByMe]);
 
   return (
     <div className="ml-4 mr-4 mb-6 bg-color1">

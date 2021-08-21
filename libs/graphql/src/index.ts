@@ -439,6 +439,43 @@ export type CreateCategoryPayloadCategoryEdgeArgs = {
   orderBy?: Maybe<Array<CategoriesOrderBy>>;
 };
 
+/** All input for the `createCfs` mutation. */
+export type CreateCfsInput = {
+  catId: Scalars['Int'];
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  content: Scalars['String'];
+  image: Scalars['String'];
+  slug: Scalars['String'];
+  title: Scalars['String'];
+};
+
+/** The output of our `createCfs` mutation. */
+export type CreateCfsPayload = {
+  __typename?: 'CreateCfsPayload';
+  /**
+   * The exact same `clientMutationId` that was provided in the mutation input,
+   * unchanged and unused. May be used by a client to track mutations.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  confession?: Maybe<Confession>;
+  /** An edge for our `Confession`. May be used by Relay 1. */
+  confessionEdge?: Maybe<ConfessionsEdge>;
+  /** Our root query field type. Allows us to run any query from our mutation payload. */
+  query?: Maybe<Query>;
+  /** Reads a single `User` that is related to this `Confession`. */
+  user?: Maybe<User>;
+};
+
+
+/** The output of our `createCfs` mutation. */
+export type CreateCfsPayloadConfessionEdgeArgs = {
+  orderBy?: Maybe<Array<ConfessionsOrderBy>>;
+};
+
 /** All input for the create `Comment` mutation. */
 export type CreateCommentInput = {
   /**
@@ -835,6 +872,7 @@ export type Mutation = {
   confirmAccountDeletion?: Maybe<ConfirmAccountDeletionPayload>;
   /** Creates a single `Category`. */
   createCategory?: Maybe<CreateCategoryPayload>;
+  createCfs?: Maybe<CreateCfsPayload>;
   /** Creates a single `Comment`. */
   createComment?: Maybe<CreateCommentPayload>;
   /** Creates a single `Confession`. */
@@ -897,6 +935,12 @@ export type MutationConfirmAccountDeletionArgs = {
 /** The root mutation type which contains root level fields which mutate data. */
 export type MutationCreateCategoryArgs = {
   input: CreateCategoryInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
+export type MutationCreateCfsArgs = {
+  input: CreateCfsInput;
 };
 
 
@@ -1708,6 +1752,26 @@ export type ConfirmAccountDeletionMutation = (
   )> }
 );
 
+export type CreateCfsMutationVariables = Exact<{
+  title: Scalars['String'];
+  content: Scalars['String'];
+  slug: Scalars['String'];
+  catId: Scalars['Int'];
+  image?: Maybe<Scalars['String']>;
+}>;
+
+
+export type CreateCfsMutation = (
+  { __typename?: 'Mutation' }
+  & { createCfs?: Maybe<(
+    { __typename?: 'CreateCfsPayload' }
+    & { confession?: Maybe<(
+      { __typename?: 'Confession' }
+      & Pick<Confession, 'content' | 'id' | 'createdAt' | 'image' | 'slug' | 'title'>
+    )> }
+  )> }
+);
+
 export type CurrentUserAuthenticationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1790,6 +1854,20 @@ export type ForgotPasswordMutation = (
   & { forgotPassword?: Maybe<(
     { __typename?: 'ForgotPasswordPayload' }
     & Pick<ForgotPasswordPayload, 'clientMutationId'>
+  )> }
+);
+
+export type GetCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCategoriesQuery = (
+  { __typename?: 'Query' }
+  & { categories?: Maybe<(
+    { __typename?: 'CategoriesConnection' }
+    & { nodes: Array<(
+      { __typename?: 'Category' }
+      & Pick<Category, 'id' | 'name'>
+    )> }
   )> }
 );
 
@@ -2249,6 +2327,52 @@ export function useConfirmAccountDeletionMutation(baseOptions?: Apollo.MutationH
 export type ConfirmAccountDeletionMutationHookResult = ReturnType<typeof useConfirmAccountDeletionMutation>;
 export type ConfirmAccountDeletionMutationResult = Apollo.MutationResult<ConfirmAccountDeletionMutation>;
 export type ConfirmAccountDeletionMutationOptions = Apollo.BaseMutationOptions<ConfirmAccountDeletionMutation, ConfirmAccountDeletionMutationVariables>;
+export const CreateCfsDocument = gql`
+    mutation CreateCfs($title: String!, $content: String!, $slug: String!, $catId: Int!, $image: String = "") {
+  createCfs(
+    input: {title: $title, content: $content, slug: $slug, catId: $catId, image: $image}
+  ) {
+    confession {
+      content
+      id
+      createdAt
+      image
+      slug
+      title
+    }
+  }
+}
+    `;
+export type CreateCfsMutationFn = Apollo.MutationFunction<CreateCfsMutation, CreateCfsMutationVariables>;
+
+/**
+ * __useCreateCfsMutation__
+ *
+ * To run a mutation, you first call `useCreateCfsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCfsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCfsMutation, { data, loading, error }] = useCreateCfsMutation({
+ *   variables: {
+ *      title: // value for 'title'
+ *      content: // value for 'content'
+ *      slug: // value for 'slug'
+ *      catId: // value for 'catId'
+ *      image: // value for 'image'
+ *   },
+ * });
+ */
+export function useCreateCfsMutation(baseOptions?: Apollo.MutationHookOptions<CreateCfsMutation, CreateCfsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCfsMutation, CreateCfsMutationVariables>(CreateCfsDocument, options);
+      }
+export type CreateCfsMutationHookResult = ReturnType<typeof useCreateCfsMutation>;
+export type CreateCfsMutationResult = Apollo.MutationResult<CreateCfsMutation>;
+export type CreateCfsMutationOptions = Apollo.BaseMutationOptions<CreateCfsMutation, CreateCfsMutationVariables>;
 export const CurrentUserAuthenticationsDocument = gql`
     query CurrentUserAuthentications {
   currentUser {
@@ -2400,6 +2524,43 @@ export function useForgotPasswordMutation(baseOptions?: Apollo.MutationHookOptio
 export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
 export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordMutation>;
 export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
+export const GetCategoriesDocument = gql`
+    query GetCategories {
+  categories {
+    nodes {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCategoriesQuery__
+ *
+ * To run a query within a React component, call `useGetCategoriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCategoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCategoriesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCategoriesQuery(baseOptions?: Apollo.QueryHookOptions<GetCategoriesQuery, GetCategoriesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCategoriesQuery, GetCategoriesQueryVariables>(GetCategoriesDocument, options);
+      }
+export function useGetCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCategoriesQuery, GetCategoriesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCategoriesQuery, GetCategoriesQueryVariables>(GetCategoriesDocument, options);
+        }
+export type GetCategoriesQueryHookResult = ReturnType<typeof useGetCategoriesQuery>;
+export type GetCategoriesLazyQueryHookResult = ReturnType<typeof useGetCategoriesLazyQuery>;
+export type GetCategoriesQueryResult = Apollo.QueryResult<GetCategoriesQuery, GetCategoriesQueryVariables>;
 export const HomePageDocument = gql`
     query HomePage($offset: Int = 0, $catId: Int = 0) {
   getCfsByCat(catId: $catId, offset: $offset, first: 10) {

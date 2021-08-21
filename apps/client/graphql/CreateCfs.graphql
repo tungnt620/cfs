@@ -1,0 +1,12 @@
+mutation CreateCfs($title: String!, $content: String!, $slug: String!, $catId: Int!, $image: String = "") {
+  createCfs(input: {title: $title, content: $content, slug: $slug, catId: $catId, image: $image}) {
+    confession {
+      content
+      id
+      createdAt
+      image
+      slug
+      title
+    }
+  }
+}

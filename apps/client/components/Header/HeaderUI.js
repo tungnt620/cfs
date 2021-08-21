@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Avatar, Button, Dropdown, Menu } from 'antd';
 import LoginPopup from '../LoginPopup';
-import { useLogoutMutation, useSharedLazyQuery, useSharedQuery } from '@cfs/graphql';
+import { useLogoutMutation, useSharedLazyQuery  } from '@cfs/graphql';
 import { useApolloClient, useReactiveVar } from '@apollo/react-hooks';
 import { preventDefault } from '@cfs/helper';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';

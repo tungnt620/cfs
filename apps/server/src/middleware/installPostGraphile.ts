@@ -144,6 +144,7 @@ export function getPostGraphileOptions({
         //       ]
         //     : ["errcode"],
     // showErrorStack: isDev || isTest,
+    // extendedErrors: ['severity', 'code', 'detail', 'hint', 'position', 'internalPosition', 'internalQuery', 'where', 'schema', 'table', 'column', 'dataType', 'constraint', 'file', 'line', 'routine'],
 
     // Automatically update GraphQL schema when database changes
     watchPg: isDev,

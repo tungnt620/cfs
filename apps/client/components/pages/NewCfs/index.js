@@ -1,21 +1,62 @@
-import React from 'react';
-import { Button, Form, Input, PageHeader, Select } from 'antd';
+import React, { useEffect, useMemo } from 'react';
+import { Alert, Button, Form, Input, message, PageHeader, Select } from 'antd';
 import { useGoBack } from '@cfs/common';
 import style from './NewCfs.module.scss';
+import { useCreateCfsMutation, useGetCategoriesQuery } from '@cfs/graphql';
+import slugify from 'slugify';
+import { extractError } from '@cfs/helper';
+import { setNewCfsCreatedByMe } from '../../../../../libs/helper/src/reactiveVars';
+import { useRouter } from 'next/router';
 
 const { TextArea } = Input;
 
 const NewCfs = () => {
+  const router = useRouter();
   const goBack = useGoBack();
   const [form] = Form.useForm();
+  const {
+    data: {
+      categories: { nodes: categories },
+    },
+  } = useGetCategoriesQuery();
+  const [
+    createCfs,
+    { data: createCfsData, error: createCfsError, loading: createCfsLoading },
+  ] = useCreateCfsMutation();
+
+  const categorySelectOptions = useMemo(
+    () =>
+      categories.map((cat) => ({
+        value: cat.id,
+        label: cat.name,
+      })),
+    [categories]
+  );
 
   const onFinish = (values) => {
-    console.log(values);
+    const title = values.title;
+    const slug = slugify(title, {
+      replacement: '-',
+      remove: /[*+~.()'"!:@]/g,
+      lower: true,
+      locale: 'vi',
+    });
+    createCfs({
+      variables: {
+        ...values,
+        slug,
+        image: '',
+      },
+    });
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log(errorInfo);
-  };
+  useEffect(() => {
+    if (createCfsData) {
+      message.success('Bài của bạn đã được tạo thành công');
+      setNewCfsCreatedByMe(createCfsData.createCfs.confession);
+      router.push('/');
+    }
+  }, [createCfsData, router]);
 
   const onSubmit = () => {
     form.submit();
@@ -26,21 +67,29 @@ const NewCfs = () => {
       onBack={goBack}
       title="Chia sẻ, tâm sự"
       extra={[
-        <Button type="primary" key="1" onClick={onSubmit}>
+        <Button
+          type="primary"
+          key="1"
+          onClick={onSubmit}
+          loading={createCfsLoading}
+        >
           Gửi
         </Button>,
       ]}
     >
       <div className="mt-4">
+        {createCfsError && (
+          <Alert message={extractError(createCfsError).message} type="error" />
+        )}
+
         <Form
           name="Create new confession"
           initialValues={{}}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           form={form}
         >
           <Form.Item
-            name="cat"
+            name="catId"
             rules={[{ required: true, message: 'Hãy điền nơi bạn muốn gửi!' }]}
             className={style.row}
           >
@@ -60,16 +109,7 @@ const NewCfs = () => {
               }
               bordered={false}
               notFoundContent="Hiện tại chưa có loại này"
-              options={[
-                {
-                  value: 1,
-                  label: 'tung',
-                },
-                {
-                  value: 2,
-                  label: 'nguyen',
-                },
-              ]}
+              options={categorySelectOptions}
             />
           </Form.Item>
 
@@ -89,7 +129,7 @@ const NewCfs = () => {
               allowClear={true}
               bordered={false}
               rows={2}
-              placeholder="Tiêu đề/ý chính bạn muốn nói"
+              placeholder="Tiêu đề/ý chính bạn muốn tâm sự"
               maxLength={100}
             />
           </Form.Item>
