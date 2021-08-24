@@ -194,6 +194,8 @@ input CommentInput {
   confessionId: Int!
   content: String
   image: String
+  parentId: Int
+  userId: UUID
 }
 
 """
@@ -204,6 +206,8 @@ input CommentPatch {
   confessionId: Int
   content: String
   image: String
+  parentId: Int
+  userId: UUID
 }
 
 """A connection to a list of `Comment` values."""

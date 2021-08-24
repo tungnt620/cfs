@@ -11,7 +11,7 @@ dayjs.locale('vi');
 const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
-const NestedComment = ({ children }) => {
+const NestedComment = ({ comment, idChildrenComments, cfsId }) => {
   const [isShowCommentEditor, setIsShowCommentEditor] = useState(false);
 
   const toggleShowComment = useCallback(() => {
@@ -23,30 +23,35 @@ const NestedComment = ({ children }) => {
       className="custom-ant-comments"
       actions={[
         <div className="flex items-center">
-          <Vote voteNo={82} />
+          <Vote voteNo={0} />
           <span key="comment-nested-reply-to" onClick={toggleShowComment}>
             Trả lời
           </span>
         </div>,
       ]}
-      author={<span>Tung</span>}
+      author={<span>{comment.user?.username ?? comment.authorName}</span>}
       avatar={<UserOutlined className="text-lg" />}
-      content={
-        <p>
-          We supply a series of design principles, practical patterns and high
-          quality design resources (Sketch and Axure).
-        </p>
-      }
+      content={<p>{comment.content}</p>}
       datetime={
-        <Tooltip
-          title={dayjs().subtract(2, 'days').format('YYYY-MM-DD HH:mm:ss')}
-        >
-          <span>{dayjs().subtract(2, 'days').fromNow()}</span>
+        <Tooltip title={dayjs(comment.createdAt).format('YYYY-MM-DD HH:mm:ss')}>
+          <span>{dayjs(comment.createdAt).fromNow()}</span>
         </Tooltip>
       }
     >
-      {isShowCommentEditor && <CommentEditor onClose={toggleShowComment} />}
-      {children}
+      {idChildrenComments[comment.id]?.map((childComment) => (
+        <NestedComment
+          comment={childComment}
+          idChildrenComments={idChildrenComments}
+          cfsId={cfsId}
+        />
+      ))}
+      {isShowCommentEditor && (
+        <CommentEditor
+          cfsId={cfsId}
+          parentId={comment.id}
+          onClose={toggleShowComment}
+        />
+      )}
     </Comment>
   );
 };

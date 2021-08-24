@@ -35,7 +35,7 @@ const NewCfs = () => {
 
   const onFinish = (values) => {
     const title = values.title;
-    const slug = slugify(title, {
+    const slug = slugify(title.substring(0, 50), {
       replacement: '-',
       remove: /[*+~.()'"!:@]/g,
       lower: true,

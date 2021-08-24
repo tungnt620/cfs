@@ -1,13 +1,35 @@
 import React, { useCallback, useState } from 'react';
-import { Form, Button, Input } from 'antd';
+import { Form, Button, Input, message } from 'antd';
+import { useCreateCommentMutation } from '@cfs/graphql';
+import { setNewCommentCreatedByMe } from '../../../../helper/src/reactiveVars';
 
 const { TextArea } = Input;
 
-const CommentEditor = ({ onClose }) => {
+const CommentEditor = ({ onClose, cfsId, parentId }) => {
   const [content, setContent] = useState('');
+  const [createComment, { loading }] = useCreateCommentMutation();
 
   const clear = useCallback(() => setContent(''), []);
   const onChangeWrap = useCallback((e) => setContent(e.target.value), []);
+
+  const addNewComment = useCallback(() => {
+    createComment({
+      variables: {
+        confessionId: cfsId,
+        content,
+        parentId,
+      },
+    }).then(
+      ({
+        data: {
+          createComment: { comment },
+        },
+      }) => {
+        message.success('Bình luận của bạn đã được thêm');
+        setNewCommentCreatedByMe(comment);
+      }
+    );
+  }, [cfsId, content, createComment, parentId]);
 
   return (
     <div className="p-2">
@@ -33,7 +55,13 @@ const CommentEditor = ({ onClose }) => {
             )}
           </div>
 
-          <Button type="primary" size="large" disabled={!content?.length}>
+          <Button
+            loading={loading}
+            onClick={addNewComment}
+            type="primary"
+            size="large"
+            disabled={!content?.length}
+          >
             Thêm
           </Button>
         </div>

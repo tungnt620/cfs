@@ -174,6 +174,8 @@ export type CommentInput = {
   confessionId: Scalars['Int'];
   content?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
+  parentId?: Maybe<Scalars['Int']>;
+  userId?: Maybe<Scalars['UUID']>;
 };
 
 /** Represents an update to a `Comment`. Fields that are set will be updated. */
@@ -182,6 +184,8 @@ export type CommentPatch = {
   confessionId?: Maybe<Scalars['Int']>;
   content?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
+  parentId?: Maybe<Scalars['Int']>;
+  userId?: Maybe<Scalars['UUID']>;
 };
 
 /** A connection to a list of `Comment` values. */
@@ -1725,6 +1729,43 @@ export type AddEmailMutation = (
   )> }
 );
 
+export type CfsDetailPageQueryVariables = Exact<{
+  slug: Scalars['String'];
+}>;
+
+
+export type CfsDetailPageQuery = (
+  { __typename?: 'Query' }
+  & { confessionBySlug?: Maybe<(
+    { __typename?: 'Confession' }
+    & Pick<Confession, 'id' | 'image' | 'slug' | 'title' | 'createdAt' | 'content'>
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'username'>
+    )>, comments: (
+      { __typename?: 'CommentsConnection' }
+      & Pick<CommentsConnection, 'totalCount'>
+      & { nodes: Array<(
+        { __typename?: 'Comment' }
+        & Pick<Comment, 'id' | 'authorName' | 'content' | 'image' | 'parentId' | 'createdAt'>
+        & { user?: Maybe<(
+          { __typename?: 'User' }
+          & Pick<User, 'username'>
+        )> }
+      )> }
+    ), confessionCategories: (
+      { __typename?: 'ConfessionCategoriesConnection' }
+      & { nodes: Array<(
+        { __typename?: 'ConfessionCategory' }
+        & { category?: Maybe<(
+          { __typename?: 'Category' }
+          & Pick<Category, 'image' | 'slug'>
+        )> }
+      )> }
+    ) }
+  )> }
+);
+
 export type ChangePasswordMutationVariables = Exact<{
   oldPassword: Scalars['String'];
   newPassword: Scalars['String'];
@@ -1768,6 +1809,28 @@ export type CreateCfsMutation = (
     & { confession?: Maybe<(
       { __typename?: 'Confession' }
       & Pick<Confession, 'content' | 'id' | 'createdAt' | 'image' | 'slug' | 'title'>
+    )> }
+  )> }
+);
+
+export type CreateCommentMutationVariables = Exact<{
+  confessionId: Scalars['Int'];
+  content: Scalars['String'];
+  parentId?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type CreateCommentMutation = (
+  { __typename?: 'Mutation' }
+  & { createComment?: Maybe<(
+    { __typename?: 'CreateCommentPayload' }
+    & { comment?: Maybe<(
+      { __typename?: 'Comment' }
+      & Pick<Comment, 'id' | 'authorName' | 'content' | 'image' | 'parentId' | 'createdAt'>
+      & { user?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'username'>
+      )> }
     )> }
   )> }
 );
@@ -2260,6 +2323,71 @@ export function useAddEmailMutation(baseOptions?: Apollo.MutationHookOptions<Add
 export type AddEmailMutationHookResult = ReturnType<typeof useAddEmailMutation>;
 export type AddEmailMutationResult = Apollo.MutationResult<AddEmailMutation>;
 export type AddEmailMutationOptions = Apollo.BaseMutationOptions<AddEmailMutation, AddEmailMutationVariables>;
+export const CfsDetailPageDocument = gql`
+    query CfsDetailPage($slug: String!) {
+  confessionBySlug(slug: $slug) {
+    id
+    image
+    slug
+    title
+    createdAt
+    content
+    user {
+      username
+    }
+    comments(first: 500) {
+      nodes {
+        id
+        authorName
+        content
+        image
+        parentId
+        createdAt
+        user {
+          username
+        }
+      }
+      totalCount
+    }
+    confessionCategories(first: 1) {
+      nodes {
+        category {
+          image
+          slug
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useCfsDetailPageQuery__
+ *
+ * To run a query within a React component, call `useCfsDetailPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCfsDetailPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCfsDetailPageQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useCfsDetailPageQuery(baseOptions: Apollo.QueryHookOptions<CfsDetailPageQuery, CfsDetailPageQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CfsDetailPageQuery, CfsDetailPageQueryVariables>(CfsDetailPageDocument, options);
+      }
+export function useCfsDetailPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CfsDetailPageQuery, CfsDetailPageQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CfsDetailPageQuery, CfsDetailPageQueryVariables>(CfsDetailPageDocument, options);
+        }
+export type CfsDetailPageQueryHookResult = ReturnType<typeof useCfsDetailPageQuery>;
+export type CfsDetailPageLazyQueryHookResult = ReturnType<typeof useCfsDetailPageLazyQuery>;
+export type CfsDetailPageQueryResult = Apollo.QueryResult<CfsDetailPageQuery, CfsDetailPageQueryVariables>;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($oldPassword: String!, $newPassword: String!) {
   changePassword(input: {oldPassword: $oldPassword, newPassword: $newPassword}) {
@@ -2373,6 +2501,53 @@ export function useCreateCfsMutation(baseOptions?: Apollo.MutationHookOptions<Cr
 export type CreateCfsMutationHookResult = ReturnType<typeof useCreateCfsMutation>;
 export type CreateCfsMutationResult = Apollo.MutationResult<CreateCfsMutation>;
 export type CreateCfsMutationOptions = Apollo.BaseMutationOptions<CreateCfsMutation, CreateCfsMutationVariables>;
+export const CreateCommentDocument = gql`
+    mutation CreateComment($confessionId: Int!, $content: String!, $parentId: Int) {
+  createComment(
+    input: {comment: {confessionId: $confessionId, content: $content, parentId: $parentId}}
+  ) {
+    comment {
+      id
+      authorName
+      content
+      image
+      parentId
+      createdAt
+      user {
+        username
+      }
+    }
+  }
+}
+    `;
+export type CreateCommentMutationFn = Apollo.MutationFunction<CreateCommentMutation, CreateCommentMutationVariables>;
+
+/**
+ * __useCreateCommentMutation__
+ *
+ * To run a mutation, you first call `useCreateCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCommentMutation, { data, loading, error }] = useCreateCommentMutation({
+ *   variables: {
+ *      confessionId: // value for 'confessionId'
+ *      content: // value for 'content'
+ *      parentId: // value for 'parentId'
+ *   },
+ * });
+ */
+export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOptions<CreateCommentMutation, CreateCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCommentMutation, CreateCommentMutationVariables>(CreateCommentDocument, options);
+      }
+export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
+export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
+export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
 export const CurrentUserAuthenticationsDocument = gql`
     query CurrentUserAuthentications {
   currentUser {

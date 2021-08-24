@@ -1,0 +1,15 @@
+mutation CreateComment($confessionId: Int!, $content: String!, $parentId: Int) {
+  createComment(input: {comment: {confessionId: $confessionId, content: $content, parentId: $parentId}}) {
+    comment {
+      id
+      authorName
+      content
+      image
+      parentId
+      createdAt
+      user {
+        username
+      }
+    }
+  }
+}

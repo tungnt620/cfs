@@ -4,16 +4,18 @@ import style from './style.module.scss';
 import { CloseOutlined } from '@ant-design/icons';
 import { useGoBack } from '@cfs/common';
 
-const CfsDetailHeader = () => {
+const CfsDetailHeader = ({ cat }) => {
   const goBack = useGoBack();
 
   return (
     <div className={style.wrapper}>
-      <Image
-        src="https://confession.vn/wp-content/uploads/2018/01/neuconfessions.jpg"
-        layout="fill"
-        objectFit="cover"
-      />
+      {cat.image && (
+        <Image
+          src={cat.image}
+          layout="fill"
+          objectFit="cover"
+        />
+      )}
 
       <div className="grid grid-rows-2 grid-cols-12 h-full">
         <div />
@@ -23,13 +25,15 @@ const CfsDetailHeader = () => {
           <div />
           <div className="flex items-center flex-col -mt-8">
             <div className="w-16 h-16 relative">
-              <Image
-                className="rounded-full"
-                src="https://confession.vn/wp-content/uploads/2018/01/neuconfessions.jpg"
-                layout="fill"
-              />
+              {cat.image && (
+                <Image
+                  className="rounded-full"
+                  src={cat.image}
+                  layout="fill"
+                />
+              )}
             </div>
-            <div className="font-bold">c/neuconfession</div>
+            <div className="font-bold">c/{cat.slug}</div>
           </div>
 
           <div className="relative">

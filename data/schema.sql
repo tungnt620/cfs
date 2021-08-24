@@ -2772,6 +2772,13 @@ GRANT INSERT(image),UPDATE(image) ON TABLE app_public.comment TO cfs_visitor;
 
 
 --
+-- Name: COLUMN comment.parent_id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(parent_id),UPDATE(parent_id) ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
 -- Name: SEQUENCE comment_id_seq; Type: ACL; Schema: app_public; Owner: -
 --
 

@@ -1,0 +1,35 @@
+query CfsDetailPage($slug: String!) {
+  confessionBySlug(slug: $slug) {
+    id
+    image
+    slug
+    title
+    createdAt
+    content
+    user {
+      username
+    }
+    comments(first: 500) {
+      nodes {
+        id
+        authorName
+        content
+        image
+        parentId
+        createdAt
+        user {
+          username
+        }
+      }
+      totalCount
+    }
+    confessionCategories(first: 1) {
+      nodes {
+        category {
+          image
+          slug
+        }
+      }
+    }
+  }
+}

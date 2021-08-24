@@ -1,66 +1,81 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import CfsDetailHeader from './CfsDetailHeader';
 import CommentSection from '../CommentSection';
 import Image from 'next/image';
-import MoreActions from '../CfsMiniCard/CardHeader/MoreActions';
 import CardActions from '../CfsMiniCard/CardActions';
+import dayjs from 'dayjs';
+import { UserOutlined } from '@ant-design/icons';
+import { Avatar } from 'antd';
 
-const CfsDetail = () => {
+require('dayjs/locale/vi');
+dayjs.locale('vi');
+
+const relativeTime = require('dayjs/plugin/relativeTime');
+dayjs.extend(relativeTime);
+
+const CfsDetail = ({ cfsDetailPageData }) => {
+  const userData = cfsDetailPageData.user;
+  const catData = cfsDetailPageData.confessionCategories.nodes[0].category;
+
+  const isTitleCopyFromContent = useMemo(() => {
+    const content = cfsDetailPageData.content.substring(0, 200);
+    return (
+      content.replace(/[\r\n]+/g, '. ').includes(cfsDetailPageData.title) ||
+      content.replace(/[\r\n]+/g, ' ').includes(cfsDetailPageData.title)
+    );
+  }, [cfsDetailPageData.content, cfsDetailPageData.title]);
+
   return (
     <div>
-      <CfsDetailHeader />
+      <CfsDetailHeader cat={catData} />
       <div className="ml-1 mr-1">
         <header className="flex mt-1 pt-2 pb-2 leading-5">
           <div className="flex items-center">
             <div className="w-6 h-6 mr-1">
-              <Image
-                className="rounded-full w-6 h-6"
-                src="https://confession.vn/wp-content/uploads/2018/01/hustconfession.jpg"
-                width={24}
-                height={24}
-              />
+              <Avatar size="small" icon={<UserOutlined />} />
+              {/*<Image*/}
+              {/*  className="rounded-full w-6 h-6"*/}
+              {/*  src={catData.image}*/}
+              {/*  width={24}*/}
+              {/*  height={24}*/}
+              {/*/>*/}
             </div>
 
-            <div className="mr-4 text-sm font-medium">tung</div>
+            <div className="mr-4 text-sm font-medium">{userData.username}</div>
 
             <div>
-              <span className="text-sm opacity-40">12h</span>
+              <span className="text-sm opacity-40 whitespace-nowrap">
+                {dayjs(cfsDetailPageData.createdAt).fromNow()}
+              </span>
             </div>
           </div>
-          <div className="flex w-full justify-end">
-            <MoreActions />
-          </div>
+          <div className="flex w-full justify-end">{/*<MoreActions />*/}</div>
         </header>
 
         <div className="font-medium text-lg">
-          #No1718 JOB KHÔNG LƯƠNG. "Chào tất cả mọi người. Mình là gái khoa Kinh
-          tế, hôm na
+          {!isTitleCopyFromContent && cfsDetailPageData.title}
         </div>
 
         <div className="relative w-full h-full mt-2">
-          <Image
-            src="https://confession.vn/wp-content/uploads/2018/01/neuconfessions.jpg"
-            layout="fill"
-            objectFit="cover"
-          />
+          {cfsDetailPageData.image && (
+            <Image
+              src={cfsDetailPageData.image}
+              layout="fill"
+              objectFit="cover"
+            />
+          )}
         </div>
 
-        <div className="pt-2 mb-4">
-          #No1718 JOB KHÔNG LƯƠNG "Chào tất cả mọi người. Mình là gái khoa Kinh
-          tế, hôm nay mạnh dạn viết cfs với mong muốn tìm một anh người yêu Mình
-          cao m6, cũng được gọi là xinh xắn, tính mình rất dễ gần và cởi mở.
-          Mình cần tìm một mối quan hệ tình cảm nghiêm túc và lâu dài. Mình thì
-          thích một bạn nam: cao hơn mình, tâm lý, có kinh tế càng tốt ^^ Bạn
-          nào thấy được cmt bên dưới mình addfr nha. Love all " ________________
-          #Pin nổ pro5 chốt đơn liền mấy ông ơiii
+        <div className="pt-2 mb-4 whitespace-pre-line">
+          {cfsDetailPageData.content}
         </div>
 
         <div className="mb-4">
-          <CardActions />
+          <CardActions cfs={cfsDetailPageData} />
         </div>
       </div>
 
-      <CommentSection />
+      <CommentSection comments={cfsDetailPageData.comments.nodes} cfsId={cfsDetailPageData.id} />
     </div>
   );
 };
