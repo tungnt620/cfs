@@ -1,0 +1,15 @@
+mutation UpdateComment($id: Int!, $content: String!, $image: String) {
+  updateComment(input: {patch: {content: $content, image: $image}, id: $id}) {
+    comment {
+      id
+      authorName
+      content
+      image
+      parentId
+      createdAt
+      user {
+        username
+      }
+    }
+  }
+}

@@ -1,9 +1,14 @@
 import React, { useCallback, useState } from 'react';
-import { Comment, Tooltip } from 'antd';
-import CommentEditor from './CommentEditor';
+import { Button, Comment, Tooltip } from 'antd';
+import CreateCommentEditor from './CreateCommentEditor';
 import { UserOutlined } from '@ant-design/icons';
 import Vote from '../CfsMiniCard/CardActions/Vote';
 import dayjs from 'dayjs';
+import Image from 'next/image';
+import style from './CommentSection.module.scss';
+import { useReactiveVar } from '@apollo/react-hooks';
+import { setCurrentUser } from '../../../../helper/src/reactiveVars';
+import UpdateCommentEditor from './UpdateCommentEditor';
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');
@@ -12,7 +17,9 @@ const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
 const NestedComment = ({ comment, idChildrenComments, cfsId }) => {
+  const [isEditMode, setIsEditMode] = useState(false);
   const [isShowCommentEditor, setIsShowCommentEditor] = useState(false);
+  const currentUser = useReactiveVar(setCurrentUser);
 
   const toggleShowComment = useCallback(() => {
     setIsShowCommentEditor((prev) => !prev);
@@ -24,14 +31,39 @@ const NestedComment = ({ comment, idChildrenComments, cfsId }) => {
       actions={[
         <div className="flex items-center">
           <Vote voteNo={0} />
-          <span key="comment-nested-reply-to" onClick={toggleShowComment}>
+          <span
+            key="comment-nested-reply-to"
+            className="cursor-pointer"
+            onClick={toggleShowComment}
+          >
             Trả lời
           </span>
+          {currentUser?.username && currentUser?.username === comment.user?.username && (
+            <Button onClick={() => setIsEditMode((prev) => !prev)} type="link">
+              Sửa
+            </Button>
+          )}
         </div>,
       ]}
       author={<span>{comment.user?.username ?? comment.authorName}</span>}
       avatar={<UserOutlined className="text-lg" />}
-      content={<p>{comment.content}</p>}
+      content={
+        isEditMode ? (
+          <UpdateCommentEditor
+            comment={comment}
+            onClose={() => setIsEditMode(false)}
+          />
+        ) : (
+          <>
+            {comment.image && (
+              <div className={`relative w-full ${style.minHeight200px}`}>
+                <Image src={comment.image} layout="fill" objectFit="contain" />
+              </div>
+            )}
+            {comment.content}
+          </>
+        )
+      }
       datetime={
         <Tooltip title={dayjs(comment.createdAt).format('YYYY-MM-DD HH:mm:ss')}>
           <span>{dayjs(comment.createdAt).fromNow()}</span>
@@ -46,7 +78,7 @@ const NestedComment = ({ comment, idChildrenComments, cfsId }) => {
         />
       ))}
       {isShowCommentEditor && (
-        <CommentEditor
+        <CreateCommentEditor
           cfsId={cfsId}
           parentId={comment.id}
           onClose={toggleShowComment}

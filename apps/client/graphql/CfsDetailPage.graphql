@@ -9,7 +9,7 @@ query CfsDetailPage($slug: String!) {
     user {
       username
     }
-    comments(first: 500) {
+    comments(first: 500, orderBy: ID_DESC) {
       nodes {
         id
         authorName

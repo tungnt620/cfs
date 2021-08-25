@@ -1,35 +1,34 @@
 import React, { useCallback, useState } from 'react';
 import { Form, Button, Input, message } from 'antd';
-import { useCreateCommentMutation } from '@cfs/graphql';
-import { setNewCommentCreatedByMe } from '../../../../helper/src/reactiveVars';
+import { useUpdateCommentMutation } from '@cfs/graphql';
 
 const { TextArea } = Input;
 
-const CommentEditor = ({ onClose, cfsId, parentId }) => {
-  const [content, setContent] = useState('');
-  const [createComment, { loading }] = useCreateCommentMutation();
+const UpdateCommentEditor = ({ comment, onClose }) => {
+  const [content, setContent] = useState(comment.content);
+  const [updateComment, { loading }] = useUpdateCommentMutation();
 
   const clear = useCallback(() => setContent(''), []);
   const onChangeWrap = useCallback((e) => setContent(e.target.value), []);
 
   const addNewComment = useCallback(() => {
-    createComment({
+    updateComment({
       variables: {
-        confessionId: cfsId,
+        id: comment.id,
         content,
-        parentId,
+        image: '',
       },
     }).then(
       ({
         data: {
-          createComment: { comment },
+          updateComment: { comment: updatedComment },
         },
       }) => {
-        message.success('Bình luận của bạn đã được thêm');
-        setNewCommentCreatedByMe(comment);
+        message.success('Bình luận của bạn đã được cập nhật');
+        onClose();
       }
     );
-  }, [cfsId, content, createComment, parentId]);
+  }, [comment.id, content, onClose, updateComment]);
 
   return (
     <div className="p-2">
@@ -60,9 +59,9 @@ const CommentEditor = ({ onClose, cfsId, parentId }) => {
             onClick={addNewComment}
             type="primary"
             size="large"
-            disabled={!content?.length}
+            disabled={!content?.length || content === comment.content}
           >
-            Thêm
+            Cập nhật
           </Button>
         </div>
       </Form.Item>
@@ -70,4 +69,4 @@ const CommentEditor = ({ onClose, cfsId, parentId }) => {
   );
 };
 
-export default CommentEditor;
+export default UpdateCommentEditor;

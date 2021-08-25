@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import CommentEditor from './CommentEditor';
+import CreateCommentEditor from './CreateCommentEditor';
 import NestedComment from './NestedComment';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setNewCommentCreatedByMe } from '../../../../helper/src/reactiveVars';
@@ -10,7 +10,7 @@ const CommentSection = ({ comments, cfsId }) => {
   const idChildrenComments = useMemo(() => {
     const data =
       allComments?.reduce((acc, comment) => {
-        if (comment.parentId) {
+        if (comment?.parentId) {
           acc[comment.parentId] = [...(acc[comment.parentId] ?? []), comment];
         }
         return acc;
@@ -31,16 +31,19 @@ const CommentSection = ({ comments, cfsId }) => {
   }, [comments]);
 
   useEffect(() => {
-    setAllComments((prev) => [newCommentCreatedByMe, ...prev]);
+    if (newCommentCreatedByMe) {
+      setAllComments((prev) => [newCommentCreatedByMe, ...prev]);
+    }
   }, [comments, newCommentCreatedByMe]);
 
   return (
     <div>
-      <CommentEditor cfsId={cfsId} />
+      <CreateCommentEditor cfsId={cfsId} />
       {allComments
-        ?.filter((comment) => !comment.parentId)
+        ?.filter((comment) => !comment?.parentId)
         ?.map((comment) => (
           <NestedComment
+            key={comment.id}
             comment={comment}
             idChildrenComments={idChildrenComments}
             cfsId={cfsId}

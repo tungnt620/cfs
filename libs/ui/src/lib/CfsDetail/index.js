@@ -6,6 +6,7 @@ import CardActions from '../CfsMiniCard/CardActions';
 import dayjs from 'dayjs';
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
+import style from './CfsDetail.module.scss';
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');
@@ -56,12 +57,12 @@ const CfsDetail = ({ cfsDetailPageData }) => {
           {!isTitleCopyFromContent && cfsDetailPageData.title}
         </div>
 
-        <div className="relative w-full h-full mt-2">
+        <div className={`relative w-full mt-2 ${style.minHeight300px}`}>
           {cfsDetailPageData.image && (
             <Image
               src={cfsDetailPageData.image}
               layout="fill"
-              objectFit="cover"
+              objectFit="contain"
             />
           )}
         </div>
@@ -75,7 +76,10 @@ const CfsDetail = ({ cfsDetailPageData }) => {
         </div>
       </div>
 
-      <CommentSection comments={cfsDetailPageData.comments.nodes} cfsId={cfsDetailPageData.id} />
+      <CommentSection
+        comments={cfsDetailPageData.comments.nodes}
+        cfsId={cfsDetailPageData.id}
+      />
     </div>
   );
 };
