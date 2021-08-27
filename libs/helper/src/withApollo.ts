@@ -7,7 +7,6 @@ import {
 import { onError } from '@apollo/client/link/error';
 import { getDataFromTree } from '@apollo/client/react/ssr';
 import withApolloBase from 'next-with-apollo';
-import { offsetLimitPagination } from '@apollo/client/utilities';
 
 const mainLink = new HttpLink({
   uri: `${process.env.NEXT_PUBLIC_API_URL}/graphql`,
@@ -36,6 +35,11 @@ export const withApollo = withApolloBase(
             queryType: true,
             fields: {
               getCfsByCat: {
+                // Don't cache separate results based on
+                // any of this field's arguments.
+                keyArgs: false,
+              },
+              getCfsByCatSlug: {
                 // Don't cache separate results based on
                 // any of this field's arguments.
                 keyArgs: false,

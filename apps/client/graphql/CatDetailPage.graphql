@@ -1,0 +1,6 @@
+query CatDetailPage($slug: String!) {
+  categoryBySlug(slug: $slug) {
+    image
+    slug
+  }
+}

@@ -1,0 +1,7 @@
+query GetCfsByCatSlug($catSlug: String!, $offset: Int!) {
+  getCfsByCatSlug(catSlug: $catSlug, offset: $offset, first: 10) {
+    nodes {
+      ...HomePage_Confession
+    }
+  }
+}

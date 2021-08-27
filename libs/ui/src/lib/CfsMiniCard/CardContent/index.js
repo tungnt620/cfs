@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Image as AntdImage } from 'antd';
 import styles from './CardContent.module.scss';
 
 const CardContent = ({ cfs }) => {
@@ -10,8 +11,8 @@ const CardContent = ({ cfs }) => {
   return (
     <>
       <div className="flex justify-between mt-2 mb-2 items-center">
-        <Link href={slug}>
-          <a>
+        <Link href={`/${slug}`}>
+          <a className='w-full'>
             <div className="whitespace-normal font-medium leading-5 flex items-center">
               {title}
             </div>
@@ -33,17 +34,9 @@ const CardContent = ({ cfs }) => {
         )}
       </div>
 
-      {expandedThumbnail && (
-        <div style={{ position: 'relative', width: '100%', minHeight: 300 }}>
-          <Image
-            className="mt-2 mb-2"
-            src={image}
-            layout="fill"
-            objectFit="contain"
-          />
-        </div>
-      )}
+      {expandedThumbnail && <AntdImage src={image} />}
     </>
   );
 };
+
 export default CardContent;

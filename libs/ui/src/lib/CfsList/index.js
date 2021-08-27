@@ -12,7 +12,7 @@ export const CfsList = ({ cfsList, fetchMore, selectedCat }) => {
       fetchMore({
         variables: {
           offset: newOffset,
-          catId: parseInt(selectedCat),
+          catId: isNaN(selectedCat) ? undefined : parseInt(selectedCat),
         },
       });
     },

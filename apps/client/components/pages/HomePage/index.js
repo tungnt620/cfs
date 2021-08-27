@@ -32,7 +32,7 @@ const HomePage = () => {
   }, [fetchMore, newCfsCreatedByMe]);
 
   return (
-    <div className="ml-4 mr-4 mb-6 bg-color1">
+    <div className="ml-2 mr-2 mb-6 bg-color1">
       <div className="block mt-4 bg-white pb-4">
         <div className={styles.homePageListMenu}>
           {/*<Dropdown btnText={'Chọn'} />*/}

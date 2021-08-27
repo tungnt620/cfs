@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Avatar, Button, Dropdown, Menu } from 'antd';
 import LoginPopup from '../LoginPopup';
-import { useLogoutMutation, useSharedLazyQuery  } from '@cfs/graphql';
+import { useLogoutMutation, useSharedLazyQuery } from '@cfs/graphql';
 import { useApolloClient, useReactiveVar } from '@apollo/react-hooks';
 import { preventDefault } from '@cfs/helper';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
@@ -26,8 +26,8 @@ const HeaderUI = () => {
   const registerPopupVisible = useReactiveVar(showRegisterPopup);
 
   useEffect(() => {
-    getShareData()
-  }, [getShareData])
+    getShareData();
+  }, [getShareData]);
 
   useEffect(() => {
     if (shareData?.currentUser) setCurrentUser(shareData.currentUser);
@@ -117,17 +117,12 @@ const HeaderUI = () => {
       >
         <Menu onClick={toggleMenu} className="text-center">
           <Menu.Item>
-            <Link href="/cac-danh-muc">
-              <a>Các danh mục</a>
+            <Link href="/all-categories">
+              <a>Tất cả mục confession con</a>
             </Link>
           </Menu.Item>
           <Menu.Item>
-            <Link href="/cac-danh-muc">
-              <a>Nổi bậc</a>
-            </Link>
-          </Menu.Item>
-          <Menu.Item>
-            <Link href="/cac-danh-muc">
+            <Link href="/">
               <a>Mới</a>
             </Link>
           </Menu.Item>

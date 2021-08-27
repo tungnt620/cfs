@@ -1,0 +1,13 @@
+query AllCategoriesPage {
+  categories(first: 500) {
+    nodes {
+      id
+      image
+      name
+      slug
+      confessionCategories {
+        totalCount
+      }
+    }
+  }
+}

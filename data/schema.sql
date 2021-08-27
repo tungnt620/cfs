@@ -1050,6 +1050,26 @@ $$;
 
 
 --
+-- Name: get_cfs_by_cat_slug(character varying); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.get_cfs_by_cat_slug(cat_slug character varying) RETURNS SETOF app_public.confession
+    LANGUAGE sql STABLE
+    AS $$
+	SELECT
+		c.*
+	FROM
+		app_public.confession c
+	LEFT JOIN app_public.confession_category cc ON c.id = cc.confession_id
+	LEFT JOIN app_public.category cat ON cat.id = cc.category_id
+WHERE
+	cat.slug = cat_slug
+ORDER BY
+	c.id DESC;
+$$;
+
+
+--
 -- Name: logout(); Type: FUNCTION; Schema: app_public; Owner: -
 --
 
@@ -1768,6 +1788,14 @@ ALTER TABLE ONLY app_public.category
 
 
 --
+-- Name: category category_slug_key; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.category
+    ADD CONSTRAINT category_slug_key UNIQUE (slug);
+
+
+--
 -- Name: comment comment_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
 --
 
@@ -1880,6 +1908,13 @@ CREATE INDEX confession_category_category_id_index ON app_public.confession_cate
 --
 
 CREATE INDEX confession_category_confession_id_index ON app_public.confession_category USING btree (confession_id);
+
+
+--
+-- Name: idx_category_slug; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX idx_category_slug ON app_public.category USING btree (slug);
 
 
 --
@@ -2597,6 +2632,14 @@ GRANT ALL ON FUNCTION app_public.forgot_password(email public.citext) TO cfs_vis
 
 REVOKE ALL ON FUNCTION app_public.get_cfs_by_cat(cat_id integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION app_public.get_cfs_by_cat(cat_id integer) TO cfs_visitor;
+
+
+--
+-- Name: FUNCTION get_cfs_by_cat_slug(cat_slug character varying); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.get_cfs_by_cat_slug(cat_slug character varying) FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.get_cfs_by_cat_slug(cat_slug character varying) TO cfs_visitor;
 
 
 --

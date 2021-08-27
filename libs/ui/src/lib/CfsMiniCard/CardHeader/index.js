@@ -1,8 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import FollowBtn from './FollowBtn';
-import MoreActions from './MoreActions';
 import emptyImage from '../../images/empty.png';
 import dayjs from 'dayjs';
 
@@ -13,42 +11,45 @@ const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
 const CardHeader = ({ cfs }) => {
+  const catData = cfs?.confessionCategories?.nodes?.[0]?.category ?? {};
+
   return (
     <header className="flex mt-1 pt-2 leading-5">
       <div className="flex items-center">
-        {/*<Link href="/">*/}
-        <div className="w-6 h-6 mr-1">
-          <Image
-            className="rounded-full w-6 h-6"
-            src={
-              cfs?.confessionCategories?.nodes?.[0]?.category.image ??
-              emptyImage
-            }
-            width={24}
-            height={24}
-          />
-        </div>
-        {/*</Link>*/}
+        <Link href={`/cat/${catData.slug}`}>
+          <a>
+            <div className="w-6 h-6 mr-1">
+              <Image
+                className="rounded-full w-6 h-6"
+                src={catData.image ?? emptyImage}
+                width={24}
+                height={24}
+              />
+            </div>
+          </a>
+        </Link>
 
-        {/*<Link href="/">*/}
-        <div className="mr-2 text-sm font-medium">
-          c/{cfs?.confessionCategories?.nodes?.[0]?.category.slug}
-        </div>
-        {/*</Link>*/}
+        <Link href={`/cat/${catData.slug}`}>
+          <a>
+            <div className="mr-2 text-sm font-medium whitespace-nowrap">
+              c/{catData.slug}
+            </div>
+          </a>
+        </Link>
 
         {/*<FollowBtn />*/}
 
-        {/*<Link href="/">*/}
-        <div>
-          <span className="text-sm opacity-40">
-            {dayjs(cfs?.createdAt).fromNow()}
-          </span>
-        </div>
-        {/*</Link>*/}
+        <Link href={`/${cfs?.slug}`}>
+          <a>
+            <div>
+              <span className="text-sm opacity-40 whitespace-nowrap">
+                {dayjs(cfs?.createdAt).fromNow()}
+              </span>
+            </div>
+          </a>
+        </Link>
       </div>
-      <div className="flex w-full justify-end">
-        {/*<MoreActions />*/}
-      </div>
+      <div className="flex w-full justify-end">{/*<MoreActions />*/}</div>
     </header>
   );
 };

@@ -51,7 +51,9 @@ export enum CategoriesOrderBy {
   IdDesc = 'ID_DESC',
   Natural = 'NATURAL',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  SlugAsc = 'SLUG_ASC',
+  SlugDesc = 'SLUG_DESC'
 }
 
 export type Category = {
@@ -84,6 +86,8 @@ export type CategoryConfessionCategoriesArgs = {
 export type CategoryCondition = {
   /** Checks for equality with the object’s `id` field. */
   id?: Maybe<Scalars['Int']>;
+  /** Checks for equality with the object’s `slug` field. */
+  slug?: Maybe<Scalars['String']>;
 };
 
 /** An input for mutations affecting `Category` */
@@ -1092,6 +1096,7 @@ export type Query = {
   /** Reads and enables pagination through a set of `Category`. */
   categories?: Maybe<CategoriesConnection>;
   category?: Maybe<Category>;
+  categoryBySlug?: Maybe<Category>;
   comment?: Maybe<Comment>;
   /** Reads and enables pagination through a set of `Comment`. */
   comments?: Maybe<CommentsConnection>;
@@ -1106,6 +1111,8 @@ export type Query = {
   currentUser?: Maybe<User>;
   /** Reads and enables pagination through a set of `Confession`. */
   getCfsByCat?: Maybe<ConfessionsConnection>;
+  /** Reads and enables pagination through a set of `Confession`. */
+  getCfsByCatSlug?: Maybe<ConfessionsConnection>;
   user?: Maybe<User>;
   userAuthentication?: Maybe<UserAuthentication>;
   userByUsername?: Maybe<User>;
@@ -1128,6 +1135,12 @@ export type QueryCategoriesArgs = {
 /** The root query type which gives access points into the data universe. */
 export type QueryCategoryArgs = {
   id: Scalars['Int'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryCategoryBySlugArgs = {
+  slug: Scalars['String'];
 };
 
 
@@ -1197,6 +1210,17 @@ export type QueryGetCfsByCatArgs = {
   after?: Maybe<Scalars['Cursor']>;
   before?: Maybe<Scalars['Cursor']>;
   catId: Scalars['Int'];
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryGetCfsByCatSlugArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  catSlug: Scalars['String'];
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
@@ -1729,6 +1753,37 @@ export type AddEmailMutation = (
   )> }
 );
 
+export type AllCategoriesPageQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllCategoriesPageQuery = (
+  { __typename?: 'Query' }
+  & { categories?: Maybe<(
+    { __typename?: 'CategoriesConnection' }
+    & { nodes: Array<(
+      { __typename?: 'Category' }
+      & Pick<Category, 'id' | 'image' | 'name' | 'slug'>
+      & { confessionCategories: (
+        { __typename?: 'ConfessionCategoriesConnection' }
+        & Pick<ConfessionCategoriesConnection, 'totalCount'>
+      ) }
+    )> }
+  )> }
+);
+
+export type CatDetailPageQueryVariables = Exact<{
+  slug: Scalars['String'];
+}>;
+
+
+export type CatDetailPageQuery = (
+  { __typename?: 'Query' }
+  & { categoryBySlug?: Maybe<(
+    { __typename?: 'Category' }
+    & Pick<Category, 'image' | 'slug'>
+  )> }
+);
+
 export type CfsDetailPageQueryVariables = Exact<{
   slug: Scalars['String'];
 }>;
@@ -1930,6 +1985,23 @@ export type GetCategoriesQuery = (
     & { nodes: Array<(
       { __typename?: 'Category' }
       & Pick<Category, 'id' | 'name'>
+    )> }
+  )> }
+);
+
+export type GetCfsByCatSlugQueryVariables = Exact<{
+  catSlug: Scalars['String'];
+  offset: Scalars['Int'];
+}>;
+
+
+export type GetCfsByCatSlugQuery = (
+  { __typename?: 'Query' }
+  & { getCfsByCatSlug?: Maybe<(
+    { __typename?: 'ConfessionsConnection' }
+    & { nodes: Array<(
+      { __typename?: 'Confession' }
+      & HomePage_ConfessionFragment
     )> }
   )> }
 );
@@ -2345,6 +2417,84 @@ export function useAddEmailMutation(baseOptions?: Apollo.MutationHookOptions<Add
 export type AddEmailMutationHookResult = ReturnType<typeof useAddEmailMutation>;
 export type AddEmailMutationResult = Apollo.MutationResult<AddEmailMutation>;
 export type AddEmailMutationOptions = Apollo.BaseMutationOptions<AddEmailMutation, AddEmailMutationVariables>;
+export const AllCategoriesPageDocument = gql`
+    query AllCategoriesPage {
+  categories(first: 500) {
+    nodes {
+      id
+      image
+      name
+      slug
+      confessionCategories {
+        totalCount
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useAllCategoriesPageQuery__
+ *
+ * To run a query within a React component, call `useAllCategoriesPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllCategoriesPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAllCategoriesPageQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllCategoriesPageQuery(baseOptions?: Apollo.QueryHookOptions<AllCategoriesPageQuery, AllCategoriesPageQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AllCategoriesPageQuery, AllCategoriesPageQueryVariables>(AllCategoriesPageDocument, options);
+      }
+export function useAllCategoriesPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllCategoriesPageQuery, AllCategoriesPageQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AllCategoriesPageQuery, AllCategoriesPageQueryVariables>(AllCategoriesPageDocument, options);
+        }
+export type AllCategoriesPageQueryHookResult = ReturnType<typeof useAllCategoriesPageQuery>;
+export type AllCategoriesPageLazyQueryHookResult = ReturnType<typeof useAllCategoriesPageLazyQuery>;
+export type AllCategoriesPageQueryResult = Apollo.QueryResult<AllCategoriesPageQuery, AllCategoriesPageQueryVariables>;
+export const CatDetailPageDocument = gql`
+    query CatDetailPage($slug: String!) {
+  categoryBySlug(slug: $slug) {
+    image
+    slug
+  }
+}
+    `;
+
+/**
+ * __useCatDetailPageQuery__
+ *
+ * To run a query within a React component, call `useCatDetailPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCatDetailPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCatDetailPageQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useCatDetailPageQuery(baseOptions: Apollo.QueryHookOptions<CatDetailPageQuery, CatDetailPageQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CatDetailPageQuery, CatDetailPageQueryVariables>(CatDetailPageDocument, options);
+      }
+export function useCatDetailPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CatDetailPageQuery, CatDetailPageQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CatDetailPageQuery, CatDetailPageQueryVariables>(CatDetailPageDocument, options);
+        }
+export type CatDetailPageQueryHookResult = ReturnType<typeof useCatDetailPageQuery>;
+export type CatDetailPageLazyQueryHookResult = ReturnType<typeof useCatDetailPageLazyQuery>;
+export type CatDetailPageQueryResult = Apollo.QueryResult<CatDetailPageQuery, CatDetailPageQueryVariables>;
 export const CfsDetailPageDocument = gql`
     query CfsDetailPage($slug: String!) {
   confessionBySlug(slug: $slug) {
@@ -2758,6 +2908,44 @@ export function useGetCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetCategoriesQueryHookResult = ReturnType<typeof useGetCategoriesQuery>;
 export type GetCategoriesLazyQueryHookResult = ReturnType<typeof useGetCategoriesLazyQuery>;
 export type GetCategoriesQueryResult = Apollo.QueryResult<GetCategoriesQuery, GetCategoriesQueryVariables>;
+export const GetCfsByCatSlugDocument = gql`
+    query GetCfsByCatSlug($catSlug: String!, $offset: Int!) {
+  getCfsByCatSlug(catSlug: $catSlug, offset: $offset, first: 10) {
+    nodes {
+      ...HomePage_Confession
+    }
+  }
+}
+    ${HomePage_ConfessionFragmentDoc}`;
+
+/**
+ * __useGetCfsByCatSlugQuery__
+ *
+ * To run a query within a React component, call `useGetCfsByCatSlugQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCfsByCatSlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCfsByCatSlugQuery({
+ *   variables: {
+ *      catSlug: // value for 'catSlug'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useGetCfsByCatSlugQuery(baseOptions: Apollo.QueryHookOptions<GetCfsByCatSlugQuery, GetCfsByCatSlugQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCfsByCatSlugQuery, GetCfsByCatSlugQueryVariables>(GetCfsByCatSlugDocument, options);
+      }
+export function useGetCfsByCatSlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCfsByCatSlugQuery, GetCfsByCatSlugQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCfsByCatSlugQuery, GetCfsByCatSlugQueryVariables>(GetCfsByCatSlugDocument, options);
+        }
+export type GetCfsByCatSlugQueryHookResult = ReturnType<typeof useGetCfsByCatSlugQuery>;
+export type GetCfsByCatSlugLazyQueryHookResult = ReturnType<typeof useGetCfsByCatSlugLazyQuery>;
+export type GetCfsByCatSlugQueryResult = Apollo.QueryResult<GetCfsByCatSlugQuery, GetCfsByCatSlugQueryVariables>;
 export const HomePageDocument = gql`
     query HomePage($offset: Int = 0, $catId: Int = 0) {
   getCfsByCat(catId: $catId, offset: $offset, first: 10) {

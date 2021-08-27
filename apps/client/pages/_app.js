@@ -8,7 +8,7 @@ import '../../../libs/ui/src/lib/styles/global.scss';
 import MainLayout from '../components/Layout';
 import { withApollo } from '@cfs/helper';
 
-const noLayoutComponents = ['NewCfs'];
+const noLayoutComponents = ['NewCfs', 'AllCategories'];
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {

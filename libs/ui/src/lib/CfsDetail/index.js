@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import CfsDetailHeader from './CfsDetailHeader';
 import CommentSection from '../CommentSection';
 import Image from 'next/image';
 import CardActions from '../CfsMiniCard/CardActions';
 import dayjs from 'dayjs';
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar } from 'antd';
+import { Avatar, Image as AntdImage } from 'antd';
 import style from './CfsDetail.module.scss';
 
 require('dayjs/locale/vi');
@@ -15,6 +15,7 @@ const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
 const CfsDetail = ({ cfsDetailPageData }) => {
+  const [expandedThumbnail, setExpandedThumbnail] = useState(false);
   const userData = cfsDetailPageData.user;
   const catData = cfsDetailPageData.confessionCategories.nodes[0].category;
 
@@ -34,12 +35,6 @@ const CfsDetail = ({ cfsDetailPageData }) => {
           <div className="flex items-center">
             <div className="w-6 h-6 mr-1">
               <Avatar size="small" icon={<UserOutlined />} />
-              {/*<Image*/}
-              {/*  className="rounded-full w-6 h-6"*/}
-              {/*  src={catData.image}*/}
-              {/*  width={24}*/}
-              {/*  height={24}*/}
-              {/*/>*/}
             </div>
 
             <div className="mr-4 text-sm font-medium">{userData.username}</div>
@@ -57,15 +52,20 @@ const CfsDetail = ({ cfsDetailPageData }) => {
           {!isTitleCopyFromContent && cfsDetailPageData.title}
         </div>
 
-        <div className={`relative w-full mt-2 ${style.minHeight300px}`}>
-          {cfsDetailPageData.image && (
-            <Image
-              src={cfsDetailPageData.image}
-              layout="fill"
-              objectFit="contain"
-            />
-          )}
-        </div>
+        {expandedThumbnail ? (
+          <AntdImage src={cfsDetailPageData.image} />
+        ) : (
+          cfsDetailPageData.image && (
+            <div className={`relative w-full mt-2 ${style.minHeight300px}`}>
+              <Image
+                src={cfsDetailPageData.image}
+                layout="fill"
+                objectFit="contain"
+                onClick={() => setExpandedThumbnail(true)}
+              />
+            </div>
+          )
+        )}
 
         <div className="pt-2 mb-4 whitespace-pre-line">
           {cfsDetailPageData.content}
