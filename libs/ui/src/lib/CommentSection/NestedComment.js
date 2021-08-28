@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Button, Comment, Tooltip } from 'antd';
+import { Button, Comment, Image as AntdImage, Tooltip } from 'antd';
 import CreateCommentEditor from './CreateCommentEditor';
 import { UserOutlined } from '@ant-design/icons';
 import Vote from '../CfsMiniCard/CardActions/Vote';
@@ -9,6 +9,7 @@ import style from './CommentSection.module.scss';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setCurrentUser } from '../../../../helper/src/reactiveVars';
 import UpdateCommentEditor from './UpdateCommentEditor';
+import useBooleanToggle from '../../../../helper/src/hooks';
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');
@@ -17,6 +18,7 @@ const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
 const NestedComment = ({ comment, idChildrenComments, cfsId }) => {
+  const [expandedThumbnail, toggleExpandedThumbnail] = useBooleanToggle(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [isShowCommentEditor, setIsShowCommentEditor] = useState(false);
   const currentUser = useReactiveVar(setCurrentUser);
@@ -38,11 +40,15 @@ const NestedComment = ({ comment, idChildrenComments, cfsId }) => {
           >
             Trả lời
           </span>
-          {currentUser?.username && currentUser?.username === comment.user?.username && (
-            <Button onClick={() => setIsEditMode((prev) => !prev)} type="link">
-              Sửa
-            </Button>
-          )}
+          {currentUser?.username &&
+            currentUser?.username === comment.user?.username && (
+              <Button
+                onClick={() => setIsEditMode((prev) => !prev)}
+                type="link"
+              >
+                Sửa
+              </Button>
+            )}
         </div>,
       ]}
       author={<span>{comment.user?.username ?? comment.authorName}</span>}
@@ -55,10 +61,22 @@ const NestedComment = ({ comment, idChildrenComments, cfsId }) => {
           />
         ) : (
           <>
-            {comment.image && (
-              <div className={`relative w-full ${style.minHeight200px}`}>
-                <Image src={comment.image} layout="fill" objectFit="contain" />
+            {expandedThumbnail ? (
+              <div className="flex items-center justify-center">
+                <AntdImage src={comment.image} />
               </div>
+            ) : (
+              comment.image && (
+                <div className={`relative w-full ${style.minHeight200px}`}>
+                  <Image
+                    className="cursor-pointer"
+                    src={comment.image}
+                    layout="fill"
+                    objectFit="contain"
+                    onClick={toggleExpandedThumbnail}
+                  />
+                </div>
+              )
             )}
             {comment.content}
           </>

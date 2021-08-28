@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo,  } from 'react';
 import CfsDetailHeader from './CfsDetailHeader';
 import CommentSection from '../CommentSection';
 import Image from 'next/image';
@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Image as AntdImage } from 'antd';
 import style from './CfsDetail.module.scss';
+import useBooleanToggle from '../../../../helper/src/hooks';
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');
@@ -15,7 +16,7 @@ const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
 const CfsDetail = ({ cfsDetailPageData }) => {
-  const [expandedThumbnail, setExpandedThumbnail] = useState(false);
+  const [expandedThumbnail, toggleExpandedThumbnail] = useBooleanToggle(false);
   const userData = cfsDetailPageData.user;
   const catData = cfsDetailPageData.confessionCategories.nodes[0].category;
 
@@ -53,7 +54,9 @@ const CfsDetail = ({ cfsDetailPageData }) => {
         </div>
 
         {expandedThumbnail ? (
-          <AntdImage src={cfsDetailPageData.image} />
+          <div className="flex items-center justify-center">
+            <AntdImage src={cfsDetailPageData.image} />
+          </div>
         ) : (
           cfsDetailPageData.image && (
             <div className={`relative w-full mt-2 ${style.minHeight300px}`}>
@@ -61,7 +64,7 @@ const CfsDetail = ({ cfsDetailPageData }) => {
                 src={cfsDetailPageData.image}
                 layout="fill"
                 objectFit="contain"
-                onClick={() => setExpandedThumbnail(true)}
+                onClick={toggleExpandedThumbnail}
               />
             </div>
           )

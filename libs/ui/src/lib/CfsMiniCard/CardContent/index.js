@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Image as AntdImage } from 'antd';
 import styles from './CardContent.module.scss';
+import useBooleanToggle from '../../../../../helper/src/hooks';
 
 const CardContent = ({ cfs }) => {
   const { image, slug, title } = cfs;
-  const [expandedThumbnail, setExpandedThumbnail] = useState(false);
+  const [expandedThumbnail, toggleExpandedThumbnail] = useBooleanToggle(false);
 
   return (
     <>
       <div className="flex justify-between mt-2 mb-2 items-center">
         <Link href={`/${slug}`}>
-          <a className='w-full'>
+          <a className="w-full">
             <div className="whitespace-normal font-medium leading-5 flex items-center">
               {title}
             </div>
@@ -26,9 +27,7 @@ const CardContent = ({ cfs }) => {
               width={60}
               height={60}
               layout="intrinsic"
-              onClick={() => {
-                setExpandedThumbnail((prev) => !prev);
-              }}
+              onClick={toggleExpandedThumbnail}
             />
           </div>
         )}
