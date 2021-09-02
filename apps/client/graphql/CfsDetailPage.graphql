@@ -23,6 +23,12 @@ query CfsDetailPage($slug: String!) {
         image
         parentId
         createdAt
+        totalReaction
+        userCommentReactions {
+          nodes {
+            reactType
+          }
+        }
         user {
           username
         }

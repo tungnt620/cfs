@@ -32,7 +32,11 @@ const NestedComment = ({ comment, idChildrenComments, cfsId }) => {
       className="custom-ant-comments"
       actions={[
         <div className="flex items-center">
-          <Vote voteNo={0} />
+          <Vote
+            voteNo={comment.totalReaction}
+            commentId={comment.id}
+            oldUserAction={comment.userCommentReaction?.nodes?.[0]?.reactType}
+          />
           <span
             key="comment-nested-reply-to"
             className="cursor-pointer"

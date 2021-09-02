@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import UpVote from '../../../icons/UpVote';
 import {
   ReactionType,
+  useCreateOrUpdateCommentReactionMutation,
   useCreateOrUpdateConfessionReactionMutation,
 } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
@@ -33,6 +34,7 @@ const Vote = ({ voteNo = 0, confessionId, commentId, oldUserAction }) => {
   }, [oldUserAction]);
 
   const [reactConfession] = useCreateOrUpdateConfessionReactionMutation();
+  const [reactComment] = useCreateOrUpdateCommentReactionMutation();
 
   const updateAction = useCallback(
     (newAction) => {
@@ -76,11 +78,26 @@ const Vote = ({ voteNo = 0, confessionId, commentId, oldUserAction }) => {
             reactType: newAction,
           },
         });
+      } else if (commentId) {
+        reactComment({
+          variables: {
+            commentId,
+            reactType: newAction,
+          },
+        });
       }
     } else {
       showLoginPopup(true);
     }
-  }, [action, confessionId, currentUser?.id, reactConfession, updateAction]);
+  }, [
+    action,
+    commentId,
+    confessionId,
+    currentUser?.id,
+    reactComment,
+    reactConfession,
+    updateAction,
+  ]);
 
   const downVote = useCallback(() => {
     if (currentUser?.id) {
@@ -95,11 +112,26 @@ const Vote = ({ voteNo = 0, confessionId, commentId, oldUserAction }) => {
             reactType: newAction,
           },
         });
+      } else if (commentId) {
+        reactComment({
+          variables: {
+            commentId,
+            reactType: newAction,
+          },
+        });
       }
     } else {
       showLoginPopup(true);
     }
-  }, [action, confessionId, currentUser?.id, reactConfession, updateAction]);
+  }, [
+    action,
+    commentId,
+    confessionId,
+    currentUser?.id,
+    reactComment,
+    reactConfession,
+    updateAction,
+  ]);
 
   return (
     <div className="flex items-center h-8 b-1 border border-color1 rounded-2xl w-max mr-3">

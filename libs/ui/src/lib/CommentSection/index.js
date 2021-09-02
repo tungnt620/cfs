@@ -37,7 +37,7 @@ const CommentSection = ({ comments, cfsId }) => {
   }, [comments, newCommentCreatedByMe]);
 
   return (
-    <div>
+    <div id="comments">
       <CreateCommentEditor cfsId={cfsId} />
       {allComments
         ?.filter((comment) => !comment?.parentId)

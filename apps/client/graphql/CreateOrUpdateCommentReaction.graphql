@@ -1,0 +1,8 @@
+mutation CreateOrUpdateCommentReaction($commentId: Int!, $reactType: ReactionType!) {
+  createOrUpdateCommentReaction(input: {commentId: $commentId, reactType: $reactType}) {
+    comment {
+      id
+      totalReaction
+    }
+  }
+}

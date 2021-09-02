@@ -2046,8 +2046,14 @@ export type CfsDetailPageQuery = (
       & Pick<CommentsConnection, 'totalCount'>
       & { nodes: Array<(
         { __typename?: 'Comment' }
-        & Pick<Comment, 'id' | 'authorName' | 'content' | 'image' | 'parentId' | 'createdAt'>
-        & { user?: Maybe<(
+        & Pick<Comment, 'id' | 'authorName' | 'content' | 'image' | 'parentId' | 'createdAt' | 'totalReaction'>
+        & { userCommentReactions: (
+          { __typename?: 'UserCommentReactionsConnection' }
+          & { nodes: Array<(
+            { __typename?: 'UserCommentReaction' }
+            & Pick<UserCommentReaction, 'reactType'>
+          )> }
+        ), user?: Maybe<(
           { __typename?: 'User' }
           & Pick<User, 'username'>
         )> }
@@ -2130,6 +2136,23 @@ export type CreateCommentMutation = (
         { __typename?: 'User' }
         & Pick<User, 'username'>
       )> }
+    )> }
+  )> }
+);
+
+export type CreateOrUpdateCommentReactionMutationVariables = Exact<{
+  commentId: Scalars['Int'];
+  reactType: ReactionType;
+}>;
+
+
+export type CreateOrUpdateCommentReactionMutation = (
+  { __typename?: 'Mutation' }
+  & { createOrUpdateCommentReaction?: Maybe<(
+    { __typename?: 'CreateOrUpdateCommentReactionPayload' }
+    & { comment?: Maybe<(
+      { __typename?: 'Comment' }
+      & Pick<Comment, 'id' | 'totalReaction'>
     )> }
   )> }
 );
@@ -2802,6 +2825,12 @@ export const CfsDetailPageDocument = gql`
         image
         parentId
         createdAt
+        totalReaction
+        userCommentReactions {
+          nodes {
+            reactType
+          }
+        }
         user {
           username
         }
@@ -3007,6 +3036,45 @@ export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
 export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
 export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
+export const CreateOrUpdateCommentReactionDocument = gql`
+    mutation CreateOrUpdateCommentReaction($commentId: Int!, $reactType: ReactionType!) {
+  createOrUpdateCommentReaction(
+    input: {commentId: $commentId, reactType: $reactType}
+  ) {
+    comment {
+      id
+      totalReaction
+    }
+  }
+}
+    `;
+export type CreateOrUpdateCommentReactionMutationFn = Apollo.MutationFunction<CreateOrUpdateCommentReactionMutation, CreateOrUpdateCommentReactionMutationVariables>;
+
+/**
+ * __useCreateOrUpdateCommentReactionMutation__
+ *
+ * To run a mutation, you first call `useCreateOrUpdateCommentReactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrUpdateCommentReactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOrUpdateCommentReactionMutation, { data, loading, error }] = useCreateOrUpdateCommentReactionMutation({
+ *   variables: {
+ *      commentId: // value for 'commentId'
+ *      reactType: // value for 'reactType'
+ *   },
+ * });
+ */
+export function useCreateOrUpdateCommentReactionMutation(baseOptions?: Apollo.MutationHookOptions<CreateOrUpdateCommentReactionMutation, CreateOrUpdateCommentReactionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateOrUpdateCommentReactionMutation, CreateOrUpdateCommentReactionMutationVariables>(CreateOrUpdateCommentReactionDocument, options);
+      }
+export type CreateOrUpdateCommentReactionMutationHookResult = ReturnType<typeof useCreateOrUpdateCommentReactionMutation>;
+export type CreateOrUpdateCommentReactionMutationResult = Apollo.MutationResult<CreateOrUpdateCommentReactionMutation>;
+export type CreateOrUpdateCommentReactionMutationOptions = Apollo.BaseMutationOptions<CreateOrUpdateCommentReactionMutation, CreateOrUpdateCommentReactionMutationVariables>;
 export const CreateOrUpdateConfessionReactionDocument = gql`
     mutation CreateOrUpdateConfessionReaction($confessionId: Int!, $reactType: ReactionType!) {
   createOrUpdateConfessionReaction(
