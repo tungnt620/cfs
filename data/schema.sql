@@ -1195,6 +1195,24 @@ $$;
 
 
 --
+-- Name: get_relative_confessions(integer); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.get_relative_confessions(target_confession_id integer) RETURNS SETOF app_public.confession
+    LANGUAGE sql STABLE
+    AS $$
+  select * from app_public.confession where id in (
+   select confession_id from app_public.confession_category where confession_id < target_confession_id and category_id in (
+      select category_id from app_public.confession_category where confession_id = target_confession_id limit 1
+   )
+   order by confession_id desc
+   limit 3
+  )
+  order by id desc;
+$$;
+
+
+--
 -- Name: logout(); Type: FUNCTION; Schema: app_public; Owner: -
 --
 
@@ -3087,6 +3105,14 @@ GRANT ALL ON FUNCTION app_public.get_cfs_by_cat(cat_id integer) TO cfs_visitor;
 
 REVOKE ALL ON FUNCTION app_public.get_cfs_by_cat_slug(cat_slug character varying) FROM PUBLIC;
 GRANT ALL ON FUNCTION app_public.get_cfs_by_cat_slug(cat_slug character varying) TO cfs_visitor;
+
+
+--
+-- Name: FUNCTION get_relative_confessions(target_confession_id integer); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.get_relative_confessions(target_confession_id integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.get_relative_confessions(target_confession_id integer) TO cfs_visitor;
 
 
 --

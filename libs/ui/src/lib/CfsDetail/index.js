@@ -9,6 +9,7 @@ import { Avatar, Image as AntdImage } from 'antd';
 import style from './CfsDetail.module.scss';
 import useBooleanToggle from '../../../../helper/src/hooks';
 import { findNumberOccurrenceInString } from '../../../../helper/src/string';
+import { CfsList, CfsMiniCard } from '@cfs/ui';
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');
@@ -16,7 +17,7 @@ dayjs.locale('vi');
 const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
-const CfsDetail = ({ cfsDetailPageData }) => {
+const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
   const [expandedThumbnail, toggleExpandedThumbnail] = useBooleanToggle(false);
   const userData = cfsDetailPageData.user;
   const catData = cfsDetailPageData.confessionCategories.nodes[0].category;
@@ -103,6 +104,15 @@ const CfsDetail = ({ cfsDetailPageData }) => {
         comments={cfsDetailPageData.comments.nodes}
         cfsId={cfsDetailPageData.id}
       />
+
+      {relativeCfsData && (
+        <div className="mt-8 ml-2 mr-2">
+          <h3 className='font-bold text-base'>Confession khác có thể bạn thích</h3>
+          {relativeCfsData.map((cfs) => (
+            <CfsMiniCard cfs={cfs} key={cfs.id} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

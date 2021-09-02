@@ -1135,6 +1135,8 @@ export type Query = {
   getCfsByCat?: Maybe<ConfessionsConnection>;
   /** Reads and enables pagination through a set of `Confession`. */
   getCfsByCatSlug?: Maybe<ConfessionsConnection>;
+  /** Reads and enables pagination through a set of `Confession`. */
+  getRelativeConfessions?: Maybe<ConfessionsConnection>;
   user?: Maybe<User>;
   userAuthentication?: Maybe<UserAuthentication>;
   userByUsername?: Maybe<User>;
@@ -1254,6 +1256,17 @@ export type QueryGetCfsByCatSlugArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryGetRelativeConfessionsArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  targetConfessionId: Scalars['Int'];
 };
 
 
@@ -2286,6 +2299,41 @@ export type GetCfsByCatSlugQuery = (
     & { nodes: Array<(
       { __typename?: 'Confession' }
       & HomePage_ConfessionFragment
+    )> }
+  )> }
+);
+
+export type GetRelativeConfessionsQueryVariables = Exact<{
+  targetConfessionId: Scalars['Int'];
+}>;
+
+
+export type GetRelativeConfessionsQuery = (
+  { __typename?: 'Query' }
+  & { getRelativeConfessions?: Maybe<(
+    { __typename?: 'ConfessionsConnection' }
+    & { nodes: Array<(
+      { __typename?: 'Confession' }
+      & Pick<Confession, 'id' | 'slug' | 'title' | 'image' | 'createdAt' | 'totalReaction'>
+      & { comments: (
+        { __typename?: 'CommentsConnection' }
+        & Pick<CommentsConnection, 'totalCount'>
+      ), userConfessionReactions: (
+        { __typename?: 'UserConfessionReactionsConnection' }
+        & { nodes: Array<(
+          { __typename?: 'UserConfessionReaction' }
+          & Pick<UserConfessionReaction, 'reactType'>
+        )> }
+      ), confessionCategories: (
+        { __typename?: 'ConfessionCategoriesConnection' }
+        & { nodes: Array<(
+          { __typename?: 'ConfessionCategory' }
+          & { category?: Maybe<(
+            { __typename?: 'Category' }
+            & Pick<Category, 'slug' | 'image'>
+          )> }
+        )> }
+      ) }
     )> }
   )> }
 );
@@ -3340,6 +3388,64 @@ export function useGetCfsByCatSlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetCfsByCatSlugQueryHookResult = ReturnType<typeof useGetCfsByCatSlugQuery>;
 export type GetCfsByCatSlugLazyQueryHookResult = ReturnType<typeof useGetCfsByCatSlugLazyQuery>;
 export type GetCfsByCatSlugQueryResult = Apollo.QueryResult<GetCfsByCatSlugQuery, GetCfsByCatSlugQueryVariables>;
+export const GetRelativeConfessionsDocument = gql`
+    query GetRelativeConfessions($targetConfessionId: Int!) {
+  getRelativeConfessions(targetConfessionId: $targetConfessionId) {
+    nodes {
+      id
+      slug
+      title
+      image
+      createdAt
+      totalReaction
+      comments {
+        totalCount
+      }
+      userConfessionReactions {
+        nodes {
+          reactType
+        }
+      }
+      confessionCategories {
+        nodes {
+          category {
+            slug
+            image
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRelativeConfessionsQuery__
+ *
+ * To run a query within a React component, call `useGetRelativeConfessionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRelativeConfessionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRelativeConfessionsQuery({
+ *   variables: {
+ *      targetConfessionId: // value for 'targetConfessionId'
+ *   },
+ * });
+ */
+export function useGetRelativeConfessionsQuery(baseOptions: Apollo.QueryHookOptions<GetRelativeConfessionsQuery, GetRelativeConfessionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRelativeConfessionsQuery, GetRelativeConfessionsQueryVariables>(GetRelativeConfessionsDocument, options);
+      }
+export function useGetRelativeConfessionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRelativeConfessionsQuery, GetRelativeConfessionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRelativeConfessionsQuery, GetRelativeConfessionsQueryVariables>(GetRelativeConfessionsDocument, options);
+        }
+export type GetRelativeConfessionsQueryHookResult = ReturnType<typeof useGetRelativeConfessionsQuery>;
+export type GetRelativeConfessionsLazyQueryHookResult = ReturnType<typeof useGetRelativeConfessionsLazyQuery>;
+export type GetRelativeConfessionsQueryResult = Apollo.QueryResult<GetRelativeConfessionsQuery, GetRelativeConfessionsQueryVariables>;
 export const HomePageDocument = gql`
     query HomePage($offset: Int = 0, $catId: Int = 0) {
   getCfsByCat(catId: $catId, offset: $offset, first: 10) {

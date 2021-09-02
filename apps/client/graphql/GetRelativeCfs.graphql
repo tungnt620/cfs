@@ -1,0 +1,28 @@
+query GetRelativeConfessions($targetConfessionId: Int!) {
+  getRelativeConfessions(targetConfessionId: $targetConfessionId) {
+    nodes {
+      id
+      slug
+      title
+      image
+      createdAt
+      totalReaction
+      comments {
+        totalCount
+      }
+      userConfessionReactions {
+        nodes {
+          reactType
+        }
+      }
+      confessionCategories {
+        nodes {
+          category {
+            slug
+            image
+          }
+        }
+      }
+    }
+  }
+}
