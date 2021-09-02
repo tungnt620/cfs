@@ -1,4 +1,4 @@
-import React, { useMemo,  } from 'react';
+import React, { useMemo } from 'react';
 import CfsDetailHeader from './CfsDetailHeader';
 import CommentSection from '../CommentSection';
 import Image from 'next/image';
@@ -8,6 +8,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Image as AntdImage } from 'antd';
 import style from './CfsDetail.module.scss';
 import useBooleanToggle from '../../../../helper/src/hooks';
+import { findNumberOccurrenceInString } from '../../../../helper/src/string';
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');
@@ -27,6 +28,18 @@ const CfsDetail = ({ cfsDetailPageData }) => {
       content.replace(/[\r\n]+/g, ' ').includes(cfsDetailPageData.title)
     );
   }, [cfsDetailPageData.content, cfsDetailPageData.title]);
+
+  const isContainSelfLink = useMemo(() => {
+    const numberOfLink = findNumberOccurrenceInString(
+      cfsDetailPageData.content,
+      '<a href='
+    );
+    const numberOfSelfLink = findNumberOccurrenceInString(
+      cfsDetailPageData.content,
+      '<a href="https://confession.vn'
+    );
+    return numberOfSelfLink === numberOfLink;
+  }, [cfsDetailPageData.content]);
 
   return (
     <div>
@@ -70,9 +83,16 @@ const CfsDetail = ({ cfsDetailPageData }) => {
           )
         )}
 
-        <div className="pt-2 mb-4 whitespace-pre-line">
-          {cfsDetailPageData.content}
-        </div>
+        {isContainSelfLink ? (
+          <div
+            className={`pt-2 mb-4 whitespace-pre-line ${style.highlightLink}`}
+            dangerouslySetInnerHTML={{ __html: cfsDetailPageData.content }}
+          />
+        ) : (
+          <div className="pt-2 mb-4 whitespace-pre-line">
+            {cfsDetailPageData.content}
+          </div>
+        )}
 
         <div className="mb-4">
           <CardActions cfs={cfsDetailPageData} />
