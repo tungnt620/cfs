@@ -13,20 +13,20 @@ const mainLink = new HttpLink({
   credentials: 'include',
 });
 
+const onErrorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors)
+    graphQLErrors.map(({ message, locations, path }) =>
+      console.error(
+        `[GraphQL error]: message: ${message}, location: ${JSON.stringify(
+          locations
+        )}, path: ${JSON.stringify(path)}`
+      )
+    );
+  if (networkError) console.error(`[Network error]: ${networkError}`);
+});
+
 export const withApollo = withApolloBase(
   ({ initialState }) => {
-    const onErrorLink = onError(({ graphQLErrors, networkError }) => {
-      if (graphQLErrors)
-        graphQLErrors.map(({ message, locations, path }) =>
-          console.error(
-            `[GraphQL error]: message: ${message}, location: ${JSON.stringify(
-              locations
-            )}, path: ${JSON.stringify(path)}`
-          )
-        );
-      if (networkError) console.error(`[Network error]: ${networkError}`);
-    });
-
     return new ApolloClient({
       link: ApolloLink.from([onErrorLink, mainLink]),
       cache: new InMemoryCache({

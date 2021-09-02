@@ -143,9 +143,12 @@ export type Comment = {
   /** Reads a single `Comment` that is related to this `Comment`. */
   parent?: Maybe<Comment>;
   parentId?: Maybe<Scalars['Int']>;
+  totalReaction: Scalars['Int'];
   updatedAt: Scalars['Datetime'];
   /** Reads a single `User` that is related to this `Comment`. */
   user?: Maybe<User>;
+  /** Reads and enables pagination through a set of `UserCommentReaction`. */
+  userCommentReactions: UserCommentReactionsConnection;
   userId?: Maybe<Scalars['UUID']>;
 };
 
@@ -158,6 +161,17 @@ export type CommentChildCommentsArgs = {
   last?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<CommentsOrderBy>>;
+};
+
+
+export type CommentUserCommentReactionsArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  condition?: Maybe<UserCommentReactionCondition>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Array<UserCommentReactionsOrderBy>>;
 };
 
 /** A condition to be used against `Comment` object types. All fields are tested for equality and combined with a logical ‘and.’ */
@@ -241,9 +255,12 @@ export type Confession = {
   image?: Maybe<Scalars['String']>;
   slug: Scalars['String'];
   title: Scalars['String'];
+  totalReaction: Scalars['Int'];
   updatedAt: Scalars['Datetime'];
   /** Reads a single `User` that is related to this `Confession`. */
   user?: Maybe<User>;
+  /** Reads and enables pagination through a set of `UserConfessionReaction`. */
+  userConfessionReactions: UserConfessionReactionsConnection;
   userId: Scalars['UUID'];
 };
 
@@ -267,6 +284,17 @@ export type ConfessionConfessionCategoriesArgs = {
   last?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<ConfessionCategoriesOrderBy>>;
+};
+
+
+export type ConfessionUserConfessionReactionsArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  condition?: Maybe<UserConfessionReactionCondition>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Array<UserConfessionReactionsOrderBy>>;
 };
 
 /** A connection to a list of `ConfessionCategory` values. */
@@ -319,12 +347,6 @@ export type ConfessionCategoryCondition = {
   categoryId?: Maybe<Scalars['Int']>;
   /** Checks for equality with the object’s `confessionId` field. */
   confessionId?: Maybe<Scalars['Int']>;
-};
-
-/** An input for mutations affecting `ConfessionCategory` */
-export type ConfessionCategoryInput = {
-  categoryId: Scalars['Int'];
-  confessionId: Scalars['Int'];
 };
 
 /**
@@ -523,43 +545,6 @@ export type CreateCommentPayloadCommentEdgeArgs = {
   orderBy?: Maybe<Array<CommentsOrderBy>>;
 };
 
-/** All input for the create `ConfessionCategory` mutation. */
-export type CreateConfessionCategoryInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  /** The `ConfessionCategory` to be created by this mutation. */
-  confessionCategory: ConfessionCategoryInput;
-};
-
-/** The output of our create `ConfessionCategory` mutation. */
-export type CreateConfessionCategoryPayload = {
-  __typename?: 'CreateConfessionCategoryPayload';
-  /** Reads a single `Category` that is related to this `ConfessionCategory`. */
-  category?: Maybe<Category>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  /** Reads a single `Confession` that is related to this `ConfessionCategory`. */
-  confession?: Maybe<Confession>;
-  /** The `ConfessionCategory` that was created by this mutation. */
-  confessionCategory?: Maybe<ConfessionCategory>;
-  /** An edge for our `ConfessionCategory`. May be used by Relay 1. */
-  confessionCategoryEdge?: Maybe<ConfessionCategoriesEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
-};
-
-
-/** The output of our create `ConfessionCategory` mutation. */
-export type CreateConfessionCategoryPayloadConfessionCategoryEdgeArgs = {
-  orderBy?: Maybe<Array<ConfessionCategoriesOrderBy>>;
-};
-
 /** All input for the create `Confession` mutation. */
 export type CreateConfessionInput = {
   /**
@@ -592,6 +577,78 @@ export type CreateConfessionPayload = {
 
 /** The output of our create `Confession` mutation. */
 export type CreateConfessionPayloadConfessionEdgeArgs = {
+  orderBy?: Maybe<Array<ConfessionsOrderBy>>;
+};
+
+/** All input for the `createOrUpdateCommentReaction` mutation. */
+export type CreateOrUpdateCommentReactionInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  commentId: Scalars['Int'];
+  reactType: ReactionType;
+};
+
+/** The output of our `createOrUpdateCommentReaction` mutation. */
+export type CreateOrUpdateCommentReactionPayload = {
+  __typename?: 'CreateOrUpdateCommentReactionPayload';
+  /**
+   * The exact same `clientMutationId` that was provided in the mutation input,
+   * unchanged and unused. May be used by a client to track mutations.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  comment?: Maybe<Comment>;
+  /** An edge for our `Comment`. May be used by Relay 1. */
+  commentEdge?: Maybe<CommentsEdge>;
+  /** Reads a single `Confession` that is related to this `Comment`. */
+  confession?: Maybe<Confession>;
+  /** Reads a single `Comment` that is related to this `Comment`. */
+  parent?: Maybe<Comment>;
+  /** Our root query field type. Allows us to run any query from our mutation payload. */
+  query?: Maybe<Query>;
+  /** Reads a single `User` that is related to this `Comment`. */
+  user?: Maybe<User>;
+};
+
+
+/** The output of our `createOrUpdateCommentReaction` mutation. */
+export type CreateOrUpdateCommentReactionPayloadCommentEdgeArgs = {
+  orderBy?: Maybe<Array<CommentsOrderBy>>;
+};
+
+/** All input for the `createOrUpdateConfessionReaction` mutation. */
+export type CreateOrUpdateConfessionReactionInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  confessionId: Scalars['Int'];
+  reactType: ReactionType;
+};
+
+/** The output of our `createOrUpdateConfessionReaction` mutation. */
+export type CreateOrUpdateConfessionReactionPayload = {
+  __typename?: 'CreateOrUpdateConfessionReactionPayload';
+  /**
+   * The exact same `clientMutationId` that was provided in the mutation input,
+   * unchanged and unused. May be used by a client to track mutations.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  confession?: Maybe<Confession>;
+  /** An edge for our `Confession`. May be used by Relay 1. */
+  confessionEdge?: Maybe<ConfessionsEdge>;
+  /** Our root query field type. Allows us to run any query from our mutation payload. */
+  query?: Maybe<Query>;
+  /** Reads a single `User` that is related to this `Confession`. */
+  user?: Maybe<User>;
+};
+
+
+/** The output of our `createOrUpdateConfessionReaction` mutation. */
+export type CreateOrUpdateConfessionReactionPayloadConfessionEdgeArgs = {
   orderBy?: Maybe<Array<ConfessionsOrderBy>>;
 };
 
@@ -631,39 +688,6 @@ export type CreateUserEmailPayloadUserEmailEdgeArgs = {
 };
 
 
-
-/** All input for the `deleteCategory` mutation. */
-export type DeleteCategoryInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
-};
-
-/** The output of our delete `Category` mutation. */
-export type DeleteCategoryPayload = {
-  __typename?: 'DeleteCategoryPayload';
-  /** The `Category` that was deleted by this mutation. */
-  category?: Maybe<Category>;
-  /** An edge for our `Category`. May be used by Relay 1. */
-  categoryEdge?: Maybe<CategoriesEdge>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']>;
-  deletedCategoryNodeId?: Maybe<Scalars['ID']>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
-};
-
-
-/** The output of our delete `Category` mutation. */
-export type DeleteCategoryPayloadCategoryEdgeArgs = {
-  orderBy?: Maybe<Array<CategoriesOrderBy>>;
-};
 
 /** All input for the `deleteComment` mutation. */
 export type DeleteCommentInput = {
@@ -885,12 +909,10 @@ export type Mutation = {
   createComment?: Maybe<CreateCommentPayload>;
   /** Creates a single `Confession`. */
   createConfession?: Maybe<CreateConfessionPayload>;
-  /** Creates a single `ConfessionCategory`. */
-  createConfessionCategory?: Maybe<CreateConfessionCategoryPayload>;
+  createOrUpdateCommentReaction?: Maybe<CreateOrUpdateCommentReactionPayload>;
+  createOrUpdateConfessionReaction?: Maybe<CreateOrUpdateConfessionReactionPayload>;
   /** Creates a single `UserEmail`. */
   createUserEmail?: Maybe<CreateUserEmailPayload>;
-  /** Deletes a single `Category` using a unique key. */
-  deleteCategory?: Maybe<DeleteCategoryPayload>;
   /** Deletes a single `Comment` using a unique key. */
   deleteComment?: Maybe<DeleteCommentPayload>;
   /** Deletes a single `Confession` using a unique key. */
@@ -965,20 +987,20 @@ export type MutationCreateConfessionArgs = {
 
 
 /** The root mutation type which contains root level fields which mutate data. */
-export type MutationCreateConfessionCategoryArgs = {
-  input: CreateConfessionCategoryInput;
+export type MutationCreateOrUpdateCommentReactionArgs = {
+  input: CreateOrUpdateCommentReactionInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
+export type MutationCreateOrUpdateConfessionReactionArgs = {
+  input: CreateOrUpdateConfessionReactionInput;
 };
 
 
 /** The root mutation type which contains root level fields which mutate data. */
 export type MutationCreateUserEmailArgs = {
   input: CreateUserEmailInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteCategoryArgs = {
-  input: DeleteCategoryInput;
 };
 
 
@@ -1116,6 +1138,14 @@ export type Query = {
   user?: Maybe<User>;
   userAuthentication?: Maybe<UserAuthentication>;
   userByUsername?: Maybe<User>;
+  userCommentReaction?: Maybe<UserCommentReaction>;
+  userCommentReactionByUserIdAndCommentId?: Maybe<UserCommentReaction>;
+  /** Reads and enables pagination through a set of `UserCommentReaction`. */
+  userCommentReactions?: Maybe<UserCommentReactionsConnection>;
+  userConfessionReaction?: Maybe<UserConfessionReaction>;
+  userConfessionReactionByUserIdAndConfessionId?: Maybe<UserConfessionReaction>;
+  /** Reads and enables pagination through a set of `UserConfessionReaction`. */
+  userConfessionReactions?: Maybe<UserConfessionReactionsConnection>;
   userEmail?: Maybe<UserEmail>;
 };
 
@@ -1246,9 +1276,65 @@ export type QueryUserByUsernameArgs = {
 
 
 /** The root query type which gives access points into the data universe. */
+export type QueryUserCommentReactionArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryUserCommentReactionByUserIdAndCommentIdArgs = {
+  commentId: Scalars['Int'];
+  userId: Scalars['UUID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryUserCommentReactionsArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  condition?: Maybe<UserCommentReactionCondition>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Array<UserCommentReactionsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryUserConfessionReactionArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryUserConfessionReactionByUserIdAndConfessionIdArgs = {
+  confessionId: Scalars['Int'];
+  userId: Scalars['UUID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryUserConfessionReactionsArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  condition?: Maybe<UserConfessionReactionCondition>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Array<UserConfessionReactionsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
 export type QueryUserEmailArgs = {
   id: Scalars['UUID'];
 };
+
+export enum ReactionType {
+  Down = 'DOWN',
+  None = 'NONE',
+  Up = 'UP'
+}
 
 export type RegisterInput = {
   avatarUrl?: Maybe<Scalars['String']>;
@@ -1507,6 +1593,10 @@ export type User = {
   updatedAt: Scalars['Datetime'];
   /** Reads and enables pagination through a set of `UserAuthentication`. */
   userAuthenticationsList: Array<UserAuthentication>;
+  /** Reads and enables pagination through a set of `UserCommentReaction`. */
+  userCommentReactions: UserCommentReactionsConnection;
+  /** Reads and enables pagination through a set of `UserConfessionReaction`. */
+  userConfessionReactions: UserConfessionReactionsConnection;
   /** Reads and enables pagination through a set of `UserEmail`. */
   userEmails: UserEmailsConnection;
   /** Public-facing username (or 'handle') of the user. */
@@ -1544,6 +1634,30 @@ export type UserUserAuthenticationsListArgs = {
   first?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<UserAuthenticationsOrderBy>>;
+};
+
+
+/** A user who can log in to the application. */
+export type UserUserCommentReactionsArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  condition?: Maybe<UserCommentReactionCondition>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Array<UserCommentReactionsOrderBy>>;
+};
+
+
+/** A user who can log in to the application. */
+export type UserUserConfessionReactionsArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  condition?: Maybe<UserConfessionReactionCondition>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Array<UserConfessionReactionsOrderBy>>;
 };
 
 
@@ -1595,6 +1709,130 @@ export enum UserAuthenticationsOrderBy {
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   ServiceAsc = 'SERVICE_ASC',
   ServiceDesc = 'SERVICE_DESC',
+  UserIdAsc = 'USER_ID_ASC',
+  UserIdDesc = 'USER_ID_DESC'
+}
+
+export type UserCommentReaction = {
+  __typename?: 'UserCommentReaction';
+  /** Reads a single `Comment` that is related to this `UserCommentReaction`. */
+  comment?: Maybe<Comment>;
+  commentId: Scalars['Int'];
+  createdAt: Scalars['Datetime'];
+  id: Scalars['Int'];
+  reactType: ReactionType;
+  updatedAt: Scalars['Datetime'];
+  /** Reads a single `User` that is related to this `UserCommentReaction`. */
+  user?: Maybe<User>;
+  userId?: Maybe<Scalars['UUID']>;
+};
+
+/**
+ * A condition to be used against `UserCommentReaction` object types. All fields
+ * are tested for equality and combined with a logical ‘and.’
+ */
+export type UserCommentReactionCondition = {
+  /** Checks for equality with the object’s `commentId` field. */
+  commentId?: Maybe<Scalars['Int']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: Maybe<Scalars['Int']>;
+  /** Checks for equality with the object’s `userId` field. */
+  userId?: Maybe<Scalars['UUID']>;
+};
+
+/** A connection to a list of `UserCommentReaction` values. */
+export type UserCommentReactionsConnection = {
+  __typename?: 'UserCommentReactionsConnection';
+  /** A list of edges which contains the `UserCommentReaction` and cursor to aid in pagination. */
+  edges: Array<UserCommentReactionsEdge>;
+  /** A list of `UserCommentReaction` objects. */
+  nodes: Array<UserCommentReaction>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `UserCommentReaction` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A `UserCommentReaction` edge in the connection. */
+export type UserCommentReactionsEdge = {
+  __typename?: 'UserCommentReactionsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `UserCommentReaction` at the end of the edge. */
+  node: UserCommentReaction;
+};
+
+/** Methods to use when ordering `UserCommentReaction`. */
+export enum UserCommentReactionsOrderBy {
+  CommentIdAsc = 'COMMENT_ID_ASC',
+  CommentIdDesc = 'COMMENT_ID_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  UserIdAsc = 'USER_ID_ASC',
+  UserIdDesc = 'USER_ID_DESC'
+}
+
+export type UserConfessionReaction = {
+  __typename?: 'UserConfessionReaction';
+  /** Reads a single `Confession` that is related to this `UserConfessionReaction`. */
+  confession?: Maybe<Confession>;
+  confessionId: Scalars['Int'];
+  createdAt: Scalars['Datetime'];
+  id: Scalars['Int'];
+  reactType: ReactionType;
+  updatedAt: Scalars['Datetime'];
+  /** Reads a single `User` that is related to this `UserConfessionReaction`. */
+  user?: Maybe<User>;
+  userId: Scalars['UUID'];
+};
+
+/**
+ * A condition to be used against `UserConfessionReaction` object types. All fields
+ * are tested for equality and combined with a logical ‘and.’
+ */
+export type UserConfessionReactionCondition = {
+  /** Checks for equality with the object’s `confessionId` field. */
+  confessionId?: Maybe<Scalars['Int']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: Maybe<Scalars['Int']>;
+  /** Checks for equality with the object’s `userId` field. */
+  userId?: Maybe<Scalars['UUID']>;
+};
+
+/** A connection to a list of `UserConfessionReaction` values. */
+export type UserConfessionReactionsConnection = {
+  __typename?: 'UserConfessionReactionsConnection';
+  /** A list of edges which contains the `UserConfessionReaction` and cursor to aid in pagination. */
+  edges: Array<UserConfessionReactionsEdge>;
+  /** A list of `UserConfessionReaction` objects. */
+  nodes: Array<UserConfessionReaction>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `UserConfessionReaction` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A `UserConfessionReaction` edge in the connection. */
+export type UserConfessionReactionsEdge = {
+  __typename?: 'UserConfessionReactionsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `UserConfessionReaction` at the end of the edge. */
+  node: UserConfessionReaction;
+};
+
+/** Methods to use when ordering `UserConfessionReaction`. */
+export enum UserConfessionReactionsOrderBy {
+  ConfessionIdAsc = 'CONFESSION_ID_ASC',
+  ConfessionIdDesc = 'CONFESSION_ID_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   UserIdAsc = 'USER_ID_ASC',
   UserIdDesc = 'USER_ID_DESC'
 }
@@ -1793,8 +2031,14 @@ export type CfsDetailPageQuery = (
   { __typename?: 'Query' }
   & { confessionBySlug?: Maybe<(
     { __typename?: 'Confession' }
-    & Pick<Confession, 'id' | 'image' | 'slug' | 'title' | 'createdAt' | 'content'>
-    & { user?: Maybe<(
+    & Pick<Confession, 'id' | 'image' | 'slug' | 'title' | 'createdAt' | 'content' | 'totalReaction'>
+    & { userConfessionReactions: (
+      { __typename?: 'UserConfessionReactionsConnection' }
+      & { nodes: Array<(
+        { __typename?: 'UserConfessionReaction' }
+        & Pick<UserConfessionReaction, 'reactType'>
+      )> }
+    ), user?: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'username'>
     )>, comments: (
@@ -1886,6 +2130,23 @@ export type CreateCommentMutation = (
         { __typename?: 'User' }
         & Pick<User, 'username'>
       )> }
+    )> }
+  )> }
+);
+
+export type CreateOrUpdateConfessionReactionMutationVariables = Exact<{
+  confessionId: Scalars['Int'];
+  reactType: ReactionType;
+}>;
+
+
+export type CreateOrUpdateConfessionReactionMutation = (
+  { __typename?: 'Mutation' }
+  & { createOrUpdateConfessionReaction?: Maybe<(
+    { __typename?: 'CreateOrUpdateConfessionReactionPayload' }
+    & { confession?: Maybe<(
+      { __typename?: 'Confession' }
+      & Pick<Confession, 'id' | 'totalReaction'>
     )> }
   )> }
 );
@@ -2020,7 +2281,15 @@ export type HomePageQuery = (
       { __typename?: 'Confession' }
       & HomePage_ConfessionFragment
     )> }
-  )>, categories?: Maybe<(
+  )> }
+);
+
+export type HomePageAllCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type HomePageAllCategoriesQuery = (
+  { __typename?: 'Query' }
+  & { categories?: Maybe<(
     { __typename?: 'CategoriesConnection' }
     & { nodes: Array<(
       { __typename?: 'Category' }
@@ -2031,10 +2300,16 @@ export type HomePageQuery = (
 
 export type HomePage_ConfessionFragment = (
   { __typename?: 'Confession' }
-  & Pick<Confession, 'id' | 'slug' | 'title' | 'image' | 'createdAt'>
+  & Pick<Confession, 'id' | 'slug' | 'title' | 'image' | 'createdAt' | 'totalReaction'>
   & { comments: (
     { __typename?: 'CommentsConnection' }
     & Pick<CommentsConnection, 'totalCount'>
+  ), userConfessionReactions: (
+    { __typename?: 'UserConfessionReactionsConnection' }
+    & { nodes: Array<(
+      { __typename?: 'UserConfessionReaction' }
+      & Pick<UserConfessionReaction, 'reactType'>
+    )> }
   ), confessionCategories: (
     { __typename?: 'ConfessionCategoriesConnection' }
     & { nodes: Array<(
@@ -2337,8 +2612,14 @@ export const HomePage_ConfessionFragmentDoc = gql`
   title
   image
   createdAt
+  totalReaction
   comments {
     totalCount
+  }
+  userConfessionReactions {
+    nodes {
+      reactType
+    }
   }
   confessionCategories {
     nodes {
@@ -2504,6 +2785,12 @@ export const CfsDetailPageDocument = gql`
     title
     createdAt
     content
+    totalReaction
+    userConfessionReactions {
+      nodes {
+        reactType
+      }
+    }
     user {
       username
     }
@@ -2720,6 +3007,45 @@ export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
 export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
 export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
+export const CreateOrUpdateConfessionReactionDocument = gql`
+    mutation CreateOrUpdateConfessionReaction($confessionId: Int!, $reactType: ReactionType!) {
+  createOrUpdateConfessionReaction(
+    input: {confessionId: $confessionId, reactType: $reactType}
+  ) {
+    confession {
+      id
+      totalReaction
+    }
+  }
+}
+    `;
+export type CreateOrUpdateConfessionReactionMutationFn = Apollo.MutationFunction<CreateOrUpdateConfessionReactionMutation, CreateOrUpdateConfessionReactionMutationVariables>;
+
+/**
+ * __useCreateOrUpdateConfessionReactionMutation__
+ *
+ * To run a mutation, you first call `useCreateOrUpdateConfessionReactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrUpdateConfessionReactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOrUpdateConfessionReactionMutation, { data, loading, error }] = useCreateOrUpdateConfessionReactionMutation({
+ *   variables: {
+ *      confessionId: // value for 'confessionId'
+ *      reactType: // value for 'reactType'
+ *   },
+ * });
+ */
+export function useCreateOrUpdateConfessionReactionMutation(baseOptions?: Apollo.MutationHookOptions<CreateOrUpdateConfessionReactionMutation, CreateOrUpdateConfessionReactionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateOrUpdateConfessionReactionMutation, CreateOrUpdateConfessionReactionMutationVariables>(CreateOrUpdateConfessionReactionDocument, options);
+      }
+export type CreateOrUpdateConfessionReactionMutationHookResult = ReturnType<typeof useCreateOrUpdateConfessionReactionMutation>;
+export type CreateOrUpdateConfessionReactionMutationResult = Apollo.MutationResult<CreateOrUpdateConfessionReactionMutation>;
+export type CreateOrUpdateConfessionReactionMutationOptions = Apollo.BaseMutationOptions<CreateOrUpdateConfessionReactionMutation, CreateOrUpdateConfessionReactionMutationVariables>;
 export const CurrentUserAuthenticationsDocument = gql`
     query CurrentUserAuthentications {
   currentUser {
@@ -2953,12 +3279,6 @@ export const HomePageDocument = gql`
       ...HomePage_Confession
     }
   }
-  categories {
-    nodes {
-      id
-      name
-    }
-  }
 }
     ${HomePage_ConfessionFragmentDoc}`;
 
@@ -2990,6 +3310,43 @@ export function useHomePageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<H
 export type HomePageQueryHookResult = ReturnType<typeof useHomePageQuery>;
 export type HomePageLazyQueryHookResult = ReturnType<typeof useHomePageLazyQuery>;
 export type HomePageQueryResult = Apollo.QueryResult<HomePageQuery, HomePageQueryVariables>;
+export const HomePageAllCategoriesDocument = gql`
+    query HomePageAllCategories {
+  categories {
+    nodes {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useHomePageAllCategoriesQuery__
+ *
+ * To run a query within a React component, call `useHomePageAllCategoriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useHomePageAllCategoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useHomePageAllCategoriesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useHomePageAllCategoriesQuery(baseOptions?: Apollo.QueryHookOptions<HomePageAllCategoriesQuery, HomePageAllCategoriesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<HomePageAllCategoriesQuery, HomePageAllCategoriesQueryVariables>(HomePageAllCategoriesDocument, options);
+      }
+export function useHomePageAllCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HomePageAllCategoriesQuery, HomePageAllCategoriesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<HomePageAllCategoriesQuery, HomePageAllCategoriesQueryVariables>(HomePageAllCategoriesDocument, options);
+        }
+export type HomePageAllCategoriesQueryHookResult = ReturnType<typeof useHomePageAllCategoriesQuery>;
+export type HomePageAllCategoriesLazyQueryHookResult = ReturnType<typeof useHomePageAllCategoriesLazyQuery>;
+export type HomePageAllCategoriesQueryResult = Apollo.QueryResult<HomePageAllCategoriesQuery, HomePageAllCategoriesQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
   login(input: {username: $username, password: $password}) {

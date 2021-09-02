@@ -169,10 +169,40 @@ type Comment {
   """Reads a single `Comment` that is related to this `Comment`."""
   parent: Comment
   parentId: Int
+  totalReaction: Int!
   updatedAt: Datetime!
 
   """Reads a single `User` that is related to this `Comment`."""
   user: User
+
+  """Reads and enables pagination through a set of `UserCommentReaction`."""
+  userCommentReactions(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: UserCommentReactionCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `UserCommentReaction`."""
+    orderBy: [UserCommentReactionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): UserCommentReactionsConnection!
   userId: UUID
 }
 
@@ -320,10 +350,42 @@ type Confession {
   image: String
   slug: String!
   title: String!
+  totalReaction: Int!
   updatedAt: Datetime!
 
   """Reads a single `User` that is related to this `Confession`."""
   user: User
+
+  """
+  Reads and enables pagination through a set of `UserConfessionReaction`.
+  """
+  userConfessionReactions(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: UserConfessionReactionCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `UserConfessionReaction`."""
+    orderBy: [UserConfessionReactionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): UserConfessionReactionsConnection!
   userId: UUID!
 }
 
@@ -388,12 +450,6 @@ input ConfessionCategoryCondition {
 
   """Checks for equality with the object’s `confessionId` field."""
   confessionId: Int
-}
-
-"""An input for mutations affecting `ConfessionCategory`"""
-input ConfessionCategoryInput {
-  categoryId: Int!
-  confessionId: Int!
 }
 
 """
@@ -611,51 +667,6 @@ type CreateCommentPayload {
   user: User
 }
 
-"""All input for the create `ConfessionCategory` mutation."""
-input CreateConfessionCategoryInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `ConfessionCategory` to be created by this mutation."""
-  confessionCategory: ConfessionCategoryInput!
-}
-
-"""The output of our create `ConfessionCategory` mutation."""
-type CreateConfessionCategoryPayload {
-  """
-  Reads a single `Category` that is related to this `ConfessionCategory`.
-  """
-  category: Category
-
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Reads a single `Confession` that is related to this `ConfessionCategory`.
-  """
-  confession: Confession
-
-  """The `ConfessionCategory` that was created by this mutation."""
-  confessionCategory: ConfessionCategory
-
-  """An edge for our `ConfessionCategory`. May be used by Relay 1."""
-  confessionCategoryEdge(
-    """The method to use when ordering `ConfessionCategory`."""
-    orderBy: [ConfessionCategoriesOrderBy!] = [NATURAL]
-  ): ConfessionCategoriesEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
 """All input for the create `Confession` mutation."""
 input CreateConfessionInput {
   """
@@ -677,6 +688,82 @@ type CreateConfessionPayload {
   clientMutationId: String
 
   """The `Confession` that was created by this mutation."""
+  confession: Confession
+
+  """An edge for our `Confession`. May be used by Relay 1."""
+  confessionEdge(
+    """The method to use when ordering `Confession`."""
+    orderBy: [ConfessionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ConfessionsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `Confession`."""
+  user: User
+}
+
+"""All input for the `createOrUpdateCommentReaction` mutation."""
+input CreateOrUpdateCommentReactionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  commentId: Int!
+  reactType: ReactionType!
+}
+
+"""The output of our `createOrUpdateCommentReaction` mutation."""
+type CreateOrUpdateCommentReactionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  comment: Comment
+
+  """An edge for our `Comment`. May be used by Relay 1."""
+  commentEdge(
+    """The method to use when ordering `Comment`."""
+    orderBy: [CommentsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CommentsEdge
+
+  """Reads a single `Confession` that is related to this `Comment`."""
+  confession: Confession
+
+  """Reads a single `Comment` that is related to this `Comment`."""
+  parent: Comment
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `Comment`."""
+  user: User
+}
+
+"""All input for the `createOrUpdateConfessionReaction` mutation."""
+input CreateOrUpdateConfessionReactionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  confessionId: Int!
+  reactType: ReactionType!
+}
+
+"""The output of our `createOrUpdateConfessionReaction` mutation."""
+type CreateOrUpdateConfessionReactionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
   confession: Confession
 
   """An edge for our `Confession`. May be used by Relay 1."""
@@ -740,40 +827,6 @@ A point in time as described by the [ISO
 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
 """
 scalar Datetime
-
-"""All input for the `deleteCategory` mutation."""
-input DeleteCategoryInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: Int!
-}
-
-"""The output of our delete `Category` mutation."""
-type DeleteCategoryPayload {
-  """The `Category` that was deleted by this mutation."""
-  category: Category
-
-  """An edge for our `Category`. May be used by Relay 1."""
-  categoryEdge(
-    """The method to use when ordering `Category`."""
-    orderBy: [CategoriesOrderBy!] = [PRIMARY_KEY_ASC]
-  ): CategoriesEdge
-
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-  deletedCategoryNodeId: ID
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
 
 """All input for the `deleteComment` mutation."""
 input DeleteCommentInput {
@@ -1045,14 +1098,18 @@ type Mutation {
     """
     input: CreateConfessionInput!
   ): CreateConfessionPayload
-
-  """Creates a single `ConfessionCategory`."""
-  createConfessionCategory(
+  createOrUpdateCommentReaction(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: CreateConfessionCategoryInput!
-  ): CreateConfessionCategoryPayload
+    input: CreateOrUpdateCommentReactionInput!
+  ): CreateOrUpdateCommentReactionPayload
+  createOrUpdateConfessionReaction(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateOrUpdateConfessionReactionInput!
+  ): CreateOrUpdateConfessionReactionPayload
 
   """Creates a single `UserEmail`."""
   createUserEmail(
@@ -1061,14 +1118,6 @@ type Mutation {
     """
     input: CreateUserEmailInput!
   ): CreateUserEmailPayload
-
-  """Deletes a single `Category` using a unique key."""
-  deleteCategory(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteCategoryInput!
-  ): DeleteCategoryPayload
 
   """Deletes a single `Comment` using a unique key."""
   deleteComment(
@@ -1406,7 +1455,77 @@ type Query {
   user(id: UUID!): User
   userAuthentication(id: UUID!): UserAuthentication
   userByUsername(username: String!): User
+  userCommentReaction(id: Int!): UserCommentReaction
+  userCommentReactionByUserIdAndCommentId(commentId: Int!, userId: UUID!): UserCommentReaction
+
+  """Reads and enables pagination through a set of `UserCommentReaction`."""
+  userCommentReactions(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: UserCommentReactionCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `UserCommentReaction`."""
+    orderBy: [UserCommentReactionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): UserCommentReactionsConnection
+  userConfessionReaction(id: Int!): UserConfessionReaction
+  userConfessionReactionByUserIdAndConfessionId(confessionId: Int!, userId: UUID!): UserConfessionReaction
+
+  """
+  Reads and enables pagination through a set of `UserConfessionReaction`.
+  """
+  userConfessionReactions(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: UserConfessionReactionCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `UserConfessionReaction`."""
+    orderBy: [UserConfessionReactionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): UserConfessionReactionsConnection
   userEmail(id: UUID!): UserEmail
+}
+
+enum ReactionType {
+  DOWN
+  NONE
+  UP
 }
 
 input RegisterInput {
@@ -1769,6 +1888,66 @@ type User {
     orderBy: [UserAuthenticationsOrderBy!]
   ): [UserAuthentication!]!
 
+  """Reads and enables pagination through a set of `UserCommentReaction`."""
+  userCommentReactions(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: UserCommentReactionCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `UserCommentReaction`."""
+    orderBy: [UserCommentReactionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): UserCommentReactionsConnection!
+
+  """
+  Reads and enables pagination through a set of `UserConfessionReaction`.
+  """
+  userConfessionReactions(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: UserConfessionReactionCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `UserConfessionReaction`."""
+    orderBy: [UserConfessionReactionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): UserConfessionReactionsConnection!
+
   """Reads and enables pagination through a set of `UserEmail`."""
   userEmails(
     """Read all values in the set after (below) this cursor."""
@@ -1845,6 +2024,152 @@ enum UserAuthenticationsOrderBy {
   PRIMARY_KEY_DESC
   SERVICE_ASC
   SERVICE_DESC
+  USER_ID_ASC
+  USER_ID_DESC
+}
+
+type UserCommentReaction {
+  """
+  Reads a single `Comment` that is related to this `UserCommentReaction`.
+  """
+  comment: Comment
+  commentId: Int!
+  createdAt: Datetime!
+  id: Int!
+  reactType: ReactionType!
+  updatedAt: Datetime!
+
+  """Reads a single `User` that is related to this `UserCommentReaction`."""
+  user: User
+  userId: UUID
+}
+
+"""
+A condition to be used against `UserCommentReaction` object types. All fields
+are tested for equality and combined with a logical ‘and.’
+"""
+input UserCommentReactionCondition {
+  """Checks for equality with the object’s `commentId` field."""
+  commentId: Int
+
+  """Checks for equality with the object’s `id` field."""
+  id: Int
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
+}
+
+"""A connection to a list of `UserCommentReaction` values."""
+type UserCommentReactionsConnection {
+  """
+  A list of edges which contains the `UserCommentReaction` and cursor to aid in pagination.
+  """
+  edges: [UserCommentReactionsEdge!]!
+
+  """A list of `UserCommentReaction` objects."""
+  nodes: [UserCommentReaction!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `UserCommentReaction` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+"""A `UserCommentReaction` edge in the connection."""
+type UserCommentReactionsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `UserCommentReaction` at the end of the edge."""
+  node: UserCommentReaction!
+}
+
+"""Methods to use when ordering `UserCommentReaction`."""
+enum UserCommentReactionsOrderBy {
+  COMMENT_ID_ASC
+  COMMENT_ID_DESC
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  USER_ID_ASC
+  USER_ID_DESC
+}
+
+type UserConfessionReaction {
+  """
+  Reads a single `Confession` that is related to this `UserConfessionReaction`.
+  """
+  confession: Confession
+  confessionId: Int!
+  createdAt: Datetime!
+  id: Int!
+  reactType: ReactionType!
+  updatedAt: Datetime!
+
+  """
+  Reads a single `User` that is related to this `UserConfessionReaction`.
+  """
+  user: User
+  userId: UUID!
+}
+
+"""
+A condition to be used against `UserConfessionReaction` object types. All fields
+are tested for equality and combined with a logical ‘and.’
+"""
+input UserConfessionReactionCondition {
+  """Checks for equality with the object’s `confessionId` field."""
+  confessionId: Int
+
+  """Checks for equality with the object’s `id` field."""
+  id: Int
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
+}
+
+"""A connection to a list of `UserConfessionReaction` values."""
+type UserConfessionReactionsConnection {
+  """
+  A list of edges which contains the `UserConfessionReaction` and cursor to aid in pagination.
+  """
+  edges: [UserConfessionReactionsEdge!]!
+
+  """A list of `UserConfessionReaction` objects."""
+  nodes: [UserConfessionReaction!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `UserConfessionReaction` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+"""A `UserConfessionReaction` edge in the connection."""
+type UserConfessionReactionsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `UserConfessionReaction` at the end of the edge."""
+  node: UserConfessionReaction!
+}
+
+"""Methods to use when ordering `UserConfessionReaction`."""
+enum UserConfessionReactionsOrderBy {
+  CONFESSION_ID_ASC
+  CONFESSION_ID_DESC
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
   USER_ID_ASC
   USER_ID_DESC
 }

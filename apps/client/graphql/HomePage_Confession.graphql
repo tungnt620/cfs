@@ -4,8 +4,14 @@ fragment HomePage_Confession on Confession {
   title
   image
   createdAt
+  totalReaction
   comments {
     totalCount
+  }
+  userConfessionReactions {
+    nodes {
+      reactType
+    }
   }
   confessionCategories {
     nodes {

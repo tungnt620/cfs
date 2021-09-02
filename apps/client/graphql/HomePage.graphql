@@ -4,10 +4,4 @@ query HomePage($offset: Int = 0, $catId: Int = 0) {
       ...HomePage_Confession
     }
   }
-  categories {
-    nodes {
-      id
-      name
-    }
-  }
 }

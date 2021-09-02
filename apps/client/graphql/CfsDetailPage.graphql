@@ -6,6 +6,12 @@ query CfsDetailPage($slug: String!) {
     title
     createdAt
     content
+    totalReaction
+    userConfessionReactions {
+      nodes {
+        reactType
+      }
+    }
     user {
       username
     }

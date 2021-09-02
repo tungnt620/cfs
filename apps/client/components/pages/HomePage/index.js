@@ -2,21 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { CfsList } from '@cfs/ui';
 import styles from './HomePage.module.scss';
 import { Tabs } from 'antd';
-import { useHomePageQuery } from '@cfs/graphql';
+import { useHomePageAllCategoriesQuery, useHomePageQuery } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setNewCfsCreatedByMe } from '../../../../../libs/helper/src/reactiveVars';
+import {
+  setCurrentUser,
+  setNewCfsCreatedByMe,
+} from '../../../../../libs/helper/src/reactiveVars';
 
 const { TabPane } = Tabs;
 
 const HomePage = () => {
   const [selectedCat, setSelectedCat] = useState('0');
   const newCfsCreatedByMe = useReactiveVar(setNewCfsCreatedByMe);
-  const { data: queryData, fetchMore } = useHomePageQuery({
+  const currentUser = useReactiveVar(setCurrentUser);
+  const { data: allCategories } = useHomePageAllCategoriesQuery();
+  const { data: queryData, fetchMore, refetch } = useHomePageQuery({
     variables: { offset: 0, catId: 0 },
   });
 
   const confessions = queryData?.getCfsByCat?.nodes ?? [];
-  const categories = [...(queryData?.categories?.nodes ?? [])];
+  const categories = [...(allCategories?.categories?.nodes ?? [])];
   categories.unshift({ id: 0, name: 'Tất cả' });
 
   const onChangeCat = (newCat) => {
@@ -24,12 +29,19 @@ const HomePage = () => {
     setSelectedCat(newCat);
   };
 
+  // Re-fetch to get data relative user
+  useEffect(() => {
+    if (currentUser?.id) {
+      refetch();
+    }
+  }, [currentUser, refetch]);
+
   useEffect(() => {
     if (newCfsCreatedByMe) {
       setSelectedCat('0');
-      fetchMore({ variables: { offset: 0, catId: 0 } });
+      refetch();
     }
-  }, [fetchMore, newCfsCreatedByMe]);
+  }, [refetch, newCfsCreatedByMe]);
 
   return (
     <div className="ml-2 mr-2 mb-6 bg-color1">

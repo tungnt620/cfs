@@ -80,6 +80,17 @@ COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UU
 
 
 --
+-- Name: reaction_type; Type: TYPE; Schema: app_public; Owner: -
+--
+
+CREATE TYPE app_public.reaction_type AS ENUM (
+    'none',
+    'up',
+    'down'
+);
+
+
+--
 -- Name: assert_valid_password(text); Type: FUNCTION; Schema: app_private; Owner: -
 --
 
@@ -675,6 +686,55 @@ COMMENT ON FUNCTION app_private.tg__timestamps() IS 'This trigger should be call
 
 
 --
+-- Name: tg__update_total_reaction(); Type: FUNCTION; Schema: app_private; Owner: -
+--
+
+CREATE FUNCTION app_private.tg__update_total_reaction() RETURNS trigger
+    LANGUAGE plpgsql
+    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
+    AS $$
+declare
+    arg_table_name varchar;
+    react_count integer := 0;
+begin
+    arg_table_name   := TG_ARGV[0];
+
+  if NEW.react_type = 'up' then
+      if OLD.react_type = 'up' then
+        react_count = 0;
+      elseif OLD.react_type = 'down' then
+        react_count = 2;
+      else
+        react_count = 1;
+      end if;
+  elseif NEW.react_type = 'down' then
+      if OLD.react_type = 'down' then
+        react_count = 0;
+      elseif OLD.react_type = 'up' then
+        react_count = -2;
+      else
+        react_count = -1;
+      end if;
+  elseif NEW.react_type = 'none' then
+    if OLD.react_type = 'up' then
+      react_count = -1;
+    elseif OLD.react_type = 'down' then
+      react_count = 1;
+    end if;
+  end if;
+
+  if arg_table_name = 'confession' then
+    update app_public.confession set total_reaction = total_reaction + react_count where id = NEW.confession_id;
+  elseif arg_table_name = 'comment' then
+    update app_public.comment set total_reaction = total_reaction + react_count where id = NEW.comment_id;
+  END if;
+
+  return NEW;
+end;
+$$;
+
+
+--
 -- Name: tg_user_email_secrets__insert_with_user_email(); Type: FUNCTION; Schema: app_private; Owner: -
 --
 
@@ -857,7 +917,8 @@ CREATE TABLE app_public.confession (
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     slug character varying(120),
     image character varying(255),
-    user_id uuid DEFAULT app_public.current_user_id()
+    user_id uuid DEFAULT app_public.current_user_id(),
+    total_reaction integer DEFAULT 0 NOT NULL
 );
 
 
@@ -889,6 +950,70 @@ CREATE FUNCTION app_public.create_cfs(title character varying, content character
 		return v_new_cfs;
 	end;
 	$$;
+
+
+--
+-- Name: comment; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.comment (
+    id integer NOT NULL,
+    confession_id integer,
+    author_name character varying(255),
+    content text,
+    created_at bigint,
+    image character varying(255),
+    updated_at timestamp with time zone DEFAULT now(),
+    user_id uuid DEFAULT app_public.current_user_id(),
+    parent_id integer,
+    total_reaction integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- Name: create_or_update_comment_reaction(integer, app_public.reaction_type); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.create_or_update_comment_reaction(comment_id integer, react_type app_public.reaction_type) RETURNS app_public.comment
+    LANGUAGE plpgsql STRICT SECURITY DEFINER
+    SET search_path TO 'app_public', 'app_private', 'app_hidden', 'public'
+    AS $$
+declare
+  v_comment app_public.comment;
+begin
+	 INSERT INTO app_public.user_comment_reaction (comment_id, react_type)
+   VALUES(comment_id, react_type)
+   ON CONFLICT ON CONSTRAINT user_id_comment_id_unique_key
+   DO
+      UPDATE SET react_type = EXCLUDED.react_type;
+
+   select * into v_comment from app_public.comment where id = comment_id;
+   return v_comment;
+end;
+$$;
+
+
+--
+-- Name: create_or_update_confession_reaction(integer, app_public.reaction_type); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.create_or_update_confession_reaction(confession_id integer, react_type app_public.reaction_type) RETURNS app_public.confession
+    LANGUAGE plpgsql STRICT SECURITY DEFINER
+    SET search_path TO 'app_public', 'app_private', 'app_hidden', 'public'
+    AS $$
+declare
+  v_confession app_public.confession;
+begin
+	 INSERT INTO app_public.user_confession_reaction (confession_id, react_type)
+   VALUES(confession_id, react_type)
+   ON CONFLICT ON CONSTRAINT user_id_confession_id_unique_key
+   DO
+      UPDATE SET react_type = EXCLUDED.react_type;
+
+   select * into v_confession from app_public.confession where id = confession_id;
+   return v_confession;
+end;
+$$;
 
 
 --
@@ -1601,23 +1726,6 @@ ALTER SEQUENCE app_public.category_id_seq OWNED BY app_public.category.id;
 
 
 --
--- Name: comment; Type: TABLE; Schema: app_public; Owner: -
---
-
-CREATE TABLE app_public.comment (
-    id integer NOT NULL,
-    confession_id integer,
-    author_name character varying(255),
-    content text,
-    created_at bigint,
-    image character varying(255),
-    updated_at timestamp with time zone DEFAULT now(),
-    user_id uuid DEFAULT app_public.current_user_id(),
-    parent_id integer
-);
-
-
---
 -- Name: comment_id_seq; Type: SEQUENCE; Schema: app_public; Owner: -
 --
 
@@ -1711,6 +1819,74 @@ COMMENT ON COLUMN app_public.user_authentications.details IS 'Additional profile
 
 
 --
+-- Name: user_comment_reaction; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.user_comment_reaction (
+    id integer NOT NULL,
+    user_id uuid DEFAULT app_public.current_user_id(),
+    comment_id integer NOT NULL,
+    react_type app_public.reaction_type NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: user_comment_reaction_id_seq; Type: SEQUENCE; Schema: app_public; Owner: -
+--
+
+CREATE SEQUENCE app_public.user_comment_reaction_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_comment_reaction_id_seq; Type: SEQUENCE OWNED BY; Schema: app_public; Owner: -
+--
+
+ALTER SEQUENCE app_public.user_comment_reaction_id_seq OWNED BY app_public.user_comment_reaction.id;
+
+
+--
+-- Name: user_confession_reaction; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.user_confession_reaction (
+    id integer NOT NULL,
+    user_id uuid DEFAULT app_public.current_user_id(),
+    confession_id integer NOT NULL,
+    react_type app_public.reaction_type NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: user_confession_reaction_id_seq; Type: SEQUENCE; Schema: app_public; Owner: -
+--
+
+CREATE SEQUENCE app_public.user_confession_reaction_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_confession_reaction_id_seq; Type: SEQUENCE OWNED BY; Schema: app_public; Owner: -
+--
+
+ALTER SEQUENCE app_public.user_confession_reaction_id_seq OWNED BY app_public.user_confession_reaction.id;
+
+
+--
 -- Name: category id; Type: DEFAULT; Schema: app_public; Owner: -
 --
 
@@ -1729,6 +1905,20 @@ ALTER TABLE ONLY app_public.comment ALTER COLUMN id SET DEFAULT nextval('app_pub
 --
 
 ALTER TABLE ONLY app_public.confession ALTER COLUMN id SET DEFAULT nextval('app_public.confession_id_seq'::regclass);
+
+
+--
+-- Name: user_comment_reaction id; Type: DEFAULT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.user_comment_reaction ALTER COLUMN id SET DEFAULT nextval('app_public.user_comment_reaction_id_seq'::regclass);
+
+
+--
+-- Name: user_confession_reaction id; Type: DEFAULT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.user_confession_reaction ALTER COLUMN id SET DEFAULT nextval('app_public.user_confession_reaction_id_seq'::regclass);
 
 
 --
@@ -1844,6 +2034,22 @@ ALTER TABLE ONLY app_public.user_authentications
 
 
 --
+-- Name: user_comment_reaction user_comment_reaction_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.user_comment_reaction
+    ADD CONSTRAINT user_comment_reaction_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_confession_reaction user_confession_reaction_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.user_confession_reaction
+    ADD CONSTRAINT user_confession_reaction_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: user_emails user_emails_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
 --
 
@@ -1857,6 +2063,22 @@ ALTER TABLE ONLY app_public.user_emails
 
 ALTER TABLE ONLY app_public.user_emails
     ADD CONSTRAINT user_emails_user_id_email_key UNIQUE (user_id, email);
+
+
+--
+-- Name: user_comment_reaction user_id_comment_id_unique_key; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.user_comment_reaction
+    ADD CONSTRAINT user_id_comment_id_unique_key UNIQUE (user_id, comment_id);
+
+
+--
+-- Name: user_confession_reaction user_id_confession_id_unique_key; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.user_confession_reaction
+    ADD CONSTRAINT user_id_confession_id_unique_key UNIQUE (user_id, confession_id);
 
 
 --
@@ -1967,6 +2189,34 @@ CREATE INDEX user_authentications_user_id_idx ON app_public.user_authentications
 
 
 --
+-- Name: user_comment_reaction_comment_id_idx; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX user_comment_reaction_comment_id_idx ON app_public.user_comment_reaction USING btree (comment_id);
+
+
+--
+-- Name: user_comment_reaction_user_id_idx; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX user_comment_reaction_user_id_idx ON app_public.user_comment_reaction USING btree (user_id);
+
+
+--
+-- Name: user_confession_reaction_confession_id_idx; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX user_confession_reaction_confession_id_idx ON app_public.user_confession_reaction USING btree (confession_id);
+
+
+--
+-- Name: user_confession_reaction_user_id_idx; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX user_confession_reaction_user_id_idx ON app_public.user_confession_reaction USING btree (user_id);
+
+
+--
 -- Name: category _100_timestamps; Type: TRIGGER; Schema: app_public; Owner: -
 --
 
@@ -1992,6 +2242,20 @@ CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.confession 
 --
 
 CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.user_authentications FOR EACH ROW EXECUTE FUNCTION app_private.tg__timestamps();
+
+
+--
+-- Name: user_comment_reaction _100_timestamps; Type: TRIGGER; Schema: app_public; Owner: -
+--
+
+CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.user_comment_reaction FOR EACH ROW EXECUTE FUNCTION app_private.tg__timestamps();
+
+
+--
+-- Name: user_confession_reaction _100_timestamps; Type: TRIGGER; Schema: app_public; Owner: -
+--
+
+CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.user_confession_reaction FOR EACH ROW EXECUTE FUNCTION app_private.tg__timestamps();
 
 
 --
@@ -2086,6 +2350,20 @@ CREATE TRIGGER _900_send_verification_email AFTER INSERT ON app_public.user_emai
 
 
 --
+-- Name: user_comment_reaction update_total_reaction; Type: TRIGGER; Schema: app_public; Owner: -
+--
+
+CREATE TRIGGER update_total_reaction AFTER INSERT OR UPDATE ON app_public.user_comment_reaction FOR EACH ROW EXECUTE FUNCTION app_private.tg__update_total_reaction('comment');
+
+
+--
+-- Name: user_confession_reaction update_total_reaction; Type: TRIGGER; Schema: app_public; Owner: -
+--
+
+CREATE TRIGGER update_total_reaction AFTER INSERT OR UPDATE ON app_public.user_confession_reaction FOR EACH ROW EXECUTE FUNCTION app_private.tg__update_total_reaction('confession');
+
+
+--
 -- Name: sessions sessions_user_id_fkey; Type: FK CONSTRAINT; Schema: app_private; Owner: -
 --
 
@@ -2174,6 +2452,38 @@ ALTER TABLE ONLY app_public.user_authentications
 
 
 --
+-- Name: user_comment_reaction user_comment_reaction_comment_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.user_comment_reaction
+    ADD CONSTRAINT user_comment_reaction_comment_id_fkey FOREIGN KEY (comment_id) REFERENCES app_public.comment(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_comment_reaction user_comment_reaction_user_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.user_comment_reaction
+    ADD CONSTRAINT user_comment_reaction_user_id_fkey FOREIGN KEY (user_id) REFERENCES app_public.users(id) ON DELETE SET NULL;
+
+
+--
+-- Name: user_confession_reaction user_confession_reaction_confession_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.user_confession_reaction
+    ADD CONSTRAINT user_confession_reaction_confession_id_fkey FOREIGN KEY (confession_id) REFERENCES app_public.confession(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_confession_reaction user_confession_reaction_user_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.user_confession_reaction
+    ADD CONSTRAINT user_confession_reaction_user_id_fkey FOREIGN KEY (user_id) REFERENCES app_public.users(id) ON DELETE SET NULL;
+
+
+--
 -- Name: user_emails user_emails_user_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
 --
 
@@ -2244,6 +2554,20 @@ CREATE POLICY delete_own ON app_public.user_emails FOR DELETE USING ((user_id = 
 
 
 --
+-- Name: user_comment_reaction insert_all; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY insert_all ON app_public.user_comment_reaction FOR INSERT WITH CHECK ((app_public.current_user_id() IS NOT NULL));
+
+
+--
+-- Name: user_confession_reaction insert_all; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY insert_all ON app_public.user_confession_reaction FOR INSERT WITH CHECK ((app_public.current_user_id() IS NOT NULL));
+
+
+--
 -- Name: comment insert_own; Type: POLICY; Schema: app_public; Owner: -
 --
 
@@ -2310,6 +2634,38 @@ CREATE POLICY manage_as_admin ON app_public.confession_category USING ((EXISTS (
 
 
 --
+-- Name: user_comment_reaction manage_as_admin; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY manage_as_admin ON app_public.user_comment_reaction USING ((EXISTS ( SELECT 1
+   FROM app_public.users
+  WHERE ((users.is_admin IS TRUE) AND (users.id = app_public.current_user_id())))));
+
+
+--
+-- Name: user_confession_reaction manage_as_admin; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY manage_as_admin ON app_public.user_confession_reaction USING ((EXISTS ( SELECT 1
+   FROM app_public.users
+  WHERE ((users.is_admin IS TRUE) AND (users.id = app_public.current_user_id())))));
+
+
+--
+-- Name: user_comment_reaction manage_own; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY manage_own ON app_public.user_comment_reaction USING ((user_id = app_public.current_user_id()));
+
+
+--
+-- Name: user_confession_reaction manage_own; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY manage_own ON app_public.user_confession_reaction USING ((user_id = app_public.current_user_id()));
+
+
+--
 -- Name: category select_all; Type: POLICY; Schema: app_public; Owner: -
 --
 
@@ -2349,6 +2705,20 @@ CREATE POLICY select_all ON app_public.users FOR SELECT USING (true);
 --
 
 CREATE POLICY select_own ON app_public.user_authentications FOR SELECT USING ((user_id = app_public.current_user_id()));
+
+
+--
+-- Name: user_comment_reaction select_own; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY select_own ON app_public.user_comment_reaction FOR SELECT USING ((user_id = app_public.current_user_id()));
+
+
+--
+-- Name: user_confession_reaction select_own; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY select_own ON app_public.user_confession_reaction FOR SELECT USING ((user_id = app_public.current_user_id()));
 
 
 --
@@ -2393,6 +2763,18 @@ CREATE POLICY update_self ON app_public.users FOR UPDATE USING ((id = app_public
 --
 
 ALTER TABLE app_public.user_authentications ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: user_comment_reaction; Type: ROW SECURITY; Schema: app_public; Owner: -
+--
+
+ALTER TABLE app_public.user_comment_reaction ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: user_confession_reaction; Type: ROW SECURITY; Schema: app_public; Owner: -
+--
+
+ALTER TABLE app_public.user_confession_reaction ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: user_emails; Type: ROW SECURITY; Schema: app_public; Owner: -
@@ -2522,6 +2904,13 @@ REVOKE ALL ON FUNCTION app_private.tg__timestamps() FROM PUBLIC;
 
 
 --
+-- Name: FUNCTION tg__update_total_reaction(); Type: ACL; Schema: app_private; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_private.tg__update_total_reaction() FROM PUBLIC;
+
+
+--
 -- Name: FUNCTION tg_user_email_secrets__insert_with_user_email(); Type: ACL; Schema: app_private; Owner: -
 --
 
@@ -2600,6 +2989,64 @@ GRANT INSERT(image),UPDATE(image) ON TABLE app_public.confession TO cfs_visitor;
 
 REVOKE ALL ON FUNCTION app_public.create_cfs(title character varying, content character varying, slug character varying, cat_id integer, image character varying) FROM PUBLIC;
 GRANT ALL ON FUNCTION app_public.create_cfs(title character varying, content character varying, slug character varying, cat_id integer, image character varying) TO cfs_visitor;
+
+
+--
+-- Name: TABLE comment; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,DELETE ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
+-- Name: COLUMN comment.confession_id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(confession_id),UPDATE(confession_id) ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
+-- Name: COLUMN comment.author_name; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(author_name),UPDATE(author_name) ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
+-- Name: COLUMN comment.content; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(content),UPDATE(content) ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
+-- Name: COLUMN comment.image; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(image),UPDATE(image) ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
+-- Name: COLUMN comment.parent_id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(parent_id),UPDATE(parent_id) ON TABLE app_public.comment TO cfs_visitor;
+
+
+--
+-- Name: FUNCTION create_or_update_comment_reaction(comment_id integer, react_type app_public.reaction_type); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.create_or_update_comment_reaction(comment_id integer, react_type app_public.reaction_type) FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.create_or_update_comment_reaction(comment_id integer, react_type app_public.reaction_type) TO cfs_visitor;
+
+
+--
+-- Name: FUNCTION create_or_update_confession_reaction(confession_id integer, react_type app_public.reaction_type); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.create_or_update_confession_reaction(confession_id integer, react_type app_public.reaction_type) FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.create_or_update_confession_reaction(confession_id integer, react_type app_public.reaction_type) TO cfs_visitor;
 
 
 --
@@ -2748,7 +3195,7 @@ GRANT ALL ON FUNCTION app_public.verify_email(user_email_id uuid, token text) TO
 -- Name: TABLE category; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT,DELETE ON TABLE app_public.category TO cfs_visitor;
+GRANT SELECT ON TABLE app_public.category TO cfs_visitor;
 
 
 --
@@ -2780,48 +3227,6 @@ GRANT SELECT,USAGE ON SEQUENCE app_public.category_id_seq TO cfs_visitor;
 
 
 --
--- Name: TABLE comment; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT SELECT,DELETE ON TABLE app_public.comment TO cfs_visitor;
-
-
---
--- Name: COLUMN comment.confession_id; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(confession_id),UPDATE(confession_id) ON TABLE app_public.comment TO cfs_visitor;
-
-
---
--- Name: COLUMN comment.author_name; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(author_name),UPDATE(author_name) ON TABLE app_public.comment TO cfs_visitor;
-
-
---
--- Name: COLUMN comment.content; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(content),UPDATE(content) ON TABLE app_public.comment TO cfs_visitor;
-
-
---
--- Name: COLUMN comment.image; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(image),UPDATE(image) ON TABLE app_public.comment TO cfs_visitor;
-
-
---
--- Name: COLUMN comment.parent_id; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(parent_id),UPDATE(parent_id) ON TABLE app_public.comment TO cfs_visitor;
-
-
---
 -- Name: SEQUENCE comment_id_seq; Type: ACL; Schema: app_public; Owner: -
 --
 
@@ -2836,20 +3241,6 @@ GRANT SELECT,DELETE ON TABLE app_public.confession_category TO cfs_visitor;
 
 
 --
--- Name: COLUMN confession_category.confession_id; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(confession_id) ON TABLE app_public.confession_category TO cfs_visitor;
-
-
---
--- Name: COLUMN confession_category.category_id; Type: ACL; Schema: app_public; Owner: -
---
-
-GRANT INSERT(category_id) ON TABLE app_public.confession_category TO cfs_visitor;
-
-
---
 -- Name: SEQUENCE confession_id_seq; Type: ACL; Schema: app_public; Owner: -
 --
 
@@ -2861,6 +3252,34 @@ GRANT SELECT,USAGE ON SEQUENCE app_public.confession_id_seq TO cfs_visitor;
 --
 
 GRANT SELECT,DELETE ON TABLE app_public.user_authentications TO cfs_visitor;
+
+
+--
+-- Name: TABLE user_comment_reaction; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT ON TABLE app_public.user_comment_reaction TO cfs_visitor;
+
+
+--
+-- Name: SEQUENCE user_comment_reaction_id_seq; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,USAGE ON SEQUENCE app_public.user_comment_reaction_id_seq TO cfs_visitor;
+
+
+--
+-- Name: TABLE user_confession_reaction; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT ON TABLE app_public.user_confession_reaction TO cfs_visitor;
+
+
+--
+-- Name: SEQUENCE user_confession_reaction_id_seq; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,USAGE ON SEQUENCE app_public.user_confession_reaction_id_seq TO cfs_visitor;
 
 
 --

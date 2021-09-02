@@ -33,7 +33,11 @@ const CardContent = ({ cfs }) => {
         )}
       </div>
 
-      {expandedThumbnail && <AntdImage src={image} />}
+      {expandedThumbnail && (
+        <div className="flex items-center justify-center">
+          <AntdImage src={image} />
+        </div>
+      )}
     </>
   );
 };

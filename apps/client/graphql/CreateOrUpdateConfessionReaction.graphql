@@ -1,0 +1,8 @@
+mutation CreateOrUpdateConfessionReaction($confessionId: Int!, $reactType: ReactionType!) {
+  createOrUpdateConfessionReaction(input: {confessionId: $confessionId, reactType: $reactType}) {
+    confession {
+      id
+      totalReaction
+    }
+  }
+}
