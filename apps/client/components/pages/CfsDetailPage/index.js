@@ -5,6 +5,7 @@ import {
   useGetRelativeConfessionsLazyQuery,
 } from '@cfs/graphql';
 import { useRouter } from 'next/router';
+import ConfessionSEO from '../../../shared/seo/ConfessionSEO';
 
 const CfsDetailPage = () => {
   const router = useRouter();
@@ -39,6 +40,10 @@ const CfsDetailPage = () => {
 
   return (
     <div className="mb-6">
+      <ConfessionSEO
+        confession={cfsDetailPageData}
+        categories={cfsDetailPageData?.confessionCategories?.nodes}
+      />
       {cfsDetailPageData && (
         <CfsDetail
           cfsDetailPageData={cfsDetailPageData}

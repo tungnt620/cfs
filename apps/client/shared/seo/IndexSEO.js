@@ -1,7 +1,7 @@
 import { NextSeo } from 'next-seo';
 
 const IndexSEO = () => {
-  return <NextSeo title="Confession" />;
+  return <NextSeo />;
 };
 
 export default IndexSEO;

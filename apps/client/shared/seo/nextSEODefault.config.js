@@ -1,7 +1,7 @@
 export default {
   title: 'Nơi chia sẻ những tâm sự thầm kín',
   titleTemplate: '%s | Confession',
-  description: 'Nơi chia sẻ những tâm sự thầm kín',
+  description: 'Nơi chia sẻ những tâm sự thầm kín. Tạo cho mình 1 nickname và tâm sự nào',
   canonical: 'https://confession.vn/',
   openGraph: {
     url: 'https://confession.vn/',

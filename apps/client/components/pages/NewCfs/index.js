@@ -14,11 +14,7 @@ const NewCfs = () => {
   const router = useRouter();
   const goBack = useGoBack();
   const [form] = Form.useForm();
-  const {
-    data: {
-      categories: { nodes: categories },
-    },
-  } = useGetCategoriesQuery();
+  const { data: getCategoriesData } = useGetCategoriesQuery();
   const [
     createCfs,
     { data: createCfsData, error: createCfsError, loading: createCfsLoading },
@@ -26,11 +22,11 @@ const NewCfs = () => {
 
   const categorySelectOptions = useMemo(
     () =>
-      categories.map((cat) => ({
+      getCategoriesData?.categories?.nodes?.map((cat) => ({
         value: cat.id,
         label: cat.name,
-      })),
-    [categories]
+      })) ?? [],
+    [getCategoriesData]
   );
 
   const onFinish = (values) => {

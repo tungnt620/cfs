@@ -1,12 +1,11 @@
 import { Task } from "graphile-worker";
 import { template as lodashTemplate } from "lodash";
-// @ts-ignore
 import mjml2html = require("mjml");
 import {
   emailLegalText as legalText,
   fromEmail,
   projectName,
-} from "@app/config";
+} from "@cfs/config";
 import chalk from "chalk";
 import { promises as fsp } from "fs";
 import { htmlToText } from "html-to-text";
@@ -14,7 +13,8 @@ import * as nodemailer from "nodemailer";
 
 import getTransport from "../transport";
 
-declare module global {
+// eslint-disable-next-line @typescript-eslint/no-namespace
+declare namespace global {
   let TEST_EMAILS: any[];
 }
 

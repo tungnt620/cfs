@@ -2031,7 +2031,7 @@ export type CatDetailPageQuery = (
   { __typename?: 'Query' }
   & { categoryBySlug?: Maybe<(
     { __typename?: 'Category' }
-    & Pick<Category, 'image' | 'slug'>
+    & Pick<Category, 'name' | 'image' | 'slug'>
   )> }
 );
 
@@ -2814,6 +2814,7 @@ export type AllCategoriesPageQueryResult = Apollo.QueryResult<AllCategoriesPageQ
 export const CatDetailPageDocument = gql`
     query CatDetailPage($slug: String!) {
   categoryBySlug(slug: $slug) {
+    name
     image
     slug
   }

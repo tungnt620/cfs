@@ -1,4 +1,4 @@
-import { projectName } from "@app/config";
+import { projectName } from "@cfs/config";
 import { Task } from "graphile-worker";
 
 import { SendEmailPayload } from "./send_email";

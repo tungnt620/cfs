@@ -1,4 +1,4 @@
-import { awsRegion } from "@app/config";
+import { awsRegion } from "@cfs/config";
 import * as aws from "aws-sdk";
 import chalk from "chalk";
 import { promises as fsp } from "fs";

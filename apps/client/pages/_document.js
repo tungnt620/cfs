@@ -9,10 +9,10 @@ class MyDocument extends Document {
 
   render() {
     return (
-      <Html>
+      <Html lang='vi'>
         <Head>
           <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-          <link rel="dns-prefetch" href="//s.w.org" />
+          <meta httpEquiv="content-language" content="vi" />
           <script
             dangerouslySetInnerHTML={{
               __html: `

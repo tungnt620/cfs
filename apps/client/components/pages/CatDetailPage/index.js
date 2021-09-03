@@ -6,6 +6,7 @@ import { CfsList } from '@cfs/ui';
 import { usePreviousValue } from '../../../../../libs/helper/src/hooks';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setCurrentUser } from '../../../../../libs/helper/src/reactiveVars';
+import CategorySEO from '../../../shared/seo/CategorySEO';
 
 const CatDetailPage = () => {
   const router = useRouter();
@@ -55,6 +56,7 @@ const CatDetailPage = () => {
 
   return (
     <div className="ml-2 mr-2 mb-6 bg-color1">
+      <CategorySEO category={catData} />
       {catData && <CfsDetailHeader cat={catData} />}
       <CfsList cfsList={confessions} fetchMore={fetchMoreCfs} />
     </div>

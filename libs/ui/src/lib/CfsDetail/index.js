@@ -9,7 +9,7 @@ import { Avatar, Image as AntdImage } from 'antd';
 import style from './CfsDetail.module.scss';
 import useBooleanToggle from '../../../../helper/src/hooks';
 import { findNumberOccurrenceInString } from '../../../../helper/src/string';
-import { CfsList, CfsMiniCard } from '@cfs/ui';
+import { CfsMiniCard } from '@cfs/ui';
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');

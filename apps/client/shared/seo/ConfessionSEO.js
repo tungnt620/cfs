@@ -1,6 +1,6 @@
 import { NextSeo } from 'next-seo';
 
-const ConfessionSEO = ({ confession }) => {
+const ConfessionSEO = ({ confession = {}, categories }) => {
   const url = `https://confession.vn/${confession.slug}/`;
 
   return (
@@ -14,15 +14,15 @@ const ConfessionSEO = ({ confession }) => {
       openGraph={{
         url: url,
         type: 'article',
-        images: [
+        images: confession.image ? [
           {
             url: confession.image,
             secure_url: confession.image,
             alt: confession.title,
           },
-        ],
+        ] : [],
         article: {
-          section: (confession.categories || [])
+          section: (categories || [])
             .map((cat) => cat.name)
             .join(', '),
           published_time: confession.created_at,

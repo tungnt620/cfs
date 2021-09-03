@@ -404,17 +404,15 @@
         "serve": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "graphile-worker --crontab ./crontab",
-            "cwd": "apps/worker/dist",
-            "buildTarget": "worker:build"
+            "command": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS -r ../../../libs/config/env\" graphile-worker --crontab ../crontab",
+            "cwd": "apps/worker/src"
           }
         },
         "dev": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "graphile-worker --crontab ../crontab --watch",
-            "cwd": "apps/worker/dist",
-            "buildTarget": "worker:build"
+            "command": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS -r ../../../libs/config/env\" graphile-worker --crontab ../crontab --watch",
+            "cwd": "apps/worker/src"
           }
         },
         "install-db-schema": {
@@ -422,9 +420,9 @@
           "options": {
             "commands": [
               "mkdirp dist",
-              "graphile-worker --crontab ../crontab --schema-only"
+              "cross-env NODE_OPTIONS=\"$NODE_OPTIONS -r ../../../libs/config/env\" graphile-worker --crontab ./crontab --schema-only"
             ],
-            "cwd": "apps/worker"
+            "cwd": "apps/worker/src"
           }
         },
         "lint": {

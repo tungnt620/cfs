@@ -5,19 +5,21 @@ const CategorySEO = ({ category }) => {
 
   return (
     <NextSeo
-      title={`${category.name} tag`}
+      title={category.name}
       description={`Tập hợp các confession từ ${category.name}`}
       canonical={url}
       openGraph={{
         url: url,
         type: 'object',
-        images: [
-          {
-            url: category.image,
-            secure_url: category.image,
-            alt: category.name,
-          },
-        ],
+        images: category.image
+          ? [
+              {
+                url: category.image,
+                secure_url: category.image,
+                alt: category.name,
+              },
+            ]
+          : [],
       }}
     />
   );

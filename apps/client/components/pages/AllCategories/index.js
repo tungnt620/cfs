@@ -18,7 +18,7 @@ const AllCategoriesPage = () => {
         return (
           <div className={style.cat} key={cat.id}>
             <Badge
-              onClick={() => router.push(`/cat/${cat.slug}`)}
+              onClick={() => router.push(`/category/${cat.slug}`)}
               className="cursor-pointer"
               count={cat.confessionCategories.totalCount}
             >
