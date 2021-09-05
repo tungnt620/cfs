@@ -49,7 +49,7 @@ const HomePage = () => {
         <div className={styles.homePageListMenu}>
           {/*<Dropdown btnText={'Chọn'} />*/}
         </div>
-        <div className={styles.homePageListCategories}>
+        <main className={styles.homePageListCategories}>
           <Tabs
             defaultActiveKey="0"
             activeKey={selectedCat}
@@ -65,7 +65,7 @@ const HomePage = () => {
               </TabPane>
             ))}
           </Tabs>
-        </div>
+        </main>
       </div>
     </div>
   );

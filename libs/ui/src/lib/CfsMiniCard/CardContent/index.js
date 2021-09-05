@@ -23,6 +23,7 @@ const CardContent = ({ cfs }) => {
         {image && (
           <div className={`ml-4 h-full cursor-pointer ${styles.smallImage}`}>
             <Image
+              alt="Hình ảnh trong bài confession"
               src={image}
               width={60}
               height={60}
@@ -35,7 +36,7 @@ const CardContent = ({ cfs }) => {
 
       {expandedThumbnail && (
         <div className="flex items-center justify-center">
-          <AntdImage src={image} />
+          <AntdImage alt="Hình ảnh trong bài confession" src={image} />
         </div>
       )}
     </>

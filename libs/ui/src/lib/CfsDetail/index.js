@@ -43,7 +43,7 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
   }, [cfsDetailPageData.content]);
 
   return (
-    <div>
+    <main>
       <CfsDetailHeader cat={catData} />
       <div className="ml-1 mr-1">
         <header className="flex mt-1 pt-2 pb-2 leading-5">
@@ -55,7 +55,7 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
             <div className="mr-4 text-sm font-medium">{userData.username}</div>
 
             <div>
-              <span className="text-sm opacity-40 whitespace-nowrap">
+              <span className="text-sm whitespace-nowrap color-4">
                 {dayjs(cfsDetailPageData.createdAt).fromNow()}
               </span>
             </div>
@@ -69,12 +69,16 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
 
         {expandedThumbnail ? (
           <div className="flex items-center justify-center">
-            <AntdImage src={cfsDetailPageData.image} />
+            <AntdImage
+              alt="Hình mô tả cho bài confession"
+              src={cfsDetailPageData.image}
+            />
           </div>
         ) : (
           cfsDetailPageData.image && (
             <div className={`relative w-full mt-2 ${style.minHeight300px}`}>
               <Image
+                alt="Hình mô tả cho bài confession"
                 src={cfsDetailPageData.image}
                 layout="fill"
                 objectFit="contain"
@@ -107,13 +111,15 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
 
       {relativeCfsData && (
         <div className="mt-8 ml-2 mr-2">
-          <h3 className='font-bold text-base'>Confession khác có thể bạn thích</h3>
+          <h3 className="font-bold text-base">
+            Confession khác có thể bạn thích
+          </h3>
           {relativeCfsData.map((cfs) => (
             <CfsMiniCard cfs={cfs} key={cfs.id} />
           ))}
         </div>
       )}
-    </div>
+    </main>
   );
 };
 

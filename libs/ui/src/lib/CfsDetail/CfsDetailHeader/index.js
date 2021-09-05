@@ -10,7 +10,14 @@ const CfsDetailHeader = ({ cat }) => {
 
   return (
     <div className={style.wrapper}>
-      {cat.image && <Image src={cat.image} layout="fill" objectFit="cover" />}
+      {cat.image && (
+        <Image
+          alt={`Ảnh bìa của ${cat.name}`}
+          src={cat.image}
+          layout="fill"
+          objectFit="cover"
+        />
+      )}
 
       <div
         className={`grid grid-rows-2 grid-cols-12 h-full ${style.marginRight_1px}`}
@@ -26,6 +33,7 @@ const CfsDetailHeader = ({ cat }) => {
                 <a>
                   {cat.image && (
                     <Image
+                      alt={`ảnh đại diện của ${cat.name}`}
                       className="rounded-full"
                       src={cat.image}
                       layout="fill"

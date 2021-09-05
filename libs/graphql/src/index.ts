@@ -2330,7 +2330,7 @@ export type GetRelativeConfessionsQuery = (
           { __typename?: 'ConfessionCategory' }
           & { category?: Maybe<(
             { __typename?: 'Category' }
-            & Pick<Category, 'slug' | 'image'>
+            & Pick<Category, 'name' | 'slug' | 'image'>
           )> }
         )> }
       ) }
@@ -2387,7 +2387,7 @@ export type HomePage_ConfessionFragment = (
       { __typename?: 'ConfessionCategory' }
       & { category?: Maybe<(
         { __typename?: 'Category' }
-        & Pick<Category, 'slug' | 'image'>
+        & Pick<Category, 'name' | 'slug' | 'image'>
       )> }
     )> }
   ) }
@@ -2695,6 +2695,7 @@ export const HomePage_ConfessionFragmentDoc = gql`
   confessionCategories {
     nodes {
       category {
+        name
         slug
         image
       }
@@ -3410,6 +3411,7 @@ export const GetRelativeConfessionsDocument = gql`
       confessionCategories {
         nodes {
           category {
+            name
             slug
             image
           }

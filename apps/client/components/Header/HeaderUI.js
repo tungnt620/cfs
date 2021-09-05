@@ -74,6 +74,7 @@ const HeaderUI = () => {
               width={124}
               height={40}
               className="cursor-pointer"
+              alt='Logo'
             />
           </a>
         </Link>

@@ -16,6 +16,7 @@ fragment HomePage_Confession on Confession {
   confessionCategories {
     nodes {
       category {
+        name
         slug
         image
       }

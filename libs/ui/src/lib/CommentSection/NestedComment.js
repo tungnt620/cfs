@@ -67,12 +67,13 @@ const NestedComment = ({ comment, idChildrenComments, cfsId }) => {
           <>
             {expandedThumbnail ? (
               <div className="flex items-center justify-center">
-                <AntdImage src={comment.image} />
+                <AntdImage alt="Ảnh trong comment" src={comment.image} />
               </div>
             ) : (
               comment.image && (
                 <div className={`relative w-full ${style.minHeight200px}`}>
                   <Image
+                    alt="Ảnh trong comment"
                     className="cursor-pointer"
                     src={comment.image}
                     layout="fill"

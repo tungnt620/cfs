@@ -18,6 +18,7 @@ query GetRelativeConfessions($targetConfessionId: Int!) {
       confessionCategories {
         nodes {
           category {
+            name
             slug
             image
           }

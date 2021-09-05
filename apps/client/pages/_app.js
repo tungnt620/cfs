@@ -2,13 +2,18 @@ import App from 'next/app';
 import React from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { DefaultSeo } from 'next-seo';
-import Head from 'next/head';
 import defaultSEOPropsConfigs from '../shared/seo/nextSEODefault.config';
 import '../../../libs/ui/src/lib/styles/global.scss';
 import MainLayout from '../components/Layout';
 import { withApollo } from '@cfs/helper';
 
 const noLayoutComponents = ['NewCfs', 'AllCategories'];
+
+if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
+  const ReactDOM = require('react-dom');
+  const axe = require('@axe-core/react');
+  axe(React, ReactDOM, 1000);
+}
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -26,12 +31,6 @@ class MyApp extends App {
 
     return (
       <>
-        <Head>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
-          />
-        </Head>
         <ApolloProvider client={apollo}>
           <DefaultSeo {...defaultSEOPropsConfigs} />
           {noLayoutComponents.includes(Component.name) ? (

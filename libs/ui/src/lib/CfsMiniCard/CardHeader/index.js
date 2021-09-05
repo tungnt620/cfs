@@ -20,6 +20,7 @@ const CardHeader = ({ cfs }) => {
           <a>
             <div className="w-6 h-6 mr-1">
               <Image
+                alt={`Ảnh đại diện của ${catData.name}`}
                 className="rounded-full w-6 h-6"
                 src={catData.image ?? emptyImage}
                 width={24}
@@ -42,7 +43,7 @@ const CardHeader = ({ cfs }) => {
         <Link href={`/${cfs?.slug}`}>
           <a>
             <div>
-              <span className="text-sm opacity-40 whitespace-nowrap">
+              <span className="text-sm whitespace-nowrap color4">
                 {dayjs(cfs?.createdAt).fromNow()}
               </span>
             </div>

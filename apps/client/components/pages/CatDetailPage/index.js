@@ -58,7 +58,9 @@ const CatDetailPage = () => {
     <div className="ml-2 mr-2 mb-6 bg-color1">
       <CategorySEO category={catData} />
       {catData && <CfsDetailHeader cat={catData} />}
-      <CfsList cfsList={confessions} fetchMore={fetchMoreCfs} />
+      <main>
+        <CfsList cfsList={confessions} fetchMore={fetchMoreCfs} />
+      </main>
     </div>
   );
 };

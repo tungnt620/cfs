@@ -1,8 +1,9 @@
 body {
   --main-bg-color: #fff;
   --color-1: #9e9ea7;
-  --color-2: #787c7e;
+  --color-2: #56595a;
   --color-3: #0c8ecf;
+  --color-4: #11182796;
   --header-height: 60px;
   --shadow-color: #f3f3f4;
   --border-color1: #efefed;
@@ -26,6 +27,10 @@ body {
 
 .color3 {
   color: var(--color-3)
+}
+
+.color4 {
+  color: var(--color-4)
 }
 
 .border-color1 {

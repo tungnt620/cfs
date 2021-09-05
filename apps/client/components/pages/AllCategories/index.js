@@ -14,19 +14,21 @@ const AllCategoriesPage = () => {
 
   return (
     <PageHeader onBack={goBack} title="Tất cả mục confession con">
-      {categories.map((cat) => {
-        return (
-          <div className={style.cat} key={cat.id}>
-            <Badge
-              onClick={() => router.push(`/category/${cat.slug}`)}
-              className="cursor-pointer"
-              count={cat.confessionCategories.totalCount}
-            >
-              <Tag>{cat.name}</Tag>
-            </Badge>
-          </div>
-        );
-      })}
+      <main>
+        {categories.map((cat) => {
+          return (
+            <div className={style.cat} key={cat.id}>
+              <Badge
+                onClick={() => router.push(`/category/${cat.slug}`)}
+                className="cursor-pointer"
+                count={cat.confessionCategories.totalCount}
+              >
+                <Tag>{cat.name}</Tag>
+              </Badge>
+            </div>
+          );
+        })}
+      </main>
     </PageHeader>
   );
 };
