@@ -224,6 +224,7 @@ export function getPostGraphileOptions({
       return {
         // Everyone uses the "visitor" role currently
         role: process.env.DATABASE_VISITOR,
+        statement_timeout: "3000",
 
         /*
          * Note, though this says "jwt" it's not actually anything to do with
