@@ -27,6 +27,9 @@
     "generate-graphql": "graphql-codegen --config codegen.yml"
   },
   "private": true,
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
+  },
   "devDependencies": {
     "@axe-core/react": "^4.2.2",
     "@babel/core": "7.14.6",
@@ -90,7 +93,6 @@
     "eslint-plugin-jsx-a11y": "6.4.1",
     "eslint-plugin-react": "7.21.5",
     "eslint-plugin-react-hooks": "4.2.0",
-    "fsevents": "^2.3.2",
     "graphile-migrate": "^1.2.0",
     "graphql": "^15.5.1",
     "inquirer": "^8.1.1",
