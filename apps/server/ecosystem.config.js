@@ -23,7 +23,7 @@ module.exports = {
       ref: 'origin/master',
       repo: 'https://github.com/tungnt620/cfs.git',
       path: '/data/cfs',
-      'post-deploy': 'yarn install && yarn nx build server --prod && cp ./apps/server/ecosystem.config.js ./dist/apps/server && cd ./dist/apps/server && pm2 reload ecosystem.config.js --env production'
+      'post-deploy': '/root/.asdf/shims/yarn install && /root/.asdf/shims/yarn nx build server --prod && cp ./apps/server/ecosystem.config.js ./dist/apps/server && cd ./dist/apps/server && pm2 reload ecosystem.config.js --env production'
     }
   }
 }
