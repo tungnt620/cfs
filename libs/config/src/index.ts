@@ -8,3 +8,8 @@ export const companyName = projectName; // For copyright ownership
 export const emailLegalText =
   // Envvar here so we can override on the demo website
   process.env.LEGAL_TEXT || '<Insert legal email footer text here >';
+
+export function setEnv() {
+  require("dotenv").config({ path: `${__dirname}/../../../.env` });
+  require("../extra");
+}

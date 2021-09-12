@@ -1,5 +1,7 @@
 import { makeApp } from './app';
-require('../../../libs/config/env.js');
+import { setEnv } from '@cfs/config'
+
+setEnv();
 
 async function main() {
   const app = await makeApp();
