@@ -2,7 +2,7 @@ module.exports = {
   apps: [{
     name: 'cfs_api',
     script: 'main.js',
-
+    cwd: __dirname,
     // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
     args: '',
     instances: "max",
