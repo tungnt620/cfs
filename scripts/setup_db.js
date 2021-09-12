@@ -122,8 +122,8 @@ runMain(async () => {
   }
   await pgPool.end();
 
-  runSync('nx', ['run', 'db:reset', '--erase']);
-  runSync('nx', ['run', 'db:reset', '--shadow', '--erase']);
+  runSync('yarn', ['nx', 'run', 'db:reset', '--erase']);
+  runSync('yarn', ['nx', 'run', 'db:reset', '--shadow', '--erase']);
 
   outro(`\
 ✅ Setup success

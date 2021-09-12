@@ -65,12 +65,20 @@
    * afterReset: actions executed after a `graphile-migrate reset` command.
    */
   "afterReset": [
-    "!afterReset.sql",
-    {
-      "_": "command",
-      "command": "cross-env DATABASE_URL=\"$GM_DBURL\" nx run worker:install-db-schema"
-    }
+    "!afterReset.sql"
   ],
+
+  /*
+   * afterReset: actions executed after a `graphile-migrate reset` command.
+  *
+  * "afterReset": [
+  *   "!afterReset.sql",
+  *   {
+  *     "_": "command",
+  *     "command": "cross-env DATABASE_URL=\"$GM_DBURL\" yarn nx run worker:install-db-schema"
+  *   }
+  * ],
+  */
 
   /*
    * afterAllMigrations: actions executed once all migrations are complete.
