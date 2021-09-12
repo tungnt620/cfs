@@ -301,8 +301,7 @@
         "serve": {
           "executor": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "server:build",
-            "runtimeArgs": ["-r", "./libs/config/env"]
+            "buildTarget": "server:build"
           }
         },
         "lint": {

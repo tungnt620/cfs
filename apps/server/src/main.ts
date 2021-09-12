@@ -1,4 +1,5 @@
 import { makeApp } from './app';
+require('../../../libs/config/env.js');
 
 async function main() {
   const app = await makeApp();
