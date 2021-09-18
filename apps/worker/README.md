@@ -1,3 +1,6 @@
+## deploy
+- `pm2 deploy ./apps/worker/ecosystem.config.js production`
+
 # @app/worker
 
 It's bad practice to perform unnecessary actions during the normal request cycle
