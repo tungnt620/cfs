@@ -2,7 +2,7 @@
 
 ## Deploy
 ### Client
-- `rm -rf dist/apps/client && nx build client --prod && scp -r ./dist/apps/client root@45.76.159.248:/data/cfs/source/dist/apps/. && pm2 deploy ./apps/client/ecosystem.config.js --env production`
+- `rm -rf dist/apps/client && nx build client --prod && scp -r ./dist/apps/client root@45.76.159.248:/data/cfs/source/dist/apps/. && pm2 deploy ./apps/client/ecosystem.config.js production`
 
 
 This project was generated using [Nx](https://nx.dev).
