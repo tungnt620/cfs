@@ -1,5 +1,10 @@
 # Confession
 
+## Deploy
+### Client
+- `rm -rf dist/apps/client && nx build client --prod && scp -r ./dist/apps/client root@45.76.159.248:/data/cfs/source/dist/apps/. && pm2 deploy ./apps/client/ecosystem.config.js --env production`
+
+
 This project was generated using [Nx](https://nx.dev).
 
 <p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>

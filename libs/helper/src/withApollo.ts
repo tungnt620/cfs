@@ -8,8 +8,12 @@ import { onError } from '@apollo/client/link/error';
 import { getDataFromTree } from '@apollo/client/react/ssr';
 import withApolloBase from 'next-with-apollo';
 
+const apiUrl =
+  process.env.NODE_ENV === 'production' && typeof window !== 'undefined'
+    ? process.env.NEXT_PUBLIC_BASE_API_URL_CLIENT_SIDE
+    : process.env.NEXT_PUBLIC_BASE_API_URL_SERVER_SIDE;
 const mainLink = new HttpLink({
-  uri: `${process.env.NEXT_PUBLIC_BASE_API_URL}/graphql`,
+  uri: `${apiUrl}/graphql`,
   credentials: 'include',
 });
 
@@ -26,7 +30,7 @@ const onErrorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 export const withApollo = withApolloBase(
-  ({ initialState}) : any => {
+  ({ initialState }): any => {
     return new ApolloClient({
       link: ApolloLink.from([onErrorLink, mainLink]),
       cache: new InMemoryCache({
