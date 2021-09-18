@@ -145,7 +145,7 @@ module.exports = async (inPayload, { withPgClient, logger }) => {
   generate([...staticLinks, ...categoryLinks, ...cfsLinks], logger);
 };
 
-const basePath = '../../../data/sitemap'
+const basePath = '../../../data/static'
 
 function generate(urls, logger) {
   logger.info(`Total ${urls.length} links have for generate sitemap`);

@@ -25,7 +25,7 @@ const RegisterPopup = () => {
           variables: {
             username: values.username,
             password: values.password,
-            email: `${values.username}@b.c`,
+            email: `${values.username}@confession.vn`,
           },
         });
         setCurrentUser(registerResp.data.register.user);
