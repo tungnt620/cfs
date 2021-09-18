@@ -1,6 +1,6 @@
 module.exports = {
   apps: [{
-    name: 'confession_fe',
+    name: 'cfs_fe',
     script: '/root/.asdf/shims/yarn nx serve client --prod',
 
     // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
@@ -17,7 +17,7 @@ module.exports = {
 
   deploy: {
     production: {
-      key: '/Users/tung/.ssh/id_rsa.pub',
+      key: '/Users/tung/.ssh/id_rsa',
       user: 'root',
       host: ['45.76.159.248'],
       ref: 'origin/master',
