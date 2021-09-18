@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
     name: 'confession_fe',
-    script: 'server.js',
+    script: '/root/.asdf/shims/yarn nx serve client --prod',
 
     // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
     args: '',
@@ -10,9 +10,6 @@ module.exports = {
     watch: false,
     ignore_watch : ["node_modules"],
     max_memory_restart: '1G',
-    env: {
-      NODE_ENV: 'development',
-    },
     env_production: {
       NODE_ENV: 'production',
     }
@@ -20,13 +17,15 @@ module.exports = {
 
   deploy: {
     production: {
-      key: '/Users/nguyentung/.ssh/id_rsa',
-      user: 'deploy',
-      host: ['45.77.40.46'],
+      key: '/Users/tung/.ssh/id_rsa.pub',
+      user: 'root',
+      host: ['45.76.159.248'],
       ref: 'origin/master',
-      repo: 'git@bitbucket.org:tungnt620/confession_v2.git',
-      path: '/var/www/confession_v2',
-      'post-deploy': 'cd client && npm install && npm run build && pm2 reload ecosystem.config.js --env production'
+      repo: 'https://github.com/tungnt620/cfs.git',
+      path: '/data/cfs',
+      'post-deploy': '/root/.asdf/shims/yarn install && ' +
+        '/root/.asdf/shims/yarn nx build client --prod && ' +
+        '/root/.asdf/installs/nodejs/14.17.6/.npm/bin/pm2 reload ./apps/client/ecosystem.config.js --env production'
     }
   }
 }

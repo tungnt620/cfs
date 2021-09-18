@@ -8,11 +8,7 @@ import { useLogoutMutation, useSharedLazyQuery } from '@cfs/graphql';
 import { useApolloClient, useReactiveVar } from '@apollo/react-hooks';
 import { preventDefault } from '@cfs/helper';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
-import {
-  setCurrentUser,
-  showLoginPopup,
-  showRegisterPopup,
-} from '../../../../libs/helper/src/reactiveVars';
+import { setCurrentUser, showLoginPopup, showRegisterPopup } from '@cfs/helper';
 import RegisterPopup from '../RegisterPopup';
 import CreateNewCfs from './CreateNewCfs';
 
@@ -74,7 +70,7 @@ const HeaderUI = () => {
               width={124}
               height={40}
               className="cursor-pointer"
-              alt='Logo'
+              alt="Logo"
             />
           </a>
         </Link>

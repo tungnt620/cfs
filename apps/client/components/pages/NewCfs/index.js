@@ -5,7 +5,7 @@ import style from './NewCfs.module.scss';
 import { useCreateCfsMutation, useGetCategoriesQuery } from '@cfs/graphql';
 import slugify from 'slugify';
 import { extractError } from '@cfs/helper';
-import { setNewCfsCreatedByMe } from '../../../../../libs/helper/src/reactiveVars';
+import { setNewCfsCreatedByMe } from '@cfs/helper';
 import { useRouter } from 'next/router';
 
 const { TextArea } = Input;

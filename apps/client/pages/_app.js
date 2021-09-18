@@ -6,6 +6,7 @@ import defaultSEOPropsConfigs from '../shared/seo/nextSEODefault.config';
 import '../../../libs/ui/src/lib/styles/global.scss';
 import MainLayout from '../components/Layout';
 import { withApollo } from '@cfs/helper';
+import Head from 'next/head';
 
 const noLayoutComponents = ['NewCfs', 'AllCategories'];
 
@@ -31,6 +32,12 @@ class MyApp extends App {
 
     return (
       <>
+        <Head>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, minimum-scale=1"
+          />
+        </Head>
         <ApolloProvider client={apollo}>
           <DefaultSeo {...defaultSEOPropsConfigs} />
           {noLayoutComponents.includes(Component.name) ? (

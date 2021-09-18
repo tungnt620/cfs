@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import { useCatDetailPageQuery, useGetCfsByCatSlugQuery } from '@cfs/graphql';
 import { useRouter } from 'next/router';
-import CfsDetailHeader from '../../../../../libs/ui/src/lib/CfsDetail/CfsDetailHeader';
+import { CfsDetailHeader } from '@cfs/ui';
 import { CfsList } from '@cfs/ui';
-import { usePreviousValue } from '../../../../../libs/helper/src/hooks';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser } from '../../../../../libs/helper/src/reactiveVars';
+import { setCurrentUser, usePreviousValue } from '@cfs/helper';
 import CategorySEO from '../../../shared/seo/CategorySEO';
 
 const CatDetailPage = () => {

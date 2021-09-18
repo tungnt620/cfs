@@ -1,10 +1,7 @@
 import React, { useCallback } from 'react';
 import { Button } from 'antd';
 import { useReactiveVar } from '@apollo/react-hooks';
-import {
-  setCurrentUser,
-  showLoginPopup,
-} from '../../../../libs/helper/src/reactiveVars';
+import { setCurrentUser, showLoginPopup } from '@cfs/helper';
 import { useRouter } from 'next/router';
 
 const CreateNewCfs = () => {

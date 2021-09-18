@@ -4,10 +4,7 @@ import styles from './HomePage.module.scss';
 import { Tabs } from 'antd';
 import { useHomePageAllCategoriesQuery, useHomePageQuery } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
-import {
-  setCurrentUser,
-  setNewCfsCreatedByMe,
-} from '../../../../../libs/helper/src/reactiveVars';
+import { setCurrentUser, setNewCfsCreatedByMe } from '@cfs/helper';
 
 const { TabPane } = Tabs;
 
