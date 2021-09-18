@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
     name: 'cfs_worker',
-    script: '/root/.asdf/shims/yarn yarn nx serve worker',
+    script: '/root/.asdf/shims/yarn nx serve worker',
 
     // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
     args: '',
