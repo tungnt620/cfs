@@ -13,5 +13,5 @@
 # │ │ │ │ │ │    │     │
 # │ │ │ │ │ │    │     │
 # * * * * * task ?opts {payload}
-* * * * * test_worker
+# * * * * * test_worker
 0 18 * * * generate_sitemap

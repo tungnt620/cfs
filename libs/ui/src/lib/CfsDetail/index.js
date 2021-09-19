@@ -20,7 +20,7 @@ dayjs.extend(relativeTime);
 const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
   const [expandedThumbnail, toggleExpandedThumbnail] = useBooleanToggle(false);
   const userData = cfsDetailPageData.user;
-  const catData = cfsDetailPageData.confessionCategories.nodes[0].category;
+  const catData = cfsDetailPageData.confessionCategories.nodes[0]?.category;
 
   const isTitleCopyFromContent = useMemo(() => {
     const content = cfsDetailPageData.content.substring(0, 200);
