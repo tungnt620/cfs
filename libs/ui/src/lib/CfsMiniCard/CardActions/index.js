@@ -24,7 +24,7 @@ const CardActions = ({ cfs }) => {
         />
         <Comment
           numberOfComment={cfs?.comments?.totalCount ?? 0}
-          url={`/${cfs?.slug ?? ''}#comments`}
+          url={`/${cfs?.slug ?? ''}/#comments`}
         />
       </div>
       <div className="p-2 border border-color1 rounded-full">

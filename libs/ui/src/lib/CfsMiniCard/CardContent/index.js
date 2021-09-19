@@ -12,7 +12,7 @@ const CardContent = ({ cfs }) => {
   return (
     <>
       <div className="flex justify-between mt-2 mb-2 items-center">
-        <Link href={`/${slug}`}>
+        <Link href={`/${slug}/`}>
           <a className="w-full">
             <div className="whitespace-normal font-medium leading-5 flex items-center">
               {title}

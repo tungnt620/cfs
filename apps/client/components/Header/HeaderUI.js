@@ -114,7 +114,7 @@ const HeaderUI = () => {
       >
         <Menu onClick={toggleMenu} className="text-center">
           <Menu.Item>
-            <Link href="/all-categories">
+            <Link href="/all-categories/">
               <a>Tất cả mục confession con</a>
             </Link>
           </Menu.Item>

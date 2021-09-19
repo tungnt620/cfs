@@ -37,7 +37,7 @@ ORDER BY
     const isNews = dayjs(cfs.created_at).add(2, 'day').isAfter(dayjs());
 
     return {
-      url: `/${cfs.slug}`,
+      url: `/${cfs.slug}/`,
       img: cfs.image
         ? [
             {
@@ -100,7 +100,7 @@ FROM
 
   return rows.map((cat) => {
     return {
-      url: `/category/${cat.slug}`,
+      url: `/category/${cat.slug}/`,
       img: cat.image
         ? [
             {
@@ -127,7 +127,7 @@ function getStaticLinks() {
       priority: 0.8,
     },
     {
-      url: `/all-categories`,
+      url: `/all-categories/`,
       changefreq: 'monthly',
       priority: 0.5,
     },

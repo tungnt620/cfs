@@ -5,7 +5,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { useGoBack } from '@cfs/common';
 import Link from 'next/link';
 
-const CfsDetailHeader = ({ cat }) => {
+const CfsDetailHeader = ({ cat = {} }) => {
   const goBack = useGoBack();
 
   return (
@@ -29,7 +29,7 @@ const CfsDetailHeader = ({ cat }) => {
           <div />
           <div className="flex items-center flex-col -mt-8">
             <div className="w-16 h-16 relative">
-              <Link href={`/category/${cat.slug}`}>
+              <Link href={`/category/${cat.slug}/`}>
                 <a>
                   {cat.image && (
                     <Image
@@ -42,7 +42,7 @@ const CfsDetailHeader = ({ cat }) => {
                 </a>
               </Link>
             </div>
-            <Link href={`/category/${cat.slug}`}>
+            <Link href={`/category/${cat.slug}/`}>
               <a>
                 <div className="font-bold">c/{cat.slug}</div>
               </a>
