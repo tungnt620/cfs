@@ -1213,7 +1213,7 @@ begin
   select users.* into v_user
   from app_public.users
   where id = app_public.current_user_id();
-3f16c913-5e54-41cd-92f5-77e57aaf6175
+
   if not (v_user is null) then
     -- Load their secrets
     select * into v_user_secret from app_private.user_secrets
