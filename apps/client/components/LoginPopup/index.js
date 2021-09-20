@@ -71,6 +71,21 @@ const LoginPopup = () => {
       onCancel={() => showLoginPopup(false)}
       footer={null}
     >
+      <Alert
+        type="error"
+        message={`Thực sự xin lỗi các bạn`}
+        description={
+          <div>
+            Hiện tại chức năng đăng kí/đăng nhập đang có vấn để, mình xin phép
+            tạm đóng để sửa chữa.
+            <p>Sẽ nhanh thôi!</p>
+            <p>
+              Cảm ơn các bạn.
+            </p>
+          </div>
+        }
+        style={{marginBottom: '20px'}}
+      />
       <Form
         form={form}
         layout="vertical"
@@ -89,6 +104,7 @@ const LoginPopup = () => {
             autoComplete="username"
             ref={focusElement}
             data-cy="loginpage-input-username"
+            disabled={true}
           />
         </Form.Item>
         <Form.Item
@@ -102,6 +118,7 @@ const LoginPopup = () => {
             placeholder="Mật khẩu"
             autoComplete="current-password"
             data-cy="loginpage-input-password"
+            disabled={true}
           />
         </Form.Item>
 
@@ -124,7 +141,11 @@ const LoginPopup = () => {
           </Form.Item>
         ) : null}
         <Form.Item className="mt-4">
-          <Button type="primary" htmlType="submit" disabled={submitDisabled}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            disabled={submitDisabled || true}
+          >
             Đăng nhập
           </Button>
           <Button
@@ -133,6 +154,7 @@ const LoginPopup = () => {
               showRegisterPopup(true);
               showLoginPopup(false);
             }}
+            disabled={true}
           >
             Đăng ký
           </Button>
