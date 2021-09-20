@@ -46,7 +46,7 @@ const HeaderUI = () => {
     setMenuOpened((prev) => !prev);
   }, []);
 
-  const openLoginPopup = useCallback(() => showLoginPopup(true), []);
+  const openRegisterPopup = useCallback(() => showRegisterPopup(true), []);
 
   return (
     <nav className="header-height select-none header-shadow">
@@ -98,8 +98,8 @@ const HeaderUI = () => {
               </Dropdown>
             </div>
           ) : (
-            <Button onClick={openLoginPopup} type="link">
-              Đăng nhập
+            <Button onClick={openRegisterPopup} type="link">
+              Đăng ký
             </Button>
           )}
 
