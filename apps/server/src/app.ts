@@ -82,7 +82,7 @@ export async function makeApp({
     app.set(
       'trust proxy',
       process.env.TRUST_PROXY === '1'
-        ? true
+        ? 1
         : process.env.TRUST_PROXY === 'cloudflare'
         ? ['loopback', 'linklocal', 'uniquelocal', ...cloudflareIps]
         : process.env.TRUST_PROXY.split(',')
