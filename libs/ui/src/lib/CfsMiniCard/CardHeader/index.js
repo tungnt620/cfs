@@ -3,6 +3,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import emptyImage from '../../images/empty.png';
 import dayjs from 'dayjs';
+import MoreActions from './MoreActions';
+import { useReactiveVar } from '@apollo/react-hooks';
+import { setCurrentUser } from '@cfs/helper';
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');
@@ -12,6 +15,7 @@ dayjs.extend(relativeTime);
 
 const CardHeader = ({ cfs }) => {
   const catData = cfs?.confessionCategories?.nodes?.[0]?.category ?? {};
+  const currentUser = useReactiveVar(setCurrentUser);
 
   return (
     <header className="flex mt-1 pt-2 leading-5">
@@ -50,7 +54,11 @@ const CardHeader = ({ cfs }) => {
           </a>
         </Link>
       </div>
-      <div className="flex w-full justify-end">{/*<MoreActions />*/}</div>
+      <div className="flex w-full justify-end">
+        {(currentUser?.isAdmin || cfs?.userId === currentUser?.id) && (
+          <MoreActions cfs={cfs} />
+        )}
+      </div>
     </header>
   );
 };

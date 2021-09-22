@@ -4,13 +4,15 @@ import styles from './HomePage.module.scss';
 import { Tabs } from 'antd';
 import { useHomePageAllCategoriesQuery, useHomePageQuery } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser, setNewCfsCreatedByMe } from '@cfs/helper';
+import { setCurrentUser, setNewCfsCreatedByMe, setNewDeletedCfsByMe } from '@cfs/helper';
 
 const { TabPane } = Tabs;
 
 const HomePage = () => {
   const [selectedCat, setSelectedCat] = useState('0');
   const newCfsCreatedByMe = useReactiveVar(setNewCfsCreatedByMe);
+  const newCfsDeletedByMe = useReactiveVar(setNewDeletedCfsByMe);
+
   const currentUser = useReactiveVar(setCurrentUser);
   const { data: allCategories } = useHomePageAllCategoriesQuery();
   const { data: queryData, fetchMore, refetch } = useHomePageQuery({
@@ -39,6 +41,13 @@ const HomePage = () => {
       refetch();
     }
   }, [refetch, newCfsCreatedByMe]);
+
+  useEffect(() => {
+    if (newCfsDeletedByMe) {
+      setSelectedCat('0');
+      refetch();
+    }
+  }, [refetch, newCfsDeletedByMe]);
 
   return (
     <div className="ml-2 mr-2 mb-6 bg-color1">

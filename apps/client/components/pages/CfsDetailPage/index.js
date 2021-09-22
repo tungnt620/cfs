@@ -6,10 +6,13 @@ import {
 } from '@cfs/graphql';
 import { useRouter } from 'next/router';
 import ConfessionSEO from '../../../shared/seo/ConfessionSEO';
+import { useReactiveVar } from '@apollo/react-hooks';
+import { setNewDeletedCfsByMe } from '@cfs/helper';
 
 const CfsDetailPage = () => {
   const router = useRouter();
   const { slug } = router.query;
+  const newCfsDeletedByMe = useReactiveVar(setNewDeletedCfsByMe);
 
   const { data } = useCfsDetailPageQuery({
     variables: {
@@ -37,6 +40,14 @@ const CfsDetailPage = () => {
       });
     }
   }, [cfsDetailPageData?.id, getRelativeConfessions]);
+
+  useEffect(() => {
+    if (newCfsDeletedByMe) {
+      if (newCfsDeletedByMe?.id === cfsDetailPageData?.id) {
+        router.push('/');
+      }
+    }
+  }, [cfsDetailPageData?.id, newCfsDeletedByMe, router]);
 
   return (
     <div className="mb-6">

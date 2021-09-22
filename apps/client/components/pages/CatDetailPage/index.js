@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { CfsDetailHeader } from '@cfs/ui';
 import { CfsList } from '@cfs/ui';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser, usePreviousValue } from '@cfs/helper';
+import { setCurrentUser, setNewDeletedCfsByMe, usePreviousValue } from '@cfs/helper';
 import CategorySEO from '../../../shared/seo/CategorySEO';
 
 const CatDetailPage = () => {
@@ -12,6 +12,7 @@ const CatDetailPage = () => {
   const { slug } = router.query;
   const previousCatSlug = usePreviousValue(slug);
   const currentUser = useReactiveVar(setCurrentUser);
+  const newCfsDeletedByMe = useReactiveVar(setNewDeletedCfsByMe);
 
   const {
     data: catDetailData,
@@ -41,6 +42,12 @@ const CatDetailPage = () => {
       refetchCfs();
     }
   }, [currentUser, refetchCfs]);
+
+  useEffect(() => {
+    if (newCfsDeletedByMe) {
+      refetchCfs();
+    }
+  }, [refetchCfs, newCfsDeletedByMe]);
 
   useEffect(() => {
     if (previousCatSlug && previousCatSlug !== slug) {

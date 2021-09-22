@@ -1,12 +1,18 @@
 import React, { useCallback, useState } from 'react';
 import { Modal } from 'antd';
+import { useReactiveVar } from '@apollo/react-hooks';
+import { setCurrentUser } from '@cfs/helper';
+import DeleteCfs from '../../../DeleteCfs';
 
-const MoreActions = () => {
+const MoreActions = ({ cfs }) => {
   const [modalDisplayed, setModalDisplayed] = useState(false);
+  const currentUser = useReactiveVar(setCurrentUser);
 
   const toggle = useCallback(() => {
     setModalDisplayed((prev) => !prev);
   }, []);
+
+  console.log(cfs, currentUser);
 
   return (
     <>
@@ -23,8 +29,9 @@ const MoreActions = () => {
         footer={null}
       >
         <div>
-          <p>some messages...some messages...</p>
-          <p>some messages...some messages...</p>
+          {(currentUser?.isAdmin || cfs?.userId === currentUser?.id) && (
+            <DeleteCfs cfs={cfs} />
+          )}
         </div>
       </Modal>
     </>

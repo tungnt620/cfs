@@ -4,6 +4,7 @@ mutation Login($username: String!, $password: String!) {
       id
       username
       name
+      isAdmin
     }
   }
 }

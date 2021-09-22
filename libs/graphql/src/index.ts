@@ -689,6 +689,28 @@ export type CreateUserEmailPayloadUserEmailEdgeArgs = {
 
 
 
+/** All input for the `deleteCfs` mutation. */
+export type DeleteCfsInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  confessionId: Scalars['Int'];
+};
+
+/** The output of our `deleteCfs` mutation. */
+export type DeleteCfsPayload = {
+  __typename?: 'DeleteCfsPayload';
+  /**
+   * The exact same `clientMutationId` that was provided in the mutation input,
+   * unchanged and unused. May be used by a client to track mutations.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  /** Our root query field type. Allows us to run any query from our mutation payload. */
+  query?: Maybe<Query>;
+};
+
 /** All input for the `deleteComment` mutation. */
 export type DeleteCommentInput = {
   /**
@@ -913,6 +935,7 @@ export type Mutation = {
   createOrUpdateConfessionReaction?: Maybe<CreateOrUpdateConfessionReactionPayload>;
   /** Creates a single `UserEmail`. */
   createUserEmail?: Maybe<CreateUserEmailPayload>;
+  deleteCfs?: Maybe<DeleteCfsPayload>;
   /** Deletes a single `Comment` using a unique key. */
   deleteComment?: Maybe<DeleteCommentPayload>;
   /** Deletes a single `Confession` using a unique key. */
@@ -1001,6 +1024,12 @@ export type MutationCreateOrUpdateConfessionReactionArgs = {
 /** The root mutation type which contains root level fields which mutate data. */
 export type MutationCreateUserEmailArgs = {
   input: CreateUserEmailInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
+export type MutationDeleteCfsArgs = {
+  input: DeleteCfsInput;
 };
 
 
@@ -2217,6 +2246,19 @@ export type CurrentUserUpdatedSubscription = (
   )> }
 );
 
+export type DeleteCfsMutationVariables = Exact<{
+  cfsId: Scalars['Int'];
+}>;
+
+
+export type DeleteCfsMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteCfs?: Maybe<(
+    { __typename?: 'DeleteCfsPayload' }
+    & Pick<DeleteCfsPayload, 'clientMutationId'>
+  )> }
+);
+
 export type DeleteEmailMutationVariables = Exact<{
   emailId: Scalars['UUID'];
 }>;
@@ -2371,7 +2413,7 @@ export type HomePageAllCategoriesQuery = (
 
 export type HomePage_ConfessionFragment = (
   { __typename?: 'Confession' }
-  & Pick<Confession, 'id' | 'slug' | 'title' | 'image' | 'createdAt' | 'totalReaction'>
+  & Pick<Confession, 'id' | 'slug' | 'title' | 'image' | 'createdAt' | 'totalReaction' | 'userId'>
   & { comments: (
     { __typename?: 'CommentsConnection' }
     & Pick<CommentsConnection, 'totalCount'>
@@ -2405,7 +2447,7 @@ export type LoginMutation = (
     { __typename?: 'LoginPayload' }
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
+      & Pick<User, 'id' | 'username' | 'name' | 'isAdmin'>
     ) }
   )> }
 );
@@ -2684,6 +2726,7 @@ export const HomePage_ConfessionFragmentDoc = gql`
   image
   createdAt
   totalReaction
+  userId
   comments {
     totalCount
   }
@@ -3241,6 +3284,39 @@ export function useCurrentUserUpdatedSubscription(baseOptions?: Apollo.Subscript
       }
 export type CurrentUserUpdatedSubscriptionHookResult = ReturnType<typeof useCurrentUserUpdatedSubscription>;
 export type CurrentUserUpdatedSubscriptionResult = Apollo.SubscriptionResult<CurrentUserUpdatedSubscription>;
+export const DeleteCfsDocument = gql`
+    mutation DeleteCfs($cfsId: Int!) {
+  deleteCfs(input: {confessionId: $cfsId}) {
+    clientMutationId
+  }
+}
+    `;
+export type DeleteCfsMutationFn = Apollo.MutationFunction<DeleteCfsMutation, DeleteCfsMutationVariables>;
+
+/**
+ * __useDeleteCfsMutation__
+ *
+ * To run a mutation, you first call `useDeleteCfsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCfsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCfsMutation, { data, loading, error }] = useDeleteCfsMutation({
+ *   variables: {
+ *      cfsId: // value for 'cfsId'
+ *   },
+ * });
+ */
+export function useDeleteCfsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCfsMutation, DeleteCfsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCfsMutation, DeleteCfsMutationVariables>(DeleteCfsDocument, options);
+      }
+export type DeleteCfsMutationHookResult = ReturnType<typeof useDeleteCfsMutation>;
+export type DeleteCfsMutationResult = Apollo.MutationResult<DeleteCfsMutation>;
+export type DeleteCfsMutationOptions = Apollo.BaseMutationOptions<DeleteCfsMutation, DeleteCfsMutationVariables>;
 export const DeleteEmailDocument = gql`
     mutation DeleteEmail($emailId: UUID!) {
   deleteUserEmail(input: {id: $emailId}) {
@@ -3531,6 +3607,7 @@ export const LoginDocument = gql`
       id
       username
       name
+      isAdmin
     }
   }
 }

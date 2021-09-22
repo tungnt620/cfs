@@ -1053,6 +1053,30 @@ COMMENT ON FUNCTION app_public."current_user"() IS 'The currently logged in user
 
 
 --
+-- Name: delete_cfs(integer); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.delete_cfs(confession_id integer) RETURNS void
+    LANGUAGE plpgsql SECURITY DEFINER
+    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
+    AS $$
+begin
+  if exists(
+    select 1
+    from app_public.confession
+    where (
+      user_id = app_public.current_user_id()
+      or exists ( select * from app_public.users where id = app_public.current_user_id() and is_admin = true )
+    )
+    and id = confession_id
+  ) then
+    delete from app_public.confession where id = confession_id;
+  end if;
+end;
+$$;
+
+
+--
 -- Name: forgot_password(public.citext); Type: FUNCTION; Schema: app_public; Owner: -
 --
 
@@ -2426,7 +2450,7 @@ ALTER TABLE ONLY app_public.comment
 --
 
 ALTER TABLE ONLY app_public.comment
-    ADD CONSTRAINT comment_user_id_fkey FOREIGN KEY (user_id) REFERENCES app_public.users(id) ON DELETE CASCADE;
+    ADD CONSTRAINT comment_user_id_fkey FOREIGN KEY (user_id) REFERENCES app_public.users(id);
 
 
 --
@@ -2450,7 +2474,7 @@ ALTER TABLE ONLY app_public.confession_category
 --
 
 ALTER TABLE ONLY app_public.confession
-    ADD CONSTRAINT confession_user_id_fkey FOREIGN KEY (user_id) REFERENCES app_public.users(id) ON DELETE CASCADE;
+    ADD CONSTRAINT confession_user_id_fkey FOREIGN KEY (user_id) REFERENCES app_public.users(id);
 
 
 --
@@ -2458,7 +2482,7 @@ ALTER TABLE ONLY app_public.confession
 --
 
 ALTER TABLE ONLY app_public.comment
-    ADD CONSTRAINT fk_confession FOREIGN KEY (confession_id) REFERENCES app_public.confession(id);
+    ADD CONSTRAINT fk_confession FOREIGN KEY (confession_id) REFERENCES app_public.confession(id) ON DELETE CASCADE;
 
 
 --
@@ -3081,6 +3105,14 @@ GRANT ALL ON FUNCTION app_public.current_session_id() TO cfs_visitor;
 
 REVOKE ALL ON FUNCTION app_public."current_user"() FROM PUBLIC;
 GRANT ALL ON FUNCTION app_public."current_user"() TO cfs_visitor;
+
+
+--
+-- Name: FUNCTION delete_cfs(confession_id integer); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.delete_cfs(confession_id integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.delete_cfs(confession_id integer) TO cfs_visitor;
 
 
 --

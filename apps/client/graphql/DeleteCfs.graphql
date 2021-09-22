@@ -1,0 +1,5 @@
+mutation DeleteCfs($cfsId: Int!) {
+  deleteCfs(input: {confessionId: $cfsId}) {
+    clientMutationId
+  }
+}

@@ -5,6 +5,7 @@ fragment HomePage_Confession on Confession {
   image
   createdAt
   totalReaction
+  userId
   comments {
     totalCount
   }
