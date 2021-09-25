@@ -8,8 +8,6 @@ import MainLayout from '../components/Layout';
 import { withApollo } from '@cfs/helper';
 import Head from 'next/head';
 
-const noLayoutComponents = ['NewCfs', 'AllCategories'];
-
 if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
   const ReactDOM = require('react-dom');
   const axe = require('@axe-core/react');
@@ -40,13 +38,9 @@ class MyApp extends App {
         </Head>
         <ApolloProvider client={apollo}>
           <DefaultSeo {...defaultSEOPropsConfigs} />
-          {noLayoutComponents.includes(Component.name) ? (
+          <MainLayout>
             <Component {...pageProps} />
-          ) : (
-            <MainLayout>
-              <Component {...pageProps} />
-            </MainLayout>
-          )}
+          </MainLayout>
         </ApolloProvider>
       </>
     );

@@ -12,8 +12,6 @@ const MoreActions = ({ cfs }) => {
     setModalDisplayed((prev) => !prev);
   }, []);
 
-  console.log(cfs, currentUser);
-
   return (
     <>
       <div
