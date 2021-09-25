@@ -34,7 +34,7 @@ const CommentSection = ({ comments, cfsId }) => {
     if (newCommentCreatedByMe) {
       setAllComments((prev) => [newCommentCreatedByMe, ...prev]);
     }
-  }, [comments, newCommentCreatedByMe]);
+  }, [newCommentCreatedByMe]);
 
   return (
     <div id="comments">

@@ -1818,6 +1818,40 @@ ALTER SEQUENCE app_public.confession_id_seq OWNED BY app_public.confession.id;
 
 
 --
+-- Name: feedback; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.feedback (
+    id integer NOT NULL,
+    user_id uuid DEFAULT app_public.current_user_id(),
+    content character varying(512) NOT NULL,
+    parent_id integer,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: feedback_id_seq; Type: SEQUENCE; Schema: app_public; Owner: -
+--
+
+CREATE SEQUENCE app_public.feedback_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: feedback_id_seq; Type: SEQUENCE OWNED BY; Schema: app_public; Owner: -
+--
+
+ALTER SEQUENCE app_public.feedback_id_seq OWNED BY app_public.feedback.id;
+
+
+--
 -- Name: user_authentications; Type: TABLE; Schema: app_public; Owner: -
 --
 
@@ -1950,6 +1984,13 @@ ALTER TABLE ONLY app_public.confession ALTER COLUMN id SET DEFAULT nextval('app_
 
 
 --
+-- Name: feedback id; Type: DEFAULT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.feedback ALTER COLUMN id SET DEFAULT nextval('app_public.feedback_id_seq'::regclass);
+
+
+--
 -- Name: user_comment_reaction id; Type: DEFAULT; Schema: app_public; Owner: -
 --
 
@@ -2057,6 +2098,14 @@ ALTER TABLE ONLY app_public.confession
 
 ALTER TABLE ONLY app_public.confession
     ADD CONSTRAINT confession_slug_key UNIQUE (slug);
+
+
+--
+-- Name: feedback feedback_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.feedback
+    ADD CONSTRAINT feedback_pkey PRIMARY KEY (id);
 
 
 --
@@ -2175,6 +2224,20 @@ CREATE INDEX confession_category_confession_id_index ON app_public.confession_ca
 
 
 --
+-- Name: feedback_parent_id_idx; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX feedback_parent_id_idx ON app_public.feedback USING btree (parent_id);
+
+
+--
+-- Name: feedback_user_id_idx; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX feedback_user_id_idx ON app_public.feedback USING btree (user_id);
+
+
+--
 -- Name: idx_category_slug; Type: INDEX; Schema: app_public; Owner: -
 --
 
@@ -2277,6 +2340,13 @@ CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.comment FOR
 --
 
 CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.confession FOR EACH ROW EXECUTE FUNCTION app_private.tg__timestamps();
+
+
+--
+-- Name: feedback _100_timestamps; Type: TRIGGER; Schema: app_public; Owner: -
+--
+
+CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.feedback FOR EACH ROW EXECUTE FUNCTION app_private.tg__timestamps();
 
 
 --
@@ -2478,6 +2548,14 @@ ALTER TABLE ONLY app_public.confession
 
 
 --
+-- Name: feedback feedback_user_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.feedback
+    ADD CONSTRAINT feedback_user_id_fkey FOREIGN KEY (user_id) REFERENCES app_public.users(id) ON DELETE SET NULL;
+
+
+--
 -- Name: comment fk_confession; Type: FK CONSTRAINT; Schema: app_public; Owner: -
 --
 
@@ -2596,6 +2674,12 @@ CREATE POLICY delete_own ON app_public.user_emails FOR DELETE USING ((user_id = 
 
 
 --
+-- Name: feedback; Type: ROW SECURITY; Schema: app_public; Owner: -
+--
+
+ALTER TABLE app_public.feedback ENABLE ROW LEVEL SECURITY;
+
+--
 -- Name: user_comment_reaction insert_all; Type: POLICY; Schema: app_public; Owner: -
 --
 
@@ -2676,6 +2760,15 @@ CREATE POLICY manage_as_admin ON app_public.confession_category USING ((EXISTS (
 
 
 --
+-- Name: feedback manage_as_admin; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY manage_as_admin ON app_public.feedback USING ((EXISTS ( SELECT 1
+   FROM app_public.users
+  WHERE ((users.is_admin IS TRUE) AND (users.id = app_public.current_user_id())))));
+
+
+--
 -- Name: user_comment_reaction manage_as_admin; Type: POLICY; Schema: app_public; Owner: -
 --
 
@@ -2691,6 +2784,13 @@ CREATE POLICY manage_as_admin ON app_public.user_comment_reaction USING ((EXISTS
 CREATE POLICY manage_as_admin ON app_public.user_confession_reaction USING ((EXISTS ( SELECT 1
    FROM app_public.users
   WHERE ((users.is_admin IS TRUE) AND (users.id = app_public.current_user_id())))));
+
+
+--
+-- Name: feedback manage_own; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY manage_own ON app_public.feedback USING ((user_id = app_public.current_user_id()));
 
 
 --
@@ -2740,6 +2840,13 @@ CREATE POLICY select_all ON app_public.confession_category FOR SELECT USING (tru
 --
 
 CREATE POLICY select_all ON app_public.users FOR SELECT USING (true);
+
+
+--
+-- Name: feedback select_own; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY select_own ON app_public.feedback FOR SELECT USING ((user_id = app_public.current_user_id()));
 
 
 --
@@ -3303,6 +3410,34 @@ GRANT SELECT,DELETE ON TABLE app_public.confession_category TO cfs_visitor;
 --
 
 GRANT SELECT,USAGE ON SEQUENCE app_public.confession_id_seq TO cfs_visitor;
+
+
+--
+-- Name: TABLE feedback; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT ON TABLE app_public.feedback TO cfs_visitor;
+
+
+--
+-- Name: COLUMN feedback.content; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(content),UPDATE(content) ON TABLE app_public.feedback TO cfs_visitor;
+
+
+--
+-- Name: COLUMN feedback.parent_id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(parent_id),UPDATE(parent_id) ON TABLE app_public.feedback TO cfs_visitor;
+
+
+--
+-- Name: SEQUENCE feedback_id_seq; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,USAGE ON SEQUENCE app_public.feedback_id_seq TO cfs_visitor;
 
 
 --

@@ -6,10 +6,7 @@ import {
   useCreateOrUpdateConfessionReactionMutation,
 } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
-import {
-  setCurrentUser,
-  showLoginPopup,
-} from '../../../../../../helper/src/reactiveVars';
+import { setCurrentUser, showLoginPopup } from '@cfs/helper';
 
 const Vote = ({ voteNo = 0, confessionId, commentId, oldUserAction }) => {
   const [action, setAction] = useState(oldUserAction);

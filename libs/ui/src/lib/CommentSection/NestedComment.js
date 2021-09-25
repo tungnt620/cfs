@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import Image from 'next/image';
 import style from './CommentSection.module.scss';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser } from '../../../../helper/src/reactiveVars';
+import { setCurrentUser } from '@cfs/helper';
 import UpdateCommentEditor from './UpdateCommentEditor';
 import useBooleanToggle from '../../../../helper/src/hooks';
 

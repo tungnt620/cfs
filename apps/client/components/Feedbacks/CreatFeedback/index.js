@@ -1,79 +1,72 @@
 import React, { useCallback, useState } from 'react';
 import { Form, Button, Input, message } from 'antd';
-import { useCreateCommentMutation } from '@cfs/graphql';
+import { useCreateFeedbackMutation } from '@cfs/graphql';
 import {
   setCurrentUser,
   showLoginPopup,
-  setNewCommentCreatedByMe,
+  setNewFeedbackCreatedByMe,
 } from '@cfs/helper';
 import { useReactiveVar } from '@apollo/react-hooks';
 
 const { TextArea } = Input;
 
-const CreateCommentEditor = ({ onClose, cfsId, parentId }) => {
+const CreateFeedback = () => {
   const [content, setContent] = useState('');
-  const [createComment, { loading }] = useCreateCommentMutation();
+  const [createFeedback, { loading }] = useCreateFeedbackMutation();
   const currentUser = useReactiveVar(setCurrentUser);
 
   const clear = useCallback(() => setContent(''), []);
   const onChangeWrap = useCallback((e) => setContent(e.target.value), []);
 
-  const addNewComment = useCallback(() => {
+  const addNewFeedback = useCallback(() => {
     if (!currentUser?.id) {
       showLoginPopup(true);
     } else {
-      createComment({
+      createFeedback({
         variables: {
-          confessionId: cfsId,
           content,
-          parentId,
         },
       }).then(
         ({
           data: {
-            createComment: { comment },
+            createFeedback: { feedback },
           },
         }) => {
-          message.success('Bình luận của bạn đã được gửi');
-          setNewCommentCreatedByMe(comment);
+          message.success(
+            'Góp ý của bạn đã được gửi thành công! Cảm ơn bạn. Mình sẽ phản hồi bạn sớm.',
+            1.5
+          );
+          setNewFeedbackCreatedByMe(feedback);
           setContent('');
         }
       );
     }
-  }, [cfsId, content, createComment, currentUser?.id, parentId]);
+  }, [content, createFeedback, currentUser?.id]);
 
   return (
-    <div className="p-2">
+    <div className="p-2 mt-4">
       <Form.Item className="mb-2">
         <TextArea
           rows={4}
           onChange={onChangeWrap}
           value={content}
-          placeholder="Chia sẻ cảm nghĩ của bạn"
+          placeholder="Góp ý của bạn về website, ý tưởng mới, tính năng cần sửa chữa, ... Mình luôn lắng nghe và sẽ phản hồi."
         />
       </Form.Item>
       <Form.Item>
         <div className="flex justify-between">
-          <div>
-            {onClose ? (
-              <Button size="large" onClick={onClose}>
-                Huỷ
-              </Button>
-            ) : (
-              <Button size="large" onClick={clear} disabled={!content?.length}>
-                Xoá
-              </Button>
-            )}
-          </div>
+          <Button size="large" onClick={clear} disabled={!content?.length}>
+            Xoá
+          </Button>
 
           <Button
             loading={loading}
-            onClick={addNewComment}
+            onClick={addNewFeedback}
             type="primary"
             size="large"
             disabled={!content?.length}
           >
-            {currentUser?.id ? 'Gửi' : 'Đăng nhập để gửi'}
+            {currentUser?.id ? 'Gửi' : 'Đăng nhập để để gửi'}
           </Button>
         </div>
       </Form.Item>
@@ -81,4 +74,4 @@ const CreateCommentEditor = ({ onClose, cfsId, parentId }) => {
   );
 };
 
-export default CreateCommentEditor;
+export default CreateFeedback;

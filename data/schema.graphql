@@ -705,6 +705,44 @@ type CreateConfessionPayload {
   user: User
 }
 
+"""All input for the create `Feedback` mutation."""
+input CreateFeedbackInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Feedback` to be created by this mutation."""
+  feedback: FeedbackInput!
+}
+
+"""The output of our create `Feedback` mutation."""
+type CreateFeedbackPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Feedback` that was created by this mutation."""
+  feedback: Feedback
+
+  """An edge for our `Feedback`. May be used by Relay 1."""
+  feedbackEdge(
+    """The method to use when ordering `Feedback`."""
+    orderBy: [FeedbacksOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FeedbacksEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `Feedback`."""
+  user: User
+}
+
 """All input for the `createOrUpdateCommentReaction` mutation."""
 input CreateOrUpdateCommentReactionInput {
   """
@@ -1000,6 +1038,86 @@ type DeleteUserEmailPayload {
   ): UserEmailsEdge
 }
 
+type Feedback {
+  content: String!
+  createdAt: Datetime!
+  id: Int!
+  parentId: Int
+  updatedAt: Datetime!
+
+  """Reads a single `User` that is related to this `Feedback`."""
+  user: User
+  userId: UUID
+}
+
+"""
+A condition to be used against `Feedback` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input FeedbackCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: Int
+
+  """Checks for equality with the object’s `parentId` field."""
+  parentId: Int
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
+}
+
+"""An input for mutations affecting `Feedback`"""
+input FeedbackInput {
+  content: String!
+  parentId: Int
+}
+
+"""
+Represents an update to a `Feedback`. Fields that are set will be updated.
+"""
+input FeedbackPatch {
+  content: String
+  parentId: Int
+}
+
+"""A connection to a list of `Feedback` values."""
+type FeedbacksConnection {
+  """
+  A list of edges which contains the `Feedback` and cursor to aid in pagination.
+  """
+  edges: [FeedbacksEdge!]!
+
+  """A list of `Feedback` objects."""
+  nodes: [Feedback!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Feedback` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Feedback` edge in the connection."""
+type FeedbacksEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Feedback` at the end of the edge."""
+  node: Feedback!
+}
+
+"""Methods to use when ordering `Feedback`."""
+enum FeedbacksOrderBy {
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PARENT_ID_ASC
+  PARENT_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  USER_ID_ASC
+  USER_ID_DESC
+}
+
 """All input for the `forgotPassword` mutation."""
 input ForgotPasswordInput {
   """
@@ -1122,6 +1240,14 @@ type Mutation {
     """
     input: CreateConfessionInput!
   ): CreateConfessionPayload
+
+  """Creates a single `Feedback`."""
+  createFeedback(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateFeedbackInput!
+  ): CreateFeedbackPayload
   createOrUpdateCommentReaction(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1277,6 +1403,14 @@ type Mutation {
     """
     input: UpdateConfessionInput!
   ): UpdateConfessionPayload
+
+  """Updates a single `Feedback` using a unique key and a patch."""
+  updateFeedback(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateFeedbackInput!
+  ): UpdateFeedbackPayload
 
   """Updates a single `User` using a unique key and a patch."""
   updateUser(
@@ -1438,6 +1572,36 @@ type Query {
 
   """The currently logged in user (or null if not logged in)."""
   currentUser: User
+  feedback(id: Int!): Feedback
+
+  """Reads and enables pagination through a set of `Feedback`."""
+  feedbacks(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: FeedbackCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Feedback`."""
+    orderBy: [FeedbacksOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FeedbacksConnection
 
   """Reads and enables pagination through a set of `Confession`."""
   getCfsByCat(
@@ -1807,6 +1971,47 @@ type UpdateConfessionPayload {
   user: User
 }
 
+"""All input for the `updateFeedback` mutation."""
+input UpdateFeedbackInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+
+  """
+  An object where the defined keys will be set on the `Feedback` being updated.
+  """
+  patch: FeedbackPatch!
+}
+
+"""The output of our update `Feedback` mutation."""
+type UpdateFeedbackPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Feedback` that was updated by this mutation."""
+  feedback: Feedback
+
+  """An edge for our `Feedback`. May be used by Relay 1."""
+  feedbackEdge(
+    """The method to use when ordering `Feedback`."""
+    orderBy: [FeedbacksOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FeedbacksEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `Feedback`."""
+  user: User
+}
+
 """All input for the `updateUser` mutation."""
 input UpdateUserInput {
   """
@@ -1910,6 +2115,35 @@ type User {
     orderBy: [ConfessionsOrderBy!] = [PRIMARY_KEY_ASC]
   ): ConfessionsConnection!
   createdAt: Datetime!
+
+  """Reads and enables pagination through a set of `Feedback`."""
+  feedbacks(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: FeedbackCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Feedback`."""
+    orderBy: [FeedbacksOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FeedbacksConnection!
   hasPassword: Boolean
 
   """Unique identifier for the user."""

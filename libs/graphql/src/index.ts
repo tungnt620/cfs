@@ -580,6 +580,41 @@ export type CreateConfessionPayloadConfessionEdgeArgs = {
   orderBy?: Maybe<Array<ConfessionsOrderBy>>;
 };
 
+/** All input for the create `Feedback` mutation. */
+export type CreateFeedbackInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  /** The `Feedback` to be created by this mutation. */
+  feedback: FeedbackInput;
+};
+
+/** The output of our create `Feedback` mutation. */
+export type CreateFeedbackPayload = {
+  __typename?: 'CreateFeedbackPayload';
+  /**
+   * The exact same `clientMutationId` that was provided in the mutation input,
+   * unchanged and unused. May be used by a client to track mutations.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  /** The `Feedback` that was created by this mutation. */
+  feedback?: Maybe<Feedback>;
+  /** An edge for our `Feedback`. May be used by Relay 1. */
+  feedbackEdge?: Maybe<FeedbacksEdge>;
+  /** Our root query field type. Allows us to run any query from our mutation payload. */
+  query?: Maybe<Query>;
+  /** Reads a single `User` that is related to this `Feedback`. */
+  user?: Maybe<User>;
+};
+
+
+/** The output of our create `Feedback` mutation. */
+export type CreateFeedbackPayloadFeedbackEdgeArgs = {
+  orderBy?: Maybe<Array<FeedbacksOrderBy>>;
+};
+
 /** All input for the `createOrUpdateCommentReaction` mutation. */
 export type CreateOrUpdateCommentReactionInput = {
   /**
@@ -847,6 +882,78 @@ export type DeleteUserEmailPayloadUserEmailEdgeArgs = {
   orderBy?: Maybe<Array<UserEmailsOrderBy>>;
 };
 
+export type Feedback = {
+  __typename?: 'Feedback';
+  content: Scalars['String'];
+  createdAt: Scalars['Datetime'];
+  id: Scalars['Int'];
+  parentId?: Maybe<Scalars['Int']>;
+  updatedAt: Scalars['Datetime'];
+  /** Reads a single `User` that is related to this `Feedback`. */
+  user?: Maybe<User>;
+  userId?: Maybe<Scalars['UUID']>;
+};
+
+/**
+ * A condition to be used against `Feedback` object types. All fields are tested
+ * for equality and combined with a logical ‘and.’
+ */
+export type FeedbackCondition = {
+  /** Checks for equality with the object’s `id` field. */
+  id?: Maybe<Scalars['Int']>;
+  /** Checks for equality with the object’s `parentId` field. */
+  parentId?: Maybe<Scalars['Int']>;
+  /** Checks for equality with the object’s `userId` field. */
+  userId?: Maybe<Scalars['UUID']>;
+};
+
+/** An input for mutations affecting `Feedback` */
+export type FeedbackInput = {
+  content: Scalars['String'];
+  parentId?: Maybe<Scalars['Int']>;
+};
+
+/** Represents an update to a `Feedback`. Fields that are set will be updated. */
+export type FeedbackPatch = {
+  content?: Maybe<Scalars['String']>;
+  parentId?: Maybe<Scalars['Int']>;
+};
+
+/** A connection to a list of `Feedback` values. */
+export type FeedbacksConnection = {
+  __typename?: 'FeedbacksConnection';
+  /** A list of edges which contains the `Feedback` and cursor to aid in pagination. */
+  edges: Array<FeedbacksEdge>;
+  /** A list of `Feedback` objects. */
+  nodes: Array<Feedback>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Feedback` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A `Feedback` edge in the connection. */
+export type FeedbacksEdge = {
+  __typename?: 'FeedbacksEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `Feedback` at the end of the edge. */
+  node: Feedback;
+};
+
+/** Methods to use when ordering `Feedback`. */
+export enum FeedbacksOrderBy {
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  ParentIdAsc = 'PARENT_ID_ASC',
+  ParentIdDesc = 'PARENT_ID_DESC',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  UserIdAsc = 'USER_ID_ASC',
+  UserIdDesc = 'USER_ID_DESC'
+}
+
 /** All input for the `forgotPassword` mutation. */
 export type ForgotPasswordInput = {
   /**
@@ -931,6 +1038,8 @@ export type Mutation = {
   createComment?: Maybe<CreateCommentPayload>;
   /** Creates a single `Confession`. */
   createConfession?: Maybe<CreateConfessionPayload>;
+  /** Creates a single `Feedback`. */
+  createFeedback?: Maybe<CreateFeedbackPayload>;
   createOrUpdateCommentReaction?: Maybe<CreateOrUpdateCommentReactionPayload>;
   createOrUpdateConfessionReaction?: Maybe<CreateOrUpdateConfessionReactionPayload>;
   /** Creates a single `UserEmail`. */
@@ -966,6 +1075,8 @@ export type Mutation = {
   updateComment?: Maybe<UpdateCommentPayload>;
   /** Updates a single `Confession` using a unique key and a patch. */
   updateConfession?: Maybe<UpdateConfessionPayload>;
+  /** Updates a single `Feedback` using a unique key and a patch. */
+  updateFeedback?: Maybe<UpdateFeedbackPayload>;
   /** Updates a single `User` using a unique key and a patch. */
   updateUser?: Maybe<UpdateUserPayload>;
   /** Once you have received a verification token for your email, you may call this mutation with that token to make your email verified. */
@@ -1006,6 +1117,12 @@ export type MutationCreateCommentArgs = {
 /** The root mutation type which contains root level fields which mutate data. */
 export type MutationCreateConfessionArgs = {
   input: CreateConfessionInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
+export type MutationCreateFeedbackArgs = {
+  input: CreateFeedbackInput;
 };
 
 
@@ -1118,6 +1235,12 @@ export type MutationUpdateConfessionArgs = {
 
 
 /** The root mutation type which contains root level fields which mutate data. */
+export type MutationUpdateFeedbackArgs = {
+  input: UpdateFeedbackInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
 export type MutationUpdateUserArgs = {
   input: UpdateUserInput;
 };
@@ -1160,6 +1283,9 @@ export type Query = {
   confessions?: Maybe<ConfessionsConnection>;
   /** The currently logged in user (or null if not logged in). */
   currentUser?: Maybe<User>;
+  feedback?: Maybe<Feedback>;
+  /** Reads and enables pagination through a set of `Feedback`. */
+  feedbacks?: Maybe<FeedbacksConnection>;
   /** Reads and enables pagination through a set of `Confession`. */
   getCfsByCat?: Maybe<ConfessionsConnection>;
   /** Reads and enables pagination through a set of `Confession`. */
@@ -1263,6 +1389,24 @@ export type QueryConfessionsArgs = {
   last?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<ConfessionsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryFeedbackArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryFeedbacksArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  condition?: Maybe<FeedbackCondition>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Array<FeedbacksOrderBy>>;
 };
 
 
@@ -1579,6 +1723,42 @@ export type UpdateConfessionPayloadConfessionEdgeArgs = {
   orderBy?: Maybe<Array<ConfessionsOrderBy>>;
 };
 
+/** All input for the `updateFeedback` mutation. */
+export type UpdateFeedbackInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
+  /** An object where the defined keys will be set on the `Feedback` being updated. */
+  patch: FeedbackPatch;
+};
+
+/** The output of our update `Feedback` mutation. */
+export type UpdateFeedbackPayload = {
+  __typename?: 'UpdateFeedbackPayload';
+  /**
+   * The exact same `clientMutationId` that was provided in the mutation input,
+   * unchanged and unused. May be used by a client to track mutations.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  /** The `Feedback` that was updated by this mutation. */
+  feedback?: Maybe<Feedback>;
+  /** An edge for our `Feedback`. May be used by Relay 1. */
+  feedbackEdge?: Maybe<FeedbacksEdge>;
+  /** Our root query field type. Allows us to run any query from our mutation payload. */
+  query?: Maybe<Query>;
+  /** Reads a single `User` that is related to this `Feedback`. */
+  user?: Maybe<User>;
+};
+
+
+/** The output of our update `Feedback` mutation. */
+export type UpdateFeedbackPayloadFeedbackEdgeArgs = {
+  orderBy?: Maybe<Array<FeedbacksOrderBy>>;
+};
+
 /** All input for the `updateUser` mutation. */
 export type UpdateUserInput = {
   /**
@@ -1624,6 +1804,8 @@ export type User = {
   /** Reads and enables pagination through a set of `Confession`. */
   confessions: ConfessionsConnection;
   createdAt: Scalars['Datetime'];
+  /** Reads and enables pagination through a set of `Feedback`. */
+  feedbacks: FeedbacksConnection;
   hasPassword?: Maybe<Scalars['Boolean']>;
   /** Unique identifier for the user. */
   id: Scalars['UUID'];
@@ -1667,6 +1849,18 @@ export type UserConfessionsArgs = {
   last?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<ConfessionsOrderBy>>;
+};
+
+
+/** A user who can log in to the application. */
+export type UserFeedbacksArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  condition?: Maybe<FeedbackCondition>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Array<FeedbacksOrderBy>>;
 };
 
 
@@ -2051,6 +2245,20 @@ export type AllCategoriesPageQuery = (
   )> }
 );
 
+export type AllOwnFeedbackQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllOwnFeedbackQuery = (
+  { __typename?: 'Query' }
+  & { feedbacks?: Maybe<(
+    { __typename?: 'FeedbacksConnection' }
+    & { nodes: Array<(
+      { __typename?: 'Feedback' }
+      & Pick<Feedback, 'id' | 'content' | 'parentId' | 'createdAt' | 'updatedAt'>
+    )> }
+  )> }
+);
+
 export type CatDetailPageQueryVariables = Exact<{
   slug: Scalars['String'];
 }>;
@@ -2178,6 +2386,23 @@ export type CreateCommentMutation = (
         { __typename?: 'User' }
         & Pick<User, 'username'>
       )> }
+    )> }
+  )> }
+);
+
+export type CreateFeedbackMutationVariables = Exact<{
+  content: Scalars['String'];
+  parentId?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type CreateFeedbackMutation = (
+  { __typename?: 'Mutation' }
+  & { createFeedback?: Maybe<(
+    { __typename?: 'CreateFeedbackPayload' }
+    & { feedback?: Maybe<(
+      { __typename?: 'Feedback' }
+      & Pick<Feedback, 'content' | 'createdAt' | 'id' | 'parentId' | 'updatedAt'>
     )> }
   )> }
 );
@@ -2855,6 +3080,46 @@ export function useAllCategoriesPageLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type AllCategoriesPageQueryHookResult = ReturnType<typeof useAllCategoriesPageQuery>;
 export type AllCategoriesPageLazyQueryHookResult = ReturnType<typeof useAllCategoriesPageLazyQuery>;
 export type AllCategoriesPageQueryResult = Apollo.QueryResult<AllCategoriesPageQuery, AllCategoriesPageQueryVariables>;
+export const AllOwnFeedbackDocument = gql`
+    query AllOwnFeedback {
+  feedbacks(first: 100, orderBy: ID_DESC) {
+    nodes {
+      id
+      content
+      parentId
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useAllOwnFeedbackQuery__
+ *
+ * To run a query within a React component, call `useAllOwnFeedbackQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllOwnFeedbackQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAllOwnFeedbackQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllOwnFeedbackQuery(baseOptions?: Apollo.QueryHookOptions<AllOwnFeedbackQuery, AllOwnFeedbackQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AllOwnFeedbackQuery, AllOwnFeedbackQueryVariables>(AllOwnFeedbackDocument, options);
+      }
+export function useAllOwnFeedbackLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllOwnFeedbackQuery, AllOwnFeedbackQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AllOwnFeedbackQuery, AllOwnFeedbackQueryVariables>(AllOwnFeedbackDocument, options);
+        }
+export type AllOwnFeedbackQueryHookResult = ReturnType<typeof useAllOwnFeedbackQuery>;
+export type AllOwnFeedbackLazyQueryHookResult = ReturnType<typeof useAllOwnFeedbackLazyQuery>;
+export type AllOwnFeedbackQueryResult = Apollo.QueryResult<AllOwnFeedbackQuery, AllOwnFeedbackQueryVariables>;
 export const CatDetailPageDocument = gql`
     query CatDetailPage($slug: String!) {
   categoryBySlug(slug: $slug) {
@@ -3129,6 +3394,46 @@ export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
 export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
 export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
+export const CreateFeedbackDocument = gql`
+    mutation CreateFeedback($content: String!, $parentId: Int) {
+  createFeedback(input: {feedback: {content: $content, parentId: $parentId}}) {
+    feedback {
+      content
+      createdAt
+      id
+      parentId
+      updatedAt
+    }
+  }
+}
+    `;
+export type CreateFeedbackMutationFn = Apollo.MutationFunction<CreateFeedbackMutation, CreateFeedbackMutationVariables>;
+
+/**
+ * __useCreateFeedbackMutation__
+ *
+ * To run a mutation, you first call `useCreateFeedbackMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFeedbackMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFeedbackMutation, { data, loading, error }] = useCreateFeedbackMutation({
+ *   variables: {
+ *      content: // value for 'content'
+ *      parentId: // value for 'parentId'
+ *   },
+ * });
+ */
+export function useCreateFeedbackMutation(baseOptions?: Apollo.MutationHookOptions<CreateFeedbackMutation, CreateFeedbackMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateFeedbackMutation, CreateFeedbackMutationVariables>(CreateFeedbackDocument, options);
+      }
+export type CreateFeedbackMutationHookResult = ReturnType<typeof useCreateFeedbackMutation>;
+export type CreateFeedbackMutationResult = Apollo.MutationResult<CreateFeedbackMutation>;
+export type CreateFeedbackMutationOptions = Apollo.BaseMutationOptions<CreateFeedbackMutation, CreateFeedbackMutationVariables>;
 export const CreateOrUpdateCommentReactionDocument = gql`
     mutation CreateOrUpdateCommentReaction($commentId: Int!, $reactType: ReactionType!) {
   createOrUpdateCommentReaction(

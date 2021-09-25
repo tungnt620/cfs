@@ -1,0 +1,11 @@
+mutation CreateFeedback($content: String!, $parentId: Int) {
+  createFeedback(input: {feedback: {content: $content, parentId: $parentId}}) {
+    feedback {
+      content
+      createdAt
+      id
+      parentId
+      updatedAt
+    }
+  }
+}
