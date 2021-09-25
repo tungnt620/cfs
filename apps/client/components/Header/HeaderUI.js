@@ -2,12 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { MenuOpen, MenuClose } from '@cfs/ui/icons';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Avatar, Button, Dropdown, Menu } from 'antd';
+import { Button, Menu } from 'antd';
 import LoginPopup from '../LoginPopup';
 import { useLogoutMutation, useSharedLazyQuery } from '@cfs/graphql';
 import { useApolloClient, useReactiveVar } from '@apollo/react-hooks';
-import { preventDefault, showFeedbacksModal } from '@cfs/helper';
-import { BulbOutlined, DownOutlined, UserOutlined } from '@ant-design/icons';
+import { showFeedbacksModal } from '@cfs/helper';
+import { BulbOutlined } from '@ant-design/icons';
 import { setCurrentUser, showLoginPopup, showRegisterPopup } from '@cfs/helper';
 import RegisterPopup from '../RegisterPopup';
 import CreateNewCfs from './CreateNewCfs';
@@ -83,24 +83,9 @@ const HeaderUI = () => {
             <CreateNewCfs />
 
             {currentUser?.id ? (
-              <div className="flex ml-4 items-center">
-                <Avatar size={32} icon={<UserOutlined />} className="mr-1" />
-                <Dropdown
-                  overlay={
-                    <Menu>
-                      <Menu.Item>
-                        <Button onClick={handleLogout} type="link">
-                          Đăng xuất
-                        </Button>
-                      </Menu.Item>
-                    </Menu>
-                  }
-                >
-                  <a className="ant-dropdown-link" onClick={preventDefault}>
-                    {currentUser?.username} <DownOutlined />
-                  </a>
-                </Dropdown>
-              </div>
+              <Button onClick={handleLogout} type="link">
+                Đăng xuất
+              </Button>
             ) : (
               <Button onClick={openRegisterPopup} type="link">
                 Đăng ký
@@ -127,7 +112,7 @@ const HeaderUI = () => {
             <Menu.Item>
               <Button type="link" onClick={openFeedbacksModal}>
                 <div className="flex items-center">
-                  <BulbOutlined className='pr-1' /> Gửi góp ý
+                  <BulbOutlined className="pr-1" /> Gửi góp ý
                 </div>
               </Button>
             </Menu.Item>
