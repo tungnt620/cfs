@@ -24,7 +24,7 @@ if (!SECRET) {
 }
 const MAXIMUM_SESSION_DURATION_IN_MILLISECONDS =
   parseInt(process.env.MAXIMUM_SESSION_DURATION_IN_MILLISECONDS || "", 10) ||
-  3 * DAY;
+  365 * DAY;
 
 export default (app: Express) => {
   const rootPgPool = getRootPgPool(app);
