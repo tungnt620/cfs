@@ -1,0 +1,32 @@
+query GetComments($offset: Int!) {
+  comments(orderBy: ID_DESC, first: 10, offset: $offset) {
+    nodes {
+      id
+      authorName
+      content
+      image
+      parentId
+      createdAt
+      totalReaction
+      userCommentReactions {
+        nodes {
+          reactType
+        }
+      }
+      user {
+        username
+      }
+      confession {
+        slug
+        confessionCategories {
+          nodes {
+            category {
+              slug
+            }
+          }
+        }
+      }
+      totalReaction
+    }
+  }
+}

@@ -3,6 +3,16 @@ fragment SharedLayout_Query on Query {
     id
     ...SharedLayout_User
   }
+  comments(orderBy: ID_DESC, first: 1) {
+    nodes {
+      id
+    }
+  }
+  confessions(orderBy: ID_DESC, first: 1) {
+    nodes {
+      id
+    }
+  }
 }
 
 fragment SharedLayout_User on User {

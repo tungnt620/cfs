@@ -134,7 +134,7 @@ const LoginPopup = () => {
               showLoginPopup(false);
             }}
           >
-            Đăng ký
+            hoặc đăng ký
           </Button>
         </Form.Item>
       </Form>

@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Button } from 'antd';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser, showLoginPopup } from '@cfs/helper';
+import { setCurrentUser, showRegisterPopup } from '@cfs/helper';
 import { useRouter } from 'next/router';
 
 const CreateNewCfs = () => {
@@ -10,7 +10,7 @@ const CreateNewCfs = () => {
 
   const onClick = useCallback(() => {
     if (!currentUser?.id) {
-      showLoginPopup(true);
+      showRegisterPopup(true);
     } else {
       router.push('/new');
     }

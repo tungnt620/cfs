@@ -1,0 +1,9 @@
+.homePageListMenu {
+  display: flex;
+  justify-content: space-between;
+  max-width: 900px;
+  margin: 0 auto;
+
+  padding-bottom: 0.5rem;
+  border-bottom: 5px solid var(--bg-color1);
+}

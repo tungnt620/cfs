@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Image as AntdImage } from 'antd';
 import style from './CfsDetail.module.scss';
-import useBooleanToggle from '../../../../helper/src/hooks';
+import { useBooleanToggle } from '@cfs/helper';
 import { findNumberOccurrenceInString } from '../../../../helper/src/string';
 import { CfsMiniCard } from '@cfs/ui';
 

@@ -2,16 +2,18 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { MenuOpen, MenuClose } from '@cfs/ui/icons';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Button, Menu } from 'antd';
+import { Tooltip } from 'antd';
 import LoginPopup from '../LoginPopup';
 import { useLogoutMutation, useSharedLazyQuery } from '@cfs/graphql';
 import { useApolloClient, useReactiveVar } from '@apollo/react-hooks';
 import { showFeedbacksModal } from '@cfs/helper';
-import { BulbOutlined } from '@ant-design/icons';
+import { LogoutOutlined } from '@ant-design/icons';
 import { setCurrentUser, showLoginPopup, showRegisterPopup } from '@cfs/helper';
 import RegisterPopup from '../RegisterPopup';
 import CreateNewCfs from './CreateNewCfs';
 import FeedbacksModal from '../Feedbacks/FeedbacksModal';
+import Notification from './Notifications';
+import CustomMenu from './CustomMenu';
 
 const HeaderUI = () => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -46,10 +48,7 @@ const HeaderUI = () => {
 
   const toggleMenu = useCallback(() => {
     setMenuOpened((prev) => !prev);
-  }, []);
-
-  const openRegisterPopup = useCallback(() => showRegisterPopup(true), []);
-  const openFeedbacksModal = useCallback(() => showFeedbacksModal(true), []);
+  }, [setMenuOpened]);
 
   return (
     <>
@@ -83,41 +82,21 @@ const HeaderUI = () => {
             <CreateNewCfs />
 
             {currentUser?.id ? (
-              <Button onClick={handleLogout} type="link">
-                Đăng xuất
-              </Button>
+              <>
+                <Notification shareData={shareData} />
+                <Tooltip title="Đăng xuất">
+                  <LogoutOutlined
+                    className="flex items-center pr-2 pl-2 text-xl"
+                    onClick={handleLogout}
+                  />
+                </Tooltip>
+              </>
             ) : (
-              <Button onClick={openRegisterPopup} type="link">
-                Đăng ký
-              </Button>
+              <Notification shareData={shareData} />
             )}
           </div>
         </div>
-        <nav
-          className={`${
-            menuOpened ? 'block' : 'hidden'
-          } absolute right-0 p-6 h-full-without-header w-full bg-white z-20`}
-        >
-          <Menu onClick={toggleMenu} className="text-center">
-            <Menu.Item>
-              <Link href="/all-categories/">
-                <a>Tất cả mục confession con</a>
-              </Link>
-            </Menu.Item>
-            <Menu.Item>
-              <Link href="/">
-                <a>Confession mới nhất</a>
-              </Link>
-            </Menu.Item>
-            <Menu.Item>
-              <Button type="link" onClick={openFeedbacksModal}>
-                <div className="flex items-center">
-                  <BulbOutlined className="pr-1" /> Gửi góp ý
-                </div>
-              </Button>
-            </Menu.Item>
-          </Menu>
-        </nav>
+        <CustomMenu menuOpened={menuOpened} toggleMenu={toggleMenu} />
       </nav>
 
       {loginPopupVisible && <LoginPopup />}

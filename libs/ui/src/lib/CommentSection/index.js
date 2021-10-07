@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import CreateCommentEditor from './CreateCommentEditor';
 import NestedComment from './NestedComment';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setNewCommentCreatedByMe } from '../../../../helper/src/reactiveVars';
+import { setNewCommentCreatedByMe } from '@cfs/helper';
+import { useSetLatestCommentIDUserSaw } from '@cfs/helper';
 
 const CommentSection = ({ comments, cfsId }) => {
   const [allComments, setAllComments] = useState([]);
@@ -25,6 +26,8 @@ const CommentSection = ({ comments, cfsId }) => {
 
     return data;
   }, [allComments]);
+
+  useSetLatestCommentIDUserSaw(0, comments);
 
   useEffect(() => {
     setAllComments(comments || []);

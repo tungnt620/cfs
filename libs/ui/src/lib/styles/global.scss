@@ -4,6 +4,8 @@ body {
   --color-2: #56595a;
   --color-3: #0c8ecf;
   --color-4: #11182796;
+  --color-5: #767575;
+  --color-6: #ccccca;
   --header-height: 60px;
   --shadow-color: #f3f3f4;
   --border-color1: #efefed;
@@ -31,6 +33,14 @@ body {
 
 .color4 {
   color: var(--color-4)
+}
+
+.color5 {
+  color: var(--color-5)
+}
+
+.color6 {
+  color: var(--color-6)
 }
 
 .border-color1 {

@@ -50,7 +50,7 @@ const CreateFeedback = () => {
           rows={4}
           onChange={onChangeWrap}
           value={content}
-          placeholder="Góp ý của bạn về website, ý tưởng mới, tính năng cần sửa chữa, ... Mình luôn lắng nghe và sẽ phản hồi."
+          placeholder="Xin nhận các góp ý của bạn để làm website trở nên tốt đẹp hơn."
         />
       </Form.Item>
       <Form.Item>

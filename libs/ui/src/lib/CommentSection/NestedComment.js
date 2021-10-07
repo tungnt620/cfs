@@ -9,7 +9,7 @@ import style from './CommentSection.module.scss';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setCurrentUser } from '@cfs/helper';
 import UpdateCommentEditor from './UpdateCommentEditor';
-import useBooleanToggle from '../../../../helper/src/hooks';
+import { useBooleanToggle } from '@cfs/helper';
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');

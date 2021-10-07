@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Image as AntdImage } from 'antd';
 import styles from './CardContent.module.scss';
-import useBooleanToggle from '../../../../../helper/src/hooks';
+import { useBooleanToggle } from '@cfs/helper';
 
 const CardContent = ({ cfs }) => {
   const { image, slug, title } = cfs;

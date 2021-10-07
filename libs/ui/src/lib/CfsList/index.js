@@ -2,9 +2,27 @@ import React, { useCallback, useState } from 'react';
 import style from './CfsList.module.scss';
 import { Button } from 'antd';
 import { CfsMiniCard } from '@cfs/ui';
+import { setLatestCfsIDGetByMe } from '@cfs/helper';
+import { LATEST_CFS_ID_USER_SAW_LOCAL_STORAGE_KEY } from '@cfs/common';
+import { useReactiveVar } from '@apollo/react-hooks';
 
 export const CfsList = ({ cfsList, fetchMore, selectedCat }) => {
   const [offset, setOffset] = useState(0);
+  const currentLatestCfsIDUserSaw = useReactiveVar(setLatestCfsIDGetByMe);
+
+  if (offset === 0 && cfsList?.length > 0) {
+    const latestCfsIDUserSaw =
+      cfsList[0].id > cfsList[cfsList.length - 1].id
+        ? cfsList[0].id
+        : cfsList[cfsList.length - 1].id;
+    if (latestCfsIDUserSaw > currentLatestCfsIDUserSaw) {
+      setLatestCfsIDGetByMe(latestCfsIDUserSaw);
+      localStorage.setItem(
+        LATEST_CFS_ID_USER_SAW_LOCAL_STORAGE_KEY,
+        latestCfsIDUserSaw.toString()
+      );
+    }
+  }
 
   const fetchAtOffset = useCallback(
     (newOffset) => {
@@ -15,6 +33,7 @@ export const CfsList = ({ cfsList, fetchMore, selectedCat }) => {
           catId: isNaN(selectedCat) ? undefined : parseInt(selectedCat),
         },
       });
+      window.scrollTo(0, 0);
     },
     [fetchMore, selectedCat]
   );

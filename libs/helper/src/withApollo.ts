@@ -48,6 +48,11 @@ export const withApollo = withApolloBase(
                 // any of this field's arguments.
                 keyArgs: false,
               },
+              comments: {
+                // Don't cache separate results based on
+                // any of this field's arguments.
+                keyArgs: false,
+              },
             },
           },
         },

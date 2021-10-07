@@ -142,7 +142,7 @@ const RegisterPopup = () => {
               showLoginPopup(true);
             }}
           >
-            Đăng nhập
+            hoặc đăng nhập
           </Button>
         </Form.Item>
       </Form>
