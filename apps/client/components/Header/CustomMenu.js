@@ -25,6 +25,11 @@ const CustomMenu = ({ menuOpened, toggleMenu }) => {
           </Link>
         </Menu.Item>
         <Menu.Item>
+          <Link href="/?dataType=comment">
+            <a>Bình luận mới nhất</a>
+          </Link>
+        </Menu.Item>
+        <Menu.Item>
           <div onClick={openFeedbacksModal} className="flex items-center justify-center">
             <BulbOutlined className="pr-1" /> Gửi góp ý
           </div>

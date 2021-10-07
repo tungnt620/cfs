@@ -4,20 +4,18 @@ import { useRouter } from 'next/router';
 import { CfsDetailHeader } from '@cfs/ui';
 import { CfsList } from '@cfs/ui';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser, setNewDeletedCfsByMe, usePreviousValue } from '@cfs/helper';
+import { setCurrentUser, setNewDeletedCfsByMe } from '@cfs/helper';
 import CategorySEO from '../../../shared/seo/CategorySEO';
+import { usePagination } from '../../helpers/hooks';
 
 const CatDetailPage = () => {
   const router = useRouter();
   const { slug } = router.query;
-  const previousCatSlug = usePreviousValue(slug);
   const currentUser = useReactiveVar(setCurrentUser);
   const newCfsDeletedByMe = useReactiveVar(setNewDeletedCfsByMe);
+  const { offset } = usePagination();
 
-  const {
-    data: catDetailData,
-    fetchMore: fetchMoreCatDetail,
-  } = useCatDetailPageQuery({
+  const { data: catDetailData } = useCatDetailPageQuery({
     variables: {
       slug,
     },
@@ -31,10 +29,14 @@ const CatDetailPage = () => {
   } = useGetCfsByCatSlugQuery({
     variables: {
       catSlug: slug,
-      offset: 0,
+      offset,
     },
   });
   const confessions = confessionsData?.getCfsByCatSlug?.nodes ?? [];
+
+  useEffect(() => {
+    fetchMoreCfs({ variables: { offset, catSlug: slug } });
+  }, [fetchMoreCfs, offset, router, slug]);
 
   // Re-fetch to get data relative user
   useEffect(() => {
@@ -49,23 +51,12 @@ const CatDetailPage = () => {
     }
   }, [refetchCfs, newCfsDeletedByMe]);
 
-  useEffect(() => {
-    if (previousCatSlug && previousCatSlug !== slug) {
-      fetchMoreCatDetail({
-        variables: {
-          slug,
-        },
-      });
-      refetchCfs();
-    }
-  }, [fetchMoreCatDetail, refetchCfs, previousCatSlug, slug]);
-
   return (
     <div className="ml-2 mr-2 mb-6 bg-color1">
       <CategorySEO category={catData} />
       {catData && <CfsDetailHeader cat={catData} />}
       <main>
-        <CfsList cfsList={confessions} fetchMore={fetchMoreCfs} />
+        <CfsList cfsList={confessions} />
       </main>
     </div>
   );

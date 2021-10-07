@@ -1,40 +1,29 @@
-import React, { useCallback, useState } from 'react';
-import { useGetCommentsQuery } from '@cfs/graphql';
+import React, { useEffect } from 'react';
 import CommentItem from './CommentItem';
 import { Button } from 'antd';
 import { useSetLatestCommentIDUserSaw } from '@cfs/helper';
+import { useGetCommentsQuery } from '@cfs/graphql';
+import { usePagination } from '../helpers/hooks';
 
 const CommentList = () => {
+  const { offset, goPreviousPage, goNextPage } = usePagination();
+
   const { data, fetchMore } = useGetCommentsQuery({
     variables: {
       offset: 0,
     },
   });
   const comments = data?.comments?.nodes;
-  const [offset, setOffset] = useState(0);
 
-  useSetLatestCommentIDUserSaw(offset, comments)
+  useSetLatestCommentIDUserSaw(offset, comments);
 
-  const fetchAtOffset = useCallback(
-    (newOffset) => {
-      setOffset(newOffset);
-      fetchMore({
-        variables: {
-          offset: newOffset,
-        },
-      });
-      window.scrollTo(0, 0);
-    },
-    [fetchMore]
-  );
-
-  const handleOnNext = useCallback(() => {
-    fetchAtOffset(offset + 10);
-  }, [fetchAtOffset, offset]);
-
-  const handleOnPrevious = useCallback(() => {
-    fetchAtOffset(offset - 10);
-  }, [fetchAtOffset, offset]);
+  useEffect(() => {
+    fetchMore({
+      variables: {
+        offset,
+      },
+    });
+  }, [offset, fetchMore]);
 
   return (
     <>
@@ -43,14 +32,10 @@ const CommentList = () => {
       )) ?? null}
 
       <div className="flex justify-between bg-white mt-1 pt-3">
-        <Button
-          onClick={handleOnPrevious}
-          disabled={offset === 0}
-          type="primary"
-        >
+        <Button onClick={goPreviousPage} disabled={offset === 0} type="primary">
           Trước
         </Button>
-        <Button onClick={handleOnNext} type="primary">
+        <Button onClick={goNextPage} type="primary">
           Tiếp
         </Button>
       </div>

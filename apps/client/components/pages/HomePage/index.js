@@ -12,15 +12,18 @@ import {
 import SubMenus from './SubMenus';
 import CommentList from '../../CommentList';
 import { useRouter } from 'next/router';
+import { usePagination } from '../../helpers/hooks';
 
 const { TabPane } = Tabs;
 
 const HomePage = () => {
   const router = useRouter();
-  const [selectedCat, setSelectedCat] = useState(router.query.cat || '0');
   const [dataType, setDataType] = useState(
     router.query.dataType || 'confession'
   );
+  const { offset } = usePagination();
+  const cat = router.query.cat || '0';
+
   const newCfsCreatedByMe = useReactiveVar(setNewCfsCreatedByMe);
   const newCfsDeletedByMe = useReactiveVar(setNewDeletedCfsByMe);
 
@@ -28,7 +31,7 @@ const HomePage = () => {
   const { data: allCategories } = useHomePageAllCategoriesQuery();
 
   const { data: queryData, fetchMore, refetch } = useHomePageQuery({
-    variables: { offset: 0, catId: parseInt(selectedCat) },
+    variables: { offset, catId: parseInt(cat) },
   });
 
   const confessions = queryData?.getCfsByCat?.nodes ?? [];
@@ -36,12 +39,8 @@ const HomePage = () => {
   categories.unshift({ id: 0, name: 'Tất cả' });
 
   useEffect(() => {
-    const cat = router.query.cat || '0';
-    if (cat !== selectedCat) {
-      setSelectedCat(cat);
-      fetchMore({ variables: { offset: 0, catId: parseInt(cat) } });
-    }
-  }, [fetchMore, router, selectedCat]);
+    fetchMore({ variables: { offset, catId: parseInt(cat) } });
+  }, [cat, fetchMore, offset, router]);
 
   // Re-fetch to get data relative user
   useEffect(() => {
@@ -52,22 +51,23 @@ const HomePage = () => {
 
   useEffect(() => {
     if (newCfsCreatedByMe) {
-      setSelectedCat('0');
+      router.query.cat = '0';
+      router.push(router);
       refetch();
     }
-  }, [refetch, newCfsCreatedByMe]);
+  }, [refetch, newCfsCreatedByMe, router]);
 
   useEffect(() => {
     if (newCfsDeletedByMe) {
-      setSelectedCat('0');
+      router.query.cat = '0';
+      router.push(router);
       refetch();
     }
-  }, [refetch, newCfsDeletedByMe]);
+  }, [refetch, newCfsDeletedByMe, router]);
 
   const onChangeCat = (newCat) => {
-    fetchMore({ variables: { offset: 0, catId: parseInt(newCat) } });
-    setSelectedCat(newCat);
     router.query.cat = newCat;
+    router.query.offset = '0';
     router.push(router);
   };
 
@@ -79,16 +79,12 @@ const HomePage = () => {
           {dataType === 'confession' ? (
             <Tabs
               defaultActiveKey="0"
-              activeKey={selectedCat}
+              activeKey={cat}
               onChange={onChangeCat}
             >
               {categories.map((cat) => (
                 <TabPane tab={cat.name} key={cat.id}>
-                  <CfsList
-                    cfsList={confessions}
-                    fetchMore={fetchMore}
-                    selectedCat={selectedCat}
-                  />
+                  <CfsList cfsList={confessions} />
                 </TabPane>
               ))}
             </Tabs>
