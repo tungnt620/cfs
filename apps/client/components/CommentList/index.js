@@ -3,7 +3,7 @@ import CommentItem from './CommentItem';
 import { Button } from 'antd';
 import { useSetLatestCommentIDUserSaw } from '@cfs/helper';
 import { useGetCommentsQuery } from '@cfs/graphql';
-import { usePagination } from '../helpers/hooks';
+import { usePagination } from '@cfs/helpers';
 
 const CommentList = () => {
   const { offset, goPreviousPage, goNextPage } = usePagination();

@@ -6,7 +6,7 @@ import { CfsList } from '@cfs/ui';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setCurrentUser, setNewDeletedCfsByMe } from '@cfs/helper';
 import CategorySEO from '../../../shared/seo/CategorySEO';
-import { usePagination } from '../../helpers/hooks';
+import { usePagination } from '@cfs/helpers';
 
 const CatDetailPage = () => {
   const router = useRouter();
