@@ -12,7 +12,7 @@ import {
 import SubMenus from './SubMenus';
 import CommentList from '../../CommentList';
 import { useRouter } from 'next/router';
-import { usePagination } from '@cfs/helpers';
+import { usePagination } from '@cfs/helper';
 
 const { TabPane } = Tabs;
 
