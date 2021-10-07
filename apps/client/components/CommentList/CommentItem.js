@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Button, Comment, Image as AntdImage, Tag, Tooltip } from 'antd';
+import { Button, Comment, Image as AntdImage, Tooltip } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import Image from 'next/image';
