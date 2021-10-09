@@ -4,8 +4,7 @@ import { useForm } from 'antd/lib/form/Form';
 import { extractError, getCodeFromError } from '@cfs/helper';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useLoginMutation } from '@cfs/graphql';
-import { setCurrentUser, showLoginPopup, showRegisterPopup } from '@cfs/helper';
-import { sendGAUserBehaviorEvent } from '../../../../libs/helper/src/analytics';
+import { setCurrentUser, showLoginPopup, showRegisterPopup, sendGAUserBehaviorEvent } from '@cfs/helper';
 
 function hasErrors(fieldsError) {
   return Object.keys(fieldsError).some((field) => fieldsError[field]);

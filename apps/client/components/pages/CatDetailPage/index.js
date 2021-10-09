@@ -4,10 +4,13 @@ import { useRouter } from 'next/router';
 import { CfsDetailHeader } from '@cfs/ui';
 import { CfsList } from '@cfs/ui';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser, setNewDeletedCfsByMe } from '@cfs/helper';
+import {
+  setCurrentUser,
+  setNewDeletedCfsByMe,
+  usePagination,
+  sendGAUserBehaviorEvent,
+} from '@cfs/helper';
 import CategorySEO from '../../../shared/seo/CategorySEO';
-import { usePagination } from '@cfs/helper';
-import { sendGAUserBehaviorEvent } from '../../../../../libs/helper/src/analytics';
 
 const CatDetailPage = () => {
   const router = useRouter();

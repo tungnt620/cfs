@@ -4,7 +4,7 @@ import { useGoBack } from '@cfs/common';
 import style from './style.module.scss';
 import { useAllCategoriesPageQuery } from '@cfs/graphql';
 import { useRouter } from 'next/router';
-import { sendGAUserBehaviorEvent } from '../../../../../libs/helper/src/analytics';
+import { sendGAUserBehaviorEvent } from '@cfs/helper';
 
 const AllCategoriesPage = () => {
   const router = useRouter();

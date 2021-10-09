@@ -5,8 +5,7 @@ import { CfsMiniCard } from '@cfs/ui';
 import { setLatestCfsIDGetByMe } from '@cfs/helper';
 import { LATEST_CFS_ID_USER_SAW_LOCAL_STORAGE_KEY } from '@cfs/common';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { usePagination } from '@cfs/helper';
-import { sendGAUserBehaviorEvent } from '../../../../helper/src/analytics';
+import { usePagination, sendGAUserBehaviorEvent } from '@cfs/helper';
 
 export const CfsList = ({ cfsList }) => {
   const { offset, goPreviousPage, goNextPage } = usePagination();

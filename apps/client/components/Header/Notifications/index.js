@@ -2,9 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { BellOutlined } from '@ant-design/icons';
 import { Badge, List, Popover, Tooltip } from 'antd';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setLatestCommentIDGetByMe, setLatestCfsIDGetByMe } from '@cfs/helper';
+import { setLatestCommentIDGetByMe, setLatestCfsIDGetByMe, sendGAUserBehaviorEvent } from '@cfs/helper';
 import { useRouter } from 'next/router';
-import { sendGAUserBehaviorEvent } from '../../../../../libs/helper/src/analytics';
 
 const notificationBadgeOffset = [-5, 0];
 

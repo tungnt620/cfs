@@ -4,10 +4,8 @@ import { useGoBack } from '@cfs/common';
 import style from './NewCfs.module.scss';
 import { useCreateCfsMutation, useGetCategoriesQuery } from '@cfs/graphql';
 import slugify from 'slugify';
-import { extractError } from '@cfs/helper';
-import { setNewCfsCreatedByMe } from '@cfs/helper';
+import { setNewCfsCreatedByMe, sendGAUserBehaviorEvent, extractError } from '@cfs/helper';
 import { useRouter } from 'next/router';
-import { sendGAUserBehaviorEvent } from '../../../../../libs/helper/src/analytics';
 
 const { TextArea } = Input;
 

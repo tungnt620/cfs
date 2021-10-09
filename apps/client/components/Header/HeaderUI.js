@@ -14,7 +14,7 @@ import CreateNewCfs from './CreateNewCfs';
 import FeedbacksModal from '../Feedbacks/FeedbacksModal';
 import Notification from './Notifications';
 import CustomMenu from './CustomMenu';
-import { sendGAUserBehaviorEvent } from '../../../../libs/helper/src/analytics';
+import {  sendGAUserBehaviorEvent } from '@cfs/helper';
 
 const HeaderUI = () => {
   const [menuOpened, setMenuOpened] = useState(false);

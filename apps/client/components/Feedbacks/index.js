@@ -3,8 +3,7 @@ import { useReactiveVar } from '@apollo/react-hooks';
 import CreateFeedback from './CreatFeedback';
 import Feedback from './Feedback';
 import { useAllOwnFeedbackLazyQuery } from '@cfs/graphql';
-import { setCurrentUser, setNewFeedbackCreatedByMe } from '@cfs/helper';
-import { sendGAUserBehaviorEvent } from '../../../../libs/helper/src/analytics';
+import { setCurrentUser, setNewFeedbackCreatedByMe, sendGAUserBehaviorEvent } from '@cfs/helper';
 
 const Feedbacks = () => {
   const [allFeedbacks, setAllFeedbacks] = useState([]);
