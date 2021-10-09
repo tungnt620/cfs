@@ -7,6 +7,11 @@ import '../../../libs/ui/src/lib/styles/global.scss';
 import MainLayout from '../components/Layout';
 import { withApollo } from '@cfs/helper';
 import Head from 'next/head';
+import { version as appVersion } from '../../../package.json';
+
+if (typeof window !== 'undefined') {
+  window.appVersion = appVersion;
+}
 
 if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
   const ReactDOM = require('react-dom');

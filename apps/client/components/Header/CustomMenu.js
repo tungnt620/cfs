@@ -39,4 +39,4 @@ const CustomMenu = ({ menuOpened, toggleMenu }) => {
   );
 };
 
-export default CustomMenu;
+export default React.memo(CustomMenu);

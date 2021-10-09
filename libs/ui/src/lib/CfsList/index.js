@@ -6,6 +6,7 @@ import { setLatestCfsIDGetByMe } from '@cfs/helper';
 import { LATEST_CFS_ID_USER_SAW_LOCAL_STORAGE_KEY } from '@cfs/common';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { usePagination } from '@cfs/helper';
+import { sendGAUserBehaviorEvent } from '../../../../helper/src/analytics';
 
 export const CfsList = ({ cfsList }) => {
   const { offset, goPreviousPage, goNextPage } = usePagination();
@@ -32,10 +33,31 @@ export const CfsList = ({ cfsList }) => {
         <CfsMiniCard cfs={cfs} key={cfs.id} />
       ))}
       <div className="flex justify-between bg-white mt-1 pt-3">
-        <Button onClick={goPreviousPage} disabled={offset === 0} type="primary">
+        <Button
+          onClick={() => {
+            goPreviousPage();
+            sendGAUserBehaviorEvent({
+              category: 'confession list pagination',
+              action: 'click',
+              label: 'Click previous page',
+            });
+          }}
+          disabled={offset === 0}
+          type="primary"
+        >
           Trước
         </Button>
-        <Button onClick={goNextPage} type="primary">
+        <Button
+          onClick={() => {
+            goNextPage();
+            sendGAUserBehaviorEvent({
+              category: 'confession list pagination',
+              action: 'click',
+              label: 'Click next page',
+            });
+          }}
+          type="primary"
+        >
           Tiếp
         </Button>
       </div>

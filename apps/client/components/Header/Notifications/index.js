@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BellOutlined } from '@ant-design/icons';
 import { Badge, List, Popover, Tooltip } from 'antd';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setLatestCommentIDGetByMe, setLatestCfsIDGetByMe } from '@cfs/helper';
 import { useRouter } from 'next/router';
+import { sendGAUserBehaviorEvent } from '../../../../../libs/helper/src/analytics';
 
 const notificationBadgeOffset = [-5, 0];
 
@@ -32,6 +33,17 @@ const Notification = ({ shareData }) => {
     }
   }, [currentLatestCommentIDUserSaw, shareData?.comments]);
 
+  const onVisibleChange = useCallback((isVisible) => {
+    setIsPopoverVisible(isVisible);
+    if (isVisible) {
+      sendGAUserBehaviorEvent({
+        category: 'notification',
+        action: 'click',
+        label: 'Click on notification bell',
+      });
+    }
+  }, []);
+
   const notifications = [
     {
       text: 'Có confession mới. Nhấn để xem ngay',
@@ -55,10 +67,19 @@ const Notification = ({ shareData }) => {
               onClick={() => {
                 router.push(item.url);
                 setIsPopoverVisible(false);
+                sendGAUserBehaviorEvent({
+                  category: 'notification',
+                  action: 'click',
+                  label: 'Click on notification item',
+                });
               }}
             >
               <Badge dot={item.unread} offset={[5, 0]}>
-                <span className={item.unread ? 'font-bold cursor-pointer' : 'cursor-pointer'}>
+                <span
+                  className={
+                    item.unread ? 'font-bold cursor-pointer' : 'cursor-pointer'
+                  }
+                >
                   {item.text}
                 </span>
               </Badge>
@@ -68,7 +89,7 @@ const Notification = ({ shareData }) => {
       }
       trigger="click"
       visible={isPopoverVisible}
-      onVisibleChange={setIsPopoverVisible}
+      onVisibleChange={onVisibleChange}
     >
       <Tooltip title="thông báo">
         <Badge

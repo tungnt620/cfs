@@ -4,6 +4,7 @@ import { Button } from 'antd';
 import { useSetLatestCommentIDUserSaw } from '@cfs/helper';
 import { useGetCommentsQuery } from '@cfs/graphql';
 import { usePagination } from '@cfs/helper';
+import { sendGAUserBehaviorEvent } from '../../../../libs/helper/src/analytics';
 
 const CommentList = () => {
   const { offset, goPreviousPage, goNextPage } = usePagination();
@@ -16,6 +17,26 @@ const CommentList = () => {
   const comments = data?.comments?.nodes;
 
   useSetLatestCommentIDUserSaw(offset, comments);
+
+  useEffect(() => {
+    sendGAUserBehaviorEvent({
+      category: 'comment list',
+      action: 'open',
+      label: 'Open list of comment page',
+    });
+  }, []);
+
+  // Temp hack for case apollo cache 1 comment in api get latest comment
+  // This happen when this page render in server
+  useEffect(() => {
+    if (comments?.length === 1) {
+      fetchMore({
+        variables: {
+          offset: 0,
+        },
+      });
+    }
+  }, [comments, fetchMore]);
 
   useEffect(() => {
     fetchMore({
@@ -32,10 +53,31 @@ const CommentList = () => {
       )) ?? null}
 
       <div className="flex justify-between bg-white mt-1 pt-3">
-        <Button onClick={goPreviousPage} disabled={offset === 0} type="primary">
+        <Button
+          onClick={() => {
+            goPreviousPage();
+            sendGAUserBehaviorEvent({
+              category: 'comment list pagination',
+              action: 'click',
+              label: 'Click previous page',
+            });
+          }}
+          disabled={offset === 0}
+          type="primary"
+        >
           Trước
         </Button>
-        <Button onClick={goNextPage} type="primary">
+        <Button
+          onClick={() => {
+            goNextPage();
+            sendGAUserBehaviorEvent({
+              category: 'comment list pagination',
+              action: 'click',
+              label: 'Click next page',
+            });
+          }}
+          type="primary"
+        >
           Tiếp
         </Button>
       </div>

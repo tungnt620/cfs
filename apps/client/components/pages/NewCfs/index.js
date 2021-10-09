@@ -7,6 +7,7 @@ import slugify from 'slugify';
 import { extractError } from '@cfs/helper';
 import { setNewCfsCreatedByMe } from '@cfs/helper';
 import { useRouter } from 'next/router';
+import { sendGAUserBehaviorEvent } from '../../../../../libs/helper/src/analytics';
 
 const { TextArea } = Input;
 
@@ -28,6 +29,14 @@ const NewCfs = () => {
       })) ?? [],
     [getCategoriesData]
   );
+
+  useEffect(() => {
+    sendGAUserBehaviorEvent({
+      category: 'new confession',
+      action: 'open',
+      label: 'Open new confession page',
+    });
+  }, []);
 
   const onFinish = (values) => {
     const title = values.title;

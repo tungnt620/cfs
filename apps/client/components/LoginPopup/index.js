@@ -5,6 +5,7 @@ import { extractError, getCodeFromError } from '@cfs/helper';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useLoginMutation } from '@cfs/graphql';
 import { setCurrentUser, showLoginPopup, showRegisterPopup } from '@cfs/helper';
+import { sendGAUserBehaviorEvent } from '../../../../libs/helper/src/analytics';
 
 function hasErrors(fieldsError) {
   return Object.keys(fieldsError).some((field) => fieldsError[field]);
@@ -16,6 +17,14 @@ const LoginPopup = () => {
   const [login] = useLoginMutation({});
 
   const [submitDisabled, setSubmitDisabled] = useState(false);
+
+  useEffect(() => {
+    sendGAUserBehaviorEvent({
+      category: 'login',
+      action: 'open',
+      label: 'open login popup',
+    });
+  }, [])
 
   const handleSubmit = useCallback(
     async (values) => {

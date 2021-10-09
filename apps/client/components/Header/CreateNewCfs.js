@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Button } from 'antd';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setCurrentUser, showRegisterPopup } from '@cfs/helper';

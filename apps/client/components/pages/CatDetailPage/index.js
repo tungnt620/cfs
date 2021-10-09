@@ -7,6 +7,7 @@ import { useReactiveVar } from '@apollo/react-hooks';
 import { setCurrentUser, setNewDeletedCfsByMe } from '@cfs/helper';
 import CategorySEO from '../../../shared/seo/CategorySEO';
 import { usePagination } from '@cfs/helper';
+import { sendGAUserBehaviorEvent } from '../../../../../libs/helper/src/analytics';
 
 const CatDetailPage = () => {
   const router = useRouter();
@@ -33,6 +34,14 @@ const CatDetailPage = () => {
     },
   });
   const confessions = confessionsData?.getCfsByCatSlug?.nodes ?? [];
+
+  useEffect(() => {
+    sendGAUserBehaviorEvent({
+      category: 'category detail',
+      action: 'open',
+      label: 'Open category detail page',
+    });
+  }, []);
 
   useEffect(() => {
     fetchMoreCfs({ variables: { offset, catSlug: slug } });

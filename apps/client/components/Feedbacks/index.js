@@ -4,6 +4,7 @@ import CreateFeedback from './CreatFeedback';
 import Feedback from './Feedback';
 import { useAllOwnFeedbackLazyQuery } from '@cfs/graphql';
 import { setCurrentUser, setNewFeedbackCreatedByMe } from '@cfs/helper';
+import { sendGAUserBehaviorEvent } from '../../../../libs/helper/src/analytics';
 
 const Feedbacks = () => {
   const [allFeedbacks, setAllFeedbacks] = useState([]);
@@ -12,6 +13,14 @@ const Feedbacks = () => {
 
   const [getFeedbacks, { data, refetch }] = useAllOwnFeedbackLazyQuery();
   const feedbacks = data?.feedbacks?.nodes;
+
+  useEffect(() => {
+    sendGAUserBehaviorEvent({
+      category: 'feedback',
+      action: 'open',
+      label: 'Open feedback dialog',
+    });
+  }, []);
 
   useEffect(() => {
     if (currentUser?.id) {
