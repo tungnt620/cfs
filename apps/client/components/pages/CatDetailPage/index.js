@@ -9,14 +9,17 @@ import {
   setNewDeletedCfsByMe,
   usePagination,
   sendGAUserBehaviorEvent,
+  setRecentCatIdsViewedByMe,
 } from '@cfs/helper';
 import CategorySEO from '../../../shared/seo/CategorySEO';
+import { RECENT_CAT_IDS_VIEWED_LOCAL_STORAGE_KEY } from '@cfs/common';
 
 const CatDetailPage = () => {
   const router = useRouter();
   const { slug } = router.query;
   const currentUser = useReactiveVar(setCurrentUser);
   const newCfsDeletedByMe = useReactiveVar(setNewDeletedCfsByMe);
+  const recentCatIds = useReactiveVar(setRecentCatIdsViewedByMe);
   const { offset } = usePagination();
 
   const { data: catDetailData } = useCatDetailPageQuery({
@@ -45,6 +48,19 @@ const CatDetailPage = () => {
       label: 'Open category detail page',
     });
   }, []);
+
+  useEffect(() => {
+    if (catData?.id) {
+      const uniqueCatIdSet = new Set(recentCatIds);
+      uniqueCatIdSet.add(catData.id);
+      const catIdsViewed = [...uniqueCatIdSet];
+      setRecentCatIdsViewedByMe(catIdsViewed);
+      localStorage.setItem(
+        RECENT_CAT_IDS_VIEWED_LOCAL_STORAGE_KEY,
+        catIdsViewed.join(',')
+      );
+    }
+  }, [catData?.id, recentCatIds]);
 
   useEffect(() => {
     fetchMoreCfs({ variables: { offset, catSlug: slug } });

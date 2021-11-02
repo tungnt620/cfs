@@ -14,9 +14,8 @@ const penthouse = require('penthouse')
 const urls = [
   'https://confession.vn',
   'https://confession.vn/new',
-  'https://confession.vn/all-categories',
   'https://confession.vn/9321-e-hoc-hpu2-ang-thich-1-a-bk-nam-3-gioi-thieu-oi-chut-thi-e-cung-c',
-  'https://confession.vn/category/confessionsqnu',
+  'https://confession.vn/c/confessionsqnu',
 ]
 const penthouseOptions = {
   css: 'dist/apps/client/.next/static/css/55c52f2ed2ac208cee0c.css'

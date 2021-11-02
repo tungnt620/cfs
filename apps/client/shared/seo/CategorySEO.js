@@ -1,7 +1,7 @@
 import { NextSeo } from 'next-seo';
 
 const CategorySEO = ({ category }) => {
-  const url = `https://confession.vn/category/${category.slug}/`;
+  const url = `https://confession.vn/c/${category.slug}/`;
 
   return (
     <NextSeo

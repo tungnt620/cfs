@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Button, Comment, Image as AntdImage, Tooltip } from 'antd';
+import { Comment, Image as AntdImage } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import Image from 'next/image';
@@ -8,6 +8,7 @@ import { useBooleanToggle } from '@cfs/helper';
 import { Vote } from '@cfs/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { Button, Tooltip } from '@chakra-ui/react';
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');
@@ -37,10 +38,10 @@ const CommentItem = ({ comment }) => {
             commentId={comment.id}
             oldUserAction={comment.userCommentReaction?.nodes?.[0]?.reactType}
           />
-          <Link href={`/category/${catSlug}/`}>
+          <Link href={`/c/${catSlug}/`}>
             <a className="font-bold text-sm">c/{catSlug}</a>
           </Link>
-          <Button type="link" onClick={toggleShowConfession}>
+          <Button variant='ghost' onClick={toggleShowConfession} marginLeft={'8px'}>
             Xem cfs
           </Button>
         </div>,
@@ -76,7 +77,7 @@ const CommentItem = ({ comment }) => {
         </>
       }
       datetime={
-        <Tooltip title={dayjs(comment.createdAt).format('YYYY-MM-DD HH:mm:ss')}>
+        <Tooltip label={dayjs(comment.createdAt).format('YYYY-MM-DD HH:mm:ss')}>
           <span>{dayjs(comment.createdAt).fromNow()}</span>
         </Tooltip>
       }

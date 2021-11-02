@@ -29,7 +29,7 @@ const CfsDetailHeader = ({ cat = {} }) => {
           <div />
           <div className="flex items-center flex-col -mt-8">
             <div className="w-16 h-16 relative">
-              <Link href={`/category/${cat.slug}/`}>
+              <Link href={`/c/${cat.slug}/`}>
                 <a>
                   {cat.image && (
                     <Image
@@ -42,7 +42,7 @@ const CfsDetailHeader = ({ cat = {} }) => {
                 </a>
               </Link>
             </div>
-            <Link href={`/category/${cat.slug}/`}>
+            <Link href={`/c/${cat.slug}/`}>
               <a>
                 <div className="font-bold">c/{cat.slug}</div>
               </a>

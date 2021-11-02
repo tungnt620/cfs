@@ -2268,7 +2268,7 @@ export type CatDetailPageQuery = (
   { __typename?: 'Query' }
   & { categoryBySlug?: Maybe<(
     { __typename?: 'Category' }
-    & Pick<Category, 'name' | 'image' | 'slug'>
+    & Pick<Category, 'id' | 'name' | 'image' | 'slug'>
   )> }
 );
 
@@ -2314,7 +2314,7 @@ export type CfsDetailPageQuery = (
         { __typename?: 'ConfessionCategory' }
         & { category?: Maybe<(
           { __typename?: 'Category' }
-          & Pick<Category, 'image' | 'slug'>
+          & Pick<Category, 'id' | 'image' | 'slug'>
         )> }
       )> }
     ) }
@@ -2548,7 +2548,7 @@ export type GetCategoriesQuery = (
     { __typename?: 'CategoriesConnection' }
     & { nodes: Array<(
       { __typename?: 'Category' }
-      & Pick<Category, 'id' | 'name'>
+      & Pick<Category, 'id' | 'name' | 'image'>
     )> }
   )> }
 );
@@ -3184,6 +3184,7 @@ export type AllOwnFeedbackQueryResult = Apollo.QueryResult<AllOwnFeedbackQuery, 
 export const CatDetailPageDocument = gql`
     query CatDetailPage($slug: String!) {
   categoryBySlug(slug: $slug) {
+    id
     name
     image
     slug
@@ -3259,6 +3260,7 @@ export const CfsDetailPageDocument = gql`
     confessionCategories(first: 1) {
       nodes {
         category {
+          id
           image
           slug
         }
@@ -3763,6 +3765,7 @@ export const GetCategoriesDocument = gql`
     nodes {
       id
       name
+      image
     }
   }
 }

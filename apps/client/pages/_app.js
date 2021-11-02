@@ -8,6 +8,7 @@ import MainLayout from '../components/Layout';
 import { withApollo } from '@cfs/helper';
 import Head from 'next/head';
 import { version as appVersion } from '../../../package.json';
+import { ChakraProvider } from "@chakra-ui/react"
 
 if (typeof window !== 'undefined') {
   window.appVersion = appVersion;
@@ -43,9 +44,12 @@ class MyApp extends App {
         </Head>
         <ApolloProvider client={apollo}>
           <DefaultSeo {...defaultSEOPropsConfigs} />
-          <MainLayout>
-            <Component {...pageProps} />
-          </MainLayout>
+
+          <ChakraProvider>
+            <MainLayout>
+              <Component {...pageProps} />
+            </MainLayout>
+          </ChakraProvider>
         </ApolloProvider>
       </>
     );

@@ -1,8 +1,8 @@
 import React from 'react';
 import CatDetailPage from '../../components/pages/CatDetailPage';
 
-const CfsDetail = () => {
+const CatDetail = () => {
   return <CatDetailPage />;
 };
 
-export default CfsDetail;
+export default CatDetail;

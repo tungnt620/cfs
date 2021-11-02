@@ -20,7 +20,7 @@ const CardHeader = ({ cfs }) => {
   return (
     <header className="flex mt-1 pt-2 leading-5">
       <div className="flex items-center">
-        <Link href={`/category/${catData.slug}/`}>
+        <Link href={`/c/${catData.slug}/`}>
           <a>
             <div className="w-6 h-6 mr-1">
               <Image
@@ -34,7 +34,7 @@ const CardHeader = ({ cfs }) => {
           </a>
         </Link>
 
-        <Link href={`/category/${catData.slug}/`}>
+        <Link href={`/c/${catData.slug}/`}>
           <a>
             <div className="mr-2 text-sm font-medium whitespace-nowrap">
               c/{catData.slug}

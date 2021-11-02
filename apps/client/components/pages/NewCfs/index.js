@@ -1,32 +1,44 @@
-import React, { useEffect, useMemo } from 'react';
-import { Alert, Button, Form, Input, message, PageHeader, Select } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { PageHeader } from 'antd';
 import { useGoBack } from '@cfs/common';
-import style from './NewCfs.module.scss';
-import { useCreateCfsMutation, useGetCategoriesQuery } from '@cfs/graphql';
+import { useCreateCfsMutation } from '@cfs/graphql';
 import slugify from 'slugify';
-import { setNewCfsCreatedByMe, sendGAUserBehaviorEvent, extractError } from '@cfs/helper';
+import {
+  setNewCfsCreatedByMe,
+  sendGAUserBehaviorEvent,
+  extractError,
+} from '@cfs/helper';
 import { useRouter } from 'next/router';
-
-const { TextArea } = Input;
+import {
+  Alert,
+  AlertIcon,
+  Button,
+  FormControl,
+  FormErrorMessage,
+  Select,
+  Textarea,
+  useToast,
+} from '@chakra-ui/react';
+import { useForm } from 'react-hook-form';
+import SelectCatModal from './SelectCatModal';
 
 const NewCfs = () => {
   const router = useRouter();
   const goBack = useGoBack();
-  const [form] = Form.useForm();
-  const { data: getCategoriesData } = useGetCategoriesQuery();
+  const toast = useToast();
+  const [selectedCat, setSelectedCat] = useState(null);
+  const [isOpenSelectCatIdModel, setIsOpenSelectCatIdModel] = useState(false);
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
   const [
     createCfs,
     { data: createCfsData, error: createCfsError, loading: createCfsLoading },
   ] = useCreateCfsMutation();
-
-  const categorySelectOptions = useMemo(
-    () =>
-      getCategoriesData?.categories?.nodes?.map((cat) => ({
-        value: cat.id,
-        label: cat.name,
-      })) ?? [],
-    [getCategoriesData]
-  );
 
   useEffect(() => {
     sendGAUserBehaviorEvent({
@@ -36,8 +48,13 @@ const NewCfs = () => {
     });
   }, []);
 
-  const onFinish = (values) => {
-    const title = values.title;
+  const onSubmit = (values) => {
+    const newCfs = {
+      ...values,
+    };
+    newCfs.catId = selectedCat?.id;
+
+    const title = newCfs.title;
     const slug = slugify(title.substring(0, 50), {
       replacement: '-',
       remove: /[*+~.()'"!:@]/g,
@@ -46,7 +63,7 @@ const NewCfs = () => {
     });
     createCfs({
       variables: {
-        ...values,
+        ...newCfs,
         slug,
         image: '',
       },
@@ -55,15 +72,16 @@ const NewCfs = () => {
 
   useEffect(() => {
     if (createCfsData) {
-      message.success('Bài của bạn đã được tạo thành công');
+      toast({
+        title: `Bài của bạn đã được tạo thành công`,
+        position: 'top',
+        isClosable: true,
+        status: 'success',
+      });
       setNewCfsCreatedByMe(createCfsData.createCfs.confession);
-      router.push('/');
+      router.push('/?tabIndex=1');
     }
-  }, [createCfsData, router]);
-
-  const onSubmit = () => {
-    form.submit();
-  };
+  }, [createCfsData, router, toast]);
 
   return (
     <PageHeader
@@ -71,10 +89,10 @@ const NewCfs = () => {
       title="Chia sẻ, tâm sự"
       extra={[
         <Button
-          type="primary"
           key="1"
-          onClick={onSubmit}
-          loading={createCfsLoading}
+          onClick={handleSubmit(onSubmit)}
+          isLoading={createCfsLoading || isSubmitting}
+          disabled={!selectedCat?.id}
         >
           Gửi
         </Button>,
@@ -82,80 +100,57 @@ const NewCfs = () => {
     >
       <div className="mt-4">
         {createCfsError && (
-          <Alert message={extractError(createCfsError).message} type="error" />
+          <Alert status="error">
+            <AlertIcon />
+            {extractError(createCfsError).message}
+          </Alert>
         )}
 
-        <Form
-          name="Create new confession"
-          initialValues={{}}
-          onFinish={onFinish}
-          form={form}
-        >
-          <Form.Item
-            name="catId"
-            rules={[{ required: true, message: 'Hãy điền nơi bạn muốn gửi!' }]}
-            className={style.row}
-          >
+        <form>
+          <FormControl>
             <Select
-              className="w-full"
-              showSearch
-              size="large"
-              placeholder="Chọn nơi bạn muốn gửi"
-              optionFilterProp="label"
-              filterOption={(input, option) =>
-                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-              filterSort={(optionA, optionB) =>
-                optionA.label
-                  .toLowerCase()
-                  .localeCompare(optionB.label.toLowerCase())
-              }
-              bordered={false}
-              notFoundContent="Hiện tại chưa có loại này"
-              options={categorySelectOptions}
+              placeholder="Chọn cộng đồng"
+              name='cat'
+              onClick={() => setIsOpenSelectCatIdModel(true)}
+              value={selectedCat ? selectedCat.id : null}
+            >
+              {selectedCat && (
+                <option value={selectedCat.id}>{selectedCat.name}</option>
+              )}
+            </Select>
+          </FormControl>
+          <FormControl isInvalid={errors.title} marginTop={4}>
+            <Textarea
+              id="title"
+              placeholder="Hãy đặt 1 tiêu đề thú vị"
+              {...register('title', {
+                required: 'Hãy đặt tiêu đề cho bài của bạn nào',
+              })}
             />
-          </Form.Item>
-
-          <Form.Item
-            name="title"
-            rules={[
-              {
-                required: true,
-                message: 'Hãy điền tiêu đề/ý chính bạn muốn nói!',
-              },
-            ]}
-            className={style.row}
-          >
-            <TextArea
-              size="large"
-              className="mt-2"
-              allowClear={true}
-              bordered={false}
-              rows={2}
-              placeholder="Tiêu đề/ý chính bạn muốn tâm sự"
-              maxLength={100}
+            <FormErrorMessage>
+              {errors.title && errors.title.message}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl isInvalid={errors.content} marginTop={4}>
+            <Textarea
+              id={'content'}
+              placeholder="Nội dung bài của bạn"
+              {...register('content', {
+                required: 'Hãy viết nội dung cho bài của bạn nào',
+              })}
             />
-          </Form.Item>
-
-          <Form.Item
-            name="content"
-            rules={[
-              { required: true, message: 'Hãy điền nội dung bạn muốn tâm sự!' },
-            ]}
-            className={style.row}
-          >
-            <TextArea
-              size="large"
-              className="mt-2"
-              allowClear={true}
-              bordered={false}
-              rows={6}
-              autoSize={true}
-              placeholder="Nội dung"
-              maxLength={5000}
-            />
-          </Form.Item>
-        </Form>
+            <FormErrorMessage>
+              {errors.content && errors.content.message}
+            </FormErrorMessage>
+          </FormControl>
+        </form>
+        {isOpenSelectCatIdModel && (
+          <SelectCatModal
+            selectedCat={selectedCat}
+            setSelectedCat={setSelectedCat}
+            setIsOpen={setIsOpenSelectCatIdModel}
+          />
+        )}
       </div>
     </PageHeader>
   );

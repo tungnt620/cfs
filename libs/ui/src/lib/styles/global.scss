@@ -12,7 +12,7 @@ body {
   --bg-color1: #efefed;
 }
 
-@import 'antd/dist/antd.css';
+@import './antd.css';
 @import 'icons';
 @import 'custom';
 @tailwind base;

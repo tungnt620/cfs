@@ -14,6 +14,7 @@ class MyDocument extends Document {
           <link rel="dns-prefetch" href="//fonts.googleapis.com" />
           <meta httpEquiv="content-language" content="vi" />
           <script
+            id={'ga-script'}
             dangerouslySetInnerHTML={{
               __html: `
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

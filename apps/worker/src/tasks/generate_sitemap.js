@@ -100,7 +100,7 @@ FROM
 
   return rows.map((cat) => {
     return {
-      url: `/category/${cat.slug}/`,
+      url: `/c/${cat.slug}/`,
       img: cat.image
         ? [
             {
@@ -125,11 +125,6 @@ function getStaticLinks() {
       url: `/`,
       changefreq: 'daily',
       priority: 0.8,
-    },
-    {
-      url: `/all-categories/`,
-      changefreq: 'monthly',
-      priority: 0.5,
     },
   ];
 }

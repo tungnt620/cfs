@@ -6,7 +6,7 @@ import {
   useCreateOrUpdateConfessionReactionMutation,
 } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser, showLoginPopup } from '@cfs/helper';
+import { setCurrentUser, showPromoteLoginOrRegisterPopup } from '@cfs/helper';
 
 const Vote = ({ voteNo = 0, confessionId, commentId, oldUserAction }) => {
   const [action, setAction] = useState(oldUserAction);
@@ -84,7 +84,7 @@ const Vote = ({ voteNo = 0, confessionId, commentId, oldUserAction }) => {
         });
       }
     } else {
-      showLoginPopup(true);
+      showPromoteLoginOrRegisterPopup(true);
     }
   }, [
     action,
@@ -118,7 +118,7 @@ const Vote = ({ voteNo = 0, confessionId, commentId, oldUserAction }) => {
         });
       }
     } else {
-      showLoginPopup(true);
+      showPromoteLoginOrRegisterPopup(true);
     }
   }, [
     action,

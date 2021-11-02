@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect } from 'react';
-import { Button } from 'antd';
+import React, { useCallback } from 'react';
+import { Button } from "@chakra-ui/react"
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser, showRegisterPopup } from '@cfs/helper';
+import { setCurrentUser, showPromoteLoginOrRegisterPopup } from '@cfs/helper';
 import { useRouter } from 'next/router';
 
 const CreateNewCfs = () => {
@@ -10,14 +10,14 @@ const CreateNewCfs = () => {
 
   const onClick = useCallback(() => {
     if (!currentUser?.id) {
-      showRegisterPopup(true);
+      showPromoteLoginOrRegisterPopup(true);
     } else {
       router.push('/new');
     }
   }, [currentUser?.id, router]);
 
   return (
-    <Button type="primary" onClick={onClick}>
+    <Button colorScheme="blue" onClick={onClick}>
       Viết bài
     </Button>
   );

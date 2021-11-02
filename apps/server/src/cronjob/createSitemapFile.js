@@ -26,7 +26,7 @@ async function generateSitemap() {
   for (let i = 0; i < categorySlugs.length; ++i) {
     const slugObj = categorySlugs[i];
     urls.push({
-      url: `https://confession.vn/category/${slugObj.slug}/`,
+      url: `https://confession.vn/c/${slugObj.slug}/`,
       changefreq: "daily",
       priority: "0.8"
     });

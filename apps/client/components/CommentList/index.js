@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import CommentItem from './CommentItem';
-import { Button } from 'antd';
 import { useSetLatestCommentIDUserSaw } from '@cfs/helper';
 import { useGetCommentsQuery } from '@cfs/graphql';
 import { usePagination, sendGAUserBehaviorEvent } from '@cfs/helper';
+import { Button } from '@chakra-ui/react';
 
 const CommentList = () => {
   const { offset, goPreviousPage, goNextPage } = usePagination();
@@ -62,7 +62,6 @@ const CommentList = () => {
             });
           }}
           disabled={offset === 0}
-          type="primary"
         >
           Trước
         </Button>
@@ -75,7 +74,6 @@ const CommentList = () => {
               label: 'Click next page',
             });
           }}
-          type="primary"
         >
           Tiếp
         </Button>

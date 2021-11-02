@@ -7,4 +7,5 @@ const nextConfig = {
   trailingSlash: true,
 };
 
+// module.exports = withPreact(withNx(nextConfig));
 module.exports = withNx(nextConfig);

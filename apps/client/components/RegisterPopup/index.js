@@ -1,21 +1,41 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Button, Form, Input, Modal, notification } from 'antd';
-import { useForm } from 'antd/lib/form/Form';
 import { extractError, getCodeFromError } from '@cfs/helper';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useRegisterMutation } from '@cfs/graphql';
-import { setCurrentUser, showLoginPopup, showRegisterPopup, sendGAUserBehaviorEvent } from '@cfs/helper';
-
-function hasErrors(fieldsError) {
-  return Object.keys(fieldsError).some((field) => fieldsError[field]);
-}
+import {
+  setCurrentUser,
+  showLoginPopup,
+  showRegisterPopup,
+  sendGAUserBehaviorEvent,
+} from '@cfs/helper';
+import {
+  Alert,
+  Box,
+  Button,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  useToast,
+} from '@chakra-ui/react';
+import { useForm } from 'react-hook-form';
 
 const RegisterPopup = () => {
-  const [error, setError] = useState(undefined);
-  const [form] = useForm();
-  const [register] = useRegisterMutation({});
+  const toast = useToast();
+  const [responseError, setResponseError] = useState(undefined);
+  const [registerMutation] = useRegisterMutation({});
 
-  const [submitDisabled, setSubmitDisabled] = useState(false);
+  const {
+    handleSubmit,
+    register,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm();
 
   useEffect(() => {
     sendGAUserBehaviorEvent({
@@ -25,11 +45,11 @@ const RegisterPopup = () => {
     });
   }, []);
 
-  const handleSubmit = useCallback(
+  const onSubmit = useCallback(
     async (values) => {
-      setError(null);
+      setResponseError(null);
       try {
-        const registerResp = await register({
+        const registerResp = await registerMutation({
           variables: {
             username: values.username,
             password: values.password,
@@ -37,123 +57,109 @@ const RegisterPopup = () => {
           },
         });
         setCurrentUser(registerResp.data.register.user);
-        notification.success({
-          message: `Đăng kí tài khoản thành công`,
-          placement: 'bottomRight',
-          duration: 3,
+        toast({
+          title: `Đăng kí tài khoản thành công`,
+          position: 'top',
+          isClosable: true,
+          status: 'success',
         });
         showRegisterPopup(false);
       } catch (e) {
         const code = getCodeFromError(e);
         if (code === 'NUNIQ') {
-          form.setFields([
-            {
-              name: 'username',
-              value: form.getFieldValue('username'),
-              errors: ['Tên đăng nhập đã tồn tại'],
-            },
-          ]);
-          setSubmitDisabled(true);
+          setError('username', {
+            type: 'manual',
+            message: 'Tên đăng nhập đã tồn tại',
+          });
         } else if (code === 'WEAKP') {
-          form.setFields([
-            {
-              name: 'password',
-              value: form.getFieldValue('password'),
-              errors: ['Mật khẩu phải có ít nhất 8 kí tự'],
-            },
-          ]);
-          setSubmitDisabled(true);
+          setError('password', {
+            type: 'manual',
+            message: 'Mật khẩu phải có ít nhất 8 kí tự',
+          });
         } else {
-          setError(e);
+          setResponseError(e);
         }
       }
     },
-    [form, register]
+    [registerMutation, setError, toast]
   );
 
   const focusElement = useRef(null);
   useEffect(() => focusElement.current?.focus(), [focusElement]);
 
-  const handleValuesChange = useCallback(() => {
-    setSubmitDisabled(hasErrors(form.getFieldsError().length !== 0));
-  }, [form]);
-
-  const code = getCodeFromError(error);
+  const code = getCodeFromError(responseError);
 
   return (
-    <Modal
-      title="Đăng kí tài khoản"
-      visible={true}
-      onCancel={() => showRegisterPopup(false)}
-      footer={null}
-    >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        onValuesChange={handleValuesChange}
-        style={{ width: '100%' }}
-      >
-        <Form.Item
-          name="username"
-          rules={[{ required: true, message: 'Hãy nhập tài khoản' }]}
-        >
-          <Input
-            size="large"
-            prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
-            placeholder="Tài khoản đăng nhập"
-            autoComplete="username"
-            ref={focusElement}
-            data-cy="loginpage-input-username"
-          />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          rules={[{ required: true, message: 'Hãy nhập mật khẩu' }]}
-        >
-          <Input
-            prefix={<LockOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
-            size="large"
-            type="password"
-            placeholder="Mật khẩu"
-            autoComplete="current-password"
-            data-cy="loginpage-input-password"
-          />
-        </Form.Item>
-
-        {error ? (
-          <Form.Item>
-            <Alert
-              type="error"
-              message={`Đăng kí tài khoản thất bại`}
-              description={
-                <span>
-                  {extractError(error).message}
-                  {code ? (
+    <Modal isOpen={true} onClose={() => showRegisterPopup(false)}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Đăng kí tài khoản</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <FormControl isInvalid={errors.username}>
+              <FormLabel htmlFor="username">Nick name (biệt danh)</FormLabel>
+              <Input
+                id="username"
+                placeholder="Hãy nhập nick name của bạn"
+                {...register('username', {
+                  required: 'Nick name là bắt buộc',
+                })}
+              />
+              <FormErrorMessage>
+                {errors.username && errors.username.message}
+              </FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={errors.password} marginTop={4}>
+              <FormLabel htmlFor="password">Mật khẩu</FormLabel>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Hãy nhập mật khẩu"
+                {...register('password', {
+                  required: 'Mật khẩu là bắt buộc',
+                })}
+              />
+              <FormErrorMessage>
+                {errors.password && errors.password.message}
+              </FormErrorMessage>
+            </FormControl>
+            {responseError ? (
+              <Box>
+                <Alert
+                  type="error"
+                  message="Đăng kí tài khoản thất bại"
+                  description={
                     <span>
-                      (Error code: <code>ERR_{code}</code>)
+                      {extractError(responseError).message}
+                      {code ? (
+                        <span>
+                          (Error code: <code>ERR_{code}</code>)
+                        </span>
+                      ) : null}
                     </span>
-                  ) : null}
-                </span>
-              }
-            />
-          </Form.Item>
-        ) : null}
-        <Form.Item className="mt-4">
-          <Button type="primary" htmlType="submit" disabled={submitDisabled}>
-            Đăng kí
-          </Button>
-          <Button
-            type="link"
-            onClick={() => {
-              showRegisterPopup(false);
-              showLoginPopup(true);
-            }}
-          >
-            hoặc đăng nhập
-          </Button>
-        </Form.Item>
-      </Form>
+                  }
+                />
+              </Box>
+            ) : null}
+            <Box marginTop={4}>
+              <Button colorScheme="teal" isLoading={isSubmitting} type="submit">
+                Đăng kí
+              </Button>
+              <Button
+                onClick={() => {
+                  showRegisterPopup(false);
+                  showLoginPopup(true);
+                }}
+                variant="outline"
+                marginLeft={2}
+              >
+                hoặc đăng nhập
+              </Button>
+            </Box>
+          </form>
+        </ModalBody>
+      </ModalContent>
     </Modal>
   );
 };

@@ -3,7 +3,7 @@ import { Form, Button, Input, message } from 'antd';
 import { useCreateCommentMutation } from '@cfs/graphql';
 import {
   setCurrentUser,
-  showLoginPopup,
+  showPromoteLoginOrRegisterPopup,
   setNewCommentCreatedByMe,
 } from '@cfs/helper';
 import { useReactiveVar } from '@apollo/react-hooks';
@@ -20,7 +20,7 @@ const CreateCommentEditor = ({ onClose, cfsId, parentId }) => {
 
   const addNewComment = useCallback(() => {
     if (!currentUser?.id) {
-      showLoginPopup(true);
+      showPromoteLoginOrRegisterPopup(true);
     } else {
       createComment({
         variables: {

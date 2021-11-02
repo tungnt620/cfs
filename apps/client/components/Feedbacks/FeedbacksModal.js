@@ -1,19 +1,26 @@
 import React from 'react';
-import { Modal } from 'antd';
 import { showFeedbacksModal } from '@cfs/helper';
+import {
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+} from '@chakra-ui/react';
 import Feedbacks from './index';
 
 const FeedbacksModal = () => {
   return (
-    <Modal
-      visible={true}
-      onCancel={() => showFeedbacksModal(false)}
-      centered={true}
-      maskClosable={true}
-      closable={true}
-      footer={null}
-    >
-      <Feedbacks />
+    <Modal isOpen={true} onClose={() => showFeedbacksModal(false)}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Góp ý</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Feedbacks />
+        </ModalBody>
+      </ModalContent>
     </Modal>
   );
 };

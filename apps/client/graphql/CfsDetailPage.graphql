@@ -38,6 +38,7 @@ query CfsDetailPage($slug: String!) {
     confessionCategories(first: 1) {
       nodes {
         category {
+          id
           image
           slug
         }

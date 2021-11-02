@@ -1,11 +1,11 @@
 import React from 'react';
 import style from './CfsList.module.scss';
-import { Button } from 'antd';
 import { CfsMiniCard } from '@cfs/ui';
 import { setLatestCfsIDGetByMe } from '@cfs/helper';
 import { LATEST_CFS_ID_USER_SAW_LOCAL_STORAGE_KEY } from '@cfs/common';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { usePagination, sendGAUserBehaviorEvent } from '@cfs/helper';
+import { Button } from '@chakra-ui/react';
 
 export const CfsList = ({ cfsList }) => {
   const { offset, goPreviousPage, goNextPage } = usePagination();
@@ -42,7 +42,6 @@ export const CfsList = ({ cfsList }) => {
             });
           }}
           disabled={offset === 0}
-          type="primary"
         >
           Trước
         </Button>
@@ -55,7 +54,6 @@ export const CfsList = ({ cfsList }) => {
               label: 'Click next page',
             });
           }}
-          type="primary"
         >
           Tiếp
         </Button>

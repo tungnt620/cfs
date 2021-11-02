@@ -1,99 +1,152 @@
 import React, { useEffect, useState } from 'react';
-import { CfsList } from '@cfs/ui';
-import styles from './HomePage.module.scss';
-import { Tabs } from 'antd';
-import { useHomePageAllCategoriesQuery, useHomePageQuery } from '@cfs/graphql';
-import { useReactiveVar } from '@apollo/react-hooks';
 import {
-  setCurrentUser,
-  setNewCfsCreatedByMe,
-  setNewDeletedCfsByMe,
-} from '@cfs/helper';
-import SubMenus from './SubMenus';
-import CommentList from '../../CommentList';
+  Box,
+  Icon,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  useMediaQuery,
+} from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
+import { Loading } from '@cfs/ui';
+import { AiOutlineHome } from 'react-icons/ai';
+import { FiSun } from 'react-icons/fi';
+import { BiCategory } from 'react-icons/bi';
+import { FaRegComment } from 'react-icons/fa';
+import { useReactiveVar } from '@apollo/react-hooks';
+import { setLatestCfsIDGetByMe, setLatestCommentIDGetByMe } from '@cfs/helper';
+import { useSharedLazyQuery } from '@cfs/graphql';
+import Header from '../../Header';
 import { useRouter } from 'next/router';
-import { usePagination } from '@cfs/helper';
 
-const { TabPane } = Tabs;
+const Confessions = dynamic(() => import('./Confessions'), {
+  loading: () => <Loading />,
+});
+const CommentList = dynamic(() => import('../../CommentList'), {
+  loading: () => <Loading />,
+});
+const Categories = dynamic(() => import('./Categories'), {
+  loading: () => <Loading />,
+});
+const Intro = dynamic(() => import('./Intro'), {
+  loading: () => <Loading />,
+});
 
 const HomePage = () => {
   const router = useRouter();
-  const [dataType, setDataType] = useState(
-    router.query.dataType || 'confession'
+  const [tabIndex, setTabIndex] = useState(0);
+  const [_, { data: shareData }] = useSharedLazyQuery();
+
+  const [isLargerThan900] = useMediaQuery('(min-width: 900px)');
+  const currentLatestCommentIDUserSaw = useReactiveVar(
+    setLatestCommentIDGetByMe
   );
-  const { offset } = usePagination();
-  const cat = router.query.cat || '0';
+  const currentLatestCfsIDUserSaw = useReactiveVar(setLatestCfsIDGetByMe);
 
-  const newCfsCreatedByMe = useReactiveVar(setNewCfsCreatedByMe);
-  const newCfsDeletedByMe = useReactiveVar(setNewDeletedCfsByMe);
-
-  const currentUser = useReactiveVar(setCurrentUser);
-  const { data: allCategories } = useHomePageAllCategoriesQuery();
-
-  const { data: queryData, fetchMore, refetch } = useHomePageQuery({
-    variables: { offset, catId: parseInt(cat) },
-  });
-
-  const confessions = queryData?.getCfsByCat?.nodes ?? [];
-  const categories = [...(allCategories?.categories?.nodes ?? [])];
-  categories.unshift({ id: 0, name: 'Tất cả' });
+  const [isHaveNewCfs, setIsHaveNewCfs] = useState(false);
+  const [isHaveNewComment, setIsHaveNewComment] = useState(false);
 
   useEffect(() => {
-    fetchMore({ variables: { offset, catId: parseInt(cat) } });
-  }, [cat, fetchMore, offset, router]);
-
-  // Re-fetch to get data relative user
-  useEffect(() => {
-    if (currentUser?.id) {
-      refetch();
+    const latestCfsId = shareData?.confessions?.nodes?.[0]?.id;
+    if (latestCfsId) {
+      setIsHaveNewCfs(currentLatestCfsIDUserSaw < latestCfsId);
     }
-  }, [currentUser, refetch]);
+  }, [currentLatestCfsIDUserSaw, shareData?.confessions]);
 
   useEffect(() => {
-    if (newCfsCreatedByMe) {
-      router.query.cat = '0';
-      router.push(router);
-      refetch();
+    const latestCommentId = shareData?.comments?.nodes?.[0]?.id;
+    if (latestCommentId) {
+      setIsHaveNewComment(currentLatestCommentIDUserSaw < latestCommentId);
     }
-  }, [refetch, newCfsCreatedByMe, router]);
+  }, [currentLatestCommentIDUserSaw, shareData?.comments]);
 
   useEffect(() => {
-    if (newCfsDeletedByMe) {
-      router.query.cat = '0';
-      router.push(router);
-      refetch();
-    }
-  }, [refetch, newCfsDeletedByMe, router]);
+    setTabIndex(Number(router.query.tabIndex || 0));
+  }, [router.query.tabIndex]);
 
-  const onChangeCat = (newCat) => {
-    router.query.cat = newCat;
-    router.query.offset = '0';
+  const onChangeTab = (index) => {
+    router.query.tabIndex = index;
     router.push(router);
+    setTabIndex(index);
   };
 
   return (
-    <div className="ml-2 mr-2 mb-6 bg-color1">
-      <div className="block mt-4 bg-white pb-4">
-        <SubMenus dataType={dataType} setDataType={setDataType} />
-        <main className={styles.homePageListCategories}>
-          {dataType === 'confession' ? (
-            <Tabs
-              defaultActiveKey="0"
-              activeKey={cat}
-              onChange={onChangeCat}
-            >
-              {categories.map((cat) => (
-                <TabPane tab={cat.name} key={cat.id}>
-                  <CfsList cfsList={confessions} />
-                </TabPane>
-              ))}
-            </Tabs>
-          ) : (
-            <CommentList />
-          )}
-        </main>
+    <>
+      <Header />
+      <div className="ml-2 mr-2 mb-6">
+        <Box className="block bg-white pb-4" maxWidth={900} margin={'0 auto'}>
+          <Tabs
+            isLazy={true}
+            marginTop={4}
+            variant="soft-rounded"
+            colorScheme="green"
+            onChange={onChangeTab}
+            index={tabIndex}
+          >
+            <TabList justifyContent="center" mb={8}>
+              <Tab flexDirection="column">
+                <Icon as={AiOutlineHome} boxSize="2em" />
+                <Box fontSize={isLargerThan900 ? '1rem' : '0.8rem'}>Home</Box>
+              </Tab>
+              <Tab flexDirection="column" position="relative">
+                <Icon as={FiSun} boxSize="2em" />
+                <Box fontSize={isLargerThan900 ? '1rem' : '0.8rem'}>Mới</Box>
+                {isHaveNewCfs && (
+                  <Box
+                    position={'absolute'}
+                    backgroundColor="#ff4d4f"
+                    width="10px"
+                    height="10px"
+                    top={0}
+                    right={'10px'}
+                    borderRadius={'50%'}
+                  />
+                )}
+              </Tab>
+              <Tab flexDirection="column">
+                <Icon as={BiCategory} boxSize="2em" />
+                <Box fontSize={isLargerThan900 ? '1rem' : '0.8rem'}>
+                  Cộng đồng
+                </Box>
+              </Tab>
+              <Tab flexDirection="column" position="relative">
+                <Icon as={FaRegComment} boxSize="2em" />
+                <Box fontSize={isLargerThan900 ? '1rem' : '0.8rem'}>
+                  Bình luận
+                </Box>
+                {isHaveNewComment && (
+                  <Box
+                    position={'absolute'}
+                    backgroundColor="#ff4d4f"
+                    width="10px"
+                    height="10px"
+                    top={0}
+                    right={'10px'}
+                    borderRadius={'50%'}
+                  />
+                )}
+              </Tab>
+            </TabList>
+            <TabPanels padding={0}>
+              <TabPanel padding={2}>
+                <Intro />
+              </TabPanel>
+              <TabPanel padding={2}>
+                <Confessions />
+              </TabPanel>
+              <TabPanel padding={2}>
+                <Categories />
+              </TabPanel>
+              <TabPanel padding={2}>
+                <CommentList />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </Box>
       </div>
-    </div>
+    </>
   );
 };
 

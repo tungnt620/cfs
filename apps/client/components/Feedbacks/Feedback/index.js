@@ -1,9 +1,10 @@
 import React from 'react';
-import { Comment, Tooltip } from 'antd';
+import { Comment } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setCurrentUser } from '@cfs/helper';
+import { Tooltip } from '@chakra-ui/react';
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');
@@ -22,7 +23,7 @@ const Feedback = ({ feedback }) => {
       content={feedback.content}
       datetime={
         <Tooltip
-          title={dayjs(feedback.createdAt).format('YYYY-MM-DD HH:mm:ss')}
+          label={dayjs(feedback.createdAt).format('YYYY-MM-DD HH:mm:ss')}
         >
           <span>{dayjs(feedback.createdAt).fromNow()}</span>
         </Tooltip>
