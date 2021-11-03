@@ -138,6 +138,7 @@ const NewCfs = () => {
               {...register('content', {
                 required: 'Hãy viết nội dung cho bài của bạn nào',
               })}
+              rows={10}
             />
             <FormErrorMessage>
               {errors.content && errors.content.message}
