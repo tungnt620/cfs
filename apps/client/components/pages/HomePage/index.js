@@ -67,8 +67,7 @@ const HomePage = () => {
   }, [router.query.tabIndex]);
 
   const onChangeTab = (index) => {
-    router.query.tabIndex = index;
-    router.push(router);
+    router.push(`/?tabIndex=${index}`);
     setTabIndex(index);
   };
 

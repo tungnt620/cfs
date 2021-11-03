@@ -5,7 +5,7 @@
   - Watch graphql query and generate apollo query hook
     - `yarn run generate-graphql --watch`
 - Deploy in production
-  - `rm -rf dist/apps/client && nx build client --prod && scp -r ./dist/apps/client root@45.76.159.248:/data/cfs/source/dist/apps/. && pm2 deploy ./apps/client/ecosystem.config.js production`
+  - `rm -rf dist/apps/client && nx build client --prod && rsync -av -e ssh --exclude='*.webp' --exclude='*.pack' ./dist/apps/client root@45.76.159.248:/data/cfs/source/dist/apps/. && pm2 deploy ./apps/client/ecosystem.config.js production`
   - Note: we build client app in local and push build result to server because server have limited resource and can't build success.
 ### Server
 - In local
