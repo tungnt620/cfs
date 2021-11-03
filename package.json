@@ -24,7 +24,8 @@
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "generate-graphql": "graphql-codegen --config codegen.yml"
+    "generate-graphql": "graphql-codegen --config codegen.yml",
+    "deploy-client": "rm -rf dist/apps/client && nx build client --prod && rsync -av -e ssh --exclude='*.webp' --exclude='*.pack' ./dist/apps/client root@45.76.159.248:/data/cfs/source/dist/apps/. && pm2 deploy ./apps/client/ecosystem.config.js production"
   },
   "private": true,
   "optionalDependencies": {
