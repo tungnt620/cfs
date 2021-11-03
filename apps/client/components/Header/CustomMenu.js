@@ -75,9 +75,7 @@ const CustomMenu = () => {
             )}
           </DrawerHeader>
           <DrawerBody>
-            {currentUser?.id ? (
-              <></>
-            ) : (
+            {currentUser?.id ? null : (
               <>
                 <Button
                   onClick={() => {

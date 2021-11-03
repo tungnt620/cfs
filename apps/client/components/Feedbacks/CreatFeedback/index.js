@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { Form, Input } from 'antd';
 import { useCreateFeedbackMutation } from '@cfs/graphql';
 import {
   setCurrentUser,
@@ -7,9 +6,7 @@ import {
   setNewFeedbackCreatedByMe,
 } from '@cfs/helper';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { Button, useToast } from '@chakra-ui/react';
-
-const { TextArea } = Input;
+import { Button, FormControl, Textarea, useToast } from '@chakra-ui/react';
 
 const CreateFeedback = () => {
   const [content, setContent] = useState('');
@@ -48,21 +45,20 @@ const CreateFeedback = () => {
   }, [content, createFeedback, currentUser?.id, toast]);
 
   return (
-    <div className="p-2 mt-4">
-      <Form.Item className="mb-2">
-        <TextArea
-          rows={4}
+    <>
+      <FormControl mb={4}>
+        <Textarea
+          rows={8}
           onChange={onChangeWrap}
           value={content}
           placeholder="Xin nhận các góp ý của bạn để làm Confession.vn trở nên tốt đẹp hơn."
         />
-      </Form.Item>
-      <Form.Item>
+      </FormControl>
+      <FormControl>
         <div className="flex justify-between">
           <Button onClick={clear} disabled={!content?.length} variant="outline">
             Xoá
           </Button>
-
           <Button
             isLoading={loading}
             onClick={addNewFeedback}
@@ -71,8 +67,8 @@ const CreateFeedback = () => {
             {currentUser?.id ? 'Gửi' : 'Đăng nhập để để gửi'}
           </Button>
         </div>
-      </Form.Item>
-    </div>
+      </FormControl>
+    </>
   );
 };
 

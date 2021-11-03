@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { PageHeader } from 'antd';
-import { useGoBack } from '@cfs/common';
+import {
+  TEMP_CREATE_CFS_FORM_DATA_LOCAL_STORAGE_KEY,
+  useGoBack,
+} from '@cfs/common';
 import { useCreateCfsMutation } from '@cfs/graphql';
 import slugify from 'slugify';
 import {
@@ -32,13 +35,31 @@ const NewCfs = () => {
   const {
     handleSubmit,
     register,
+    watch,
     formState: { errors, isSubmitting },
-  } = useForm();
+  } = useForm({
+    defaultValues:
+      typeof window !== 'undefined'
+        ? JSON.parse(
+            localStorage.getItem(TEMP_CREATE_CFS_FORM_DATA_LOCAL_STORAGE_KEY) ||
+              '{}'
+          )
+        : {},
+  });
 
   const [
     createCfs,
     { data: createCfsData, error: createCfsError, loading: createCfsLoading },
   ] = useCreateCfsMutation();
+
+  const currentFormValue = watch();
+
+  useEffect(() => {
+    localStorage.setItem(
+      TEMP_CREATE_CFS_FORM_DATA_LOCAL_STORAGE_KEY,
+      JSON.stringify(currentFormValue || {})
+    );
+  }, [currentFormValue]);
 
   useEffect(() => {
     sendGAUserBehaviorEvent({
@@ -78,6 +99,10 @@ const NewCfs = () => {
         isClosable: true,
         status: 'success',
       });
+      localStorage.setItem(
+        TEMP_CREATE_CFS_FORM_DATA_LOCAL_STORAGE_KEY,
+        JSON.stringify({})
+      );
       setNewCfsCreatedByMe(createCfsData.createCfs.confession);
       router.push('/?tabIndex=1');
     }
@@ -110,7 +135,7 @@ const NewCfs = () => {
           <FormControl>
             <Select
               placeholder="Chọn cộng đồng"
-              name='cat'
+              name="cat"
               onClick={() => setIsOpenSelectCatIdModel(true)}
               value={selectedCat ? selectedCat.id : null}
             >
