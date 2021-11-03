@@ -39,14 +39,11 @@ const CustomMenu = () => {
   }, [client, logout]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = React.useRef();
 
   return (
     <>
       <IconButton
-        ref={btnRef}
         onClick={onOpen}
-        finalFocusRef={btnRef}
         aria-label="User"
         variant="ghost"
         icon={<BsFillPersonFill />}

@@ -37,7 +37,7 @@ const Intro = dynamic(() => import('./Intro'), {
 const HomePage = () => {
   const router = useRouter();
   const [tabIndex, setTabIndex] = useState(0);
-  const [_, { data: shareData }] = useSharedLazyQuery();
+  const [getShareData, { data: shareData }] = useSharedLazyQuery();
 
   const [isLargerThan900] = useMediaQuery('(min-width: 900px)');
   const currentLatestCommentIDUserSaw = useReactiveVar(
@@ -47,6 +47,10 @@ const HomePage = () => {
 
   const [isHaveNewCfs, setIsHaveNewCfs] = useState(false);
   const [isHaveNewComment, setIsHaveNewComment] = useState(false);
+
+  useEffect(() => {
+    getShareData();
+  }, [getShareData])
 
   useEffect(() => {
     const latestCfsId = shareData?.confessions?.nodes?.[0]?.id;
