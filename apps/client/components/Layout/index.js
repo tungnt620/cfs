@@ -45,7 +45,7 @@ const MainLayout = ({ children }) => {
 
   return (
     <>
-      <div className="max-w-screen-xl mx-auto my-0">{children}</div>
+      <div className="max-w-screen-xl mx-auto my-0 ml-2 mr-2 mb-4">{children}</div>
 
       {loginPopupVisible && <LoginPopup />}
       {registerPopupVisible && <RegisterPopup />}

@@ -9,6 +9,7 @@ import ConfessionSEO from '../../../shared/seo/ConfessionSEO';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setNewDeletedCfsByMe, setRecentCatIdsViewedByMe } from '@cfs/helper';
 import { RECENT_CAT_IDS_VIEWED_LOCAL_STORAGE_KEY } from '@cfs/common';
+import SubPageHeader from '../../Header/SubPageHeader';
 
 const CfsDetailPage = () => {
   const router = useRouter();
@@ -69,18 +70,21 @@ const CfsDetailPage = () => {
   }, [cfsDetailPageData?.id, newCfsDeletedByMe, router]);
 
   return (
-    <div className="mb-6">
-      <ConfessionSEO
-        confession={cfsDetailPageData}
-        categories={cfsDetailPageData?.confessionCategories?.nodes}
-      />
-      {cfsDetailPageData && (
-        <CfsDetail
-          cfsDetailPageData={cfsDetailPageData}
-          relativeCfsData={relativeCfsData?.getRelativeConfessions?.nodes}
+    <>
+      <SubPageHeader />
+      <div className="mb-6">
+        <ConfessionSEO
+          confession={cfsDetailPageData}
+          categories={cfsDetailPageData?.confessionCategories?.nodes}
         />
-      )}
-    </div>
+        {cfsDetailPageData && (
+          <CfsDetail
+            cfsDetailPageData={cfsDetailPageData}
+            relativeCfsData={relativeCfsData?.getRelativeConfessions?.nodes}
+          />
+        )}
+      </div>
+    </>
   );
 };
 

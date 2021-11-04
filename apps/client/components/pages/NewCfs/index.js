@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { PageHeader } from 'antd';
-import {
-  TEMP_CREATE_CFS_FORM_DATA_LOCAL_STORAGE_KEY,
-  useGoBack,
-} from '@cfs/common';
+import { TEMP_CREATE_CFS_FORM_DATA_LOCAL_STORAGE_KEY } from '@cfs/common';
 import { useCreateCfsMutation } from '@cfs/graphql';
 import slugify from 'slugify';
 import {
@@ -24,10 +20,10 @@ import {
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import SelectCatModal from './SelectCatModal';
+import SubPageHeader from '../../Header/SubPageHeader';
 
 const NewCfs = () => {
   const router = useRouter();
-  const goBack = useGoBack();
   const toast = useToast();
   const [selectedCat, setSelectedCat] = useState(null);
   const [isOpenSelectCatIdModel, setIsOpenSelectCatIdModel] = useState(false);
@@ -109,20 +105,18 @@ const NewCfs = () => {
   }, [createCfsData, router, toast]);
 
   return (
-    <PageHeader
-      onBack={goBack}
-      title="Chia sẻ, tâm sự"
-      extra={[
-        <Button
-          key="1"
-          onClick={handleSubmit(onSubmit)}
-          isLoading={createCfsLoading || isSubmitting}
-          disabled={!selectedCat?.id}
-        >
-          Gửi
-        </Button>,
-      ]}
-    >
+    <>
+      <SubPageHeader
+        rightActions={
+          <Button
+            onClick={handleSubmit(onSubmit)}
+            isLoading={createCfsLoading || isSubmitting}
+            disabled={!selectedCat?.id}
+          >
+            Gửi
+          </Button>
+        }
+      />
       <div className="mt-4">
         {createCfsError && (
           <Alert status="error">
@@ -178,7 +172,7 @@ const NewCfs = () => {
           />
         )}
       </div>
-    </PageHeader>
+    </>
   );
 };
 

@@ -13,6 +13,7 @@ import {
 } from '@cfs/helper';
 import CategorySEO from '../../../shared/seo/CategorySEO';
 import { RECENT_CAT_IDS_VIEWED_LOCAL_STORAGE_KEY } from '@cfs/common';
+import SubPageHeader from '../../Header/SubPageHeader';
 
 const CatDetailPage = () => {
   const router = useRouter();
@@ -80,13 +81,16 @@ const CatDetailPage = () => {
   }, [refetchCfs, newCfsDeletedByMe]);
 
   return (
-    <div className="ml-2 mr-2 mb-6 bg-color1">
-      <CategorySEO category={catData} />
-      {catData && <CfsDetailHeader cat={catData} />}
-      <main>
-        <CfsList cfsList={confessions} />
-      </main>
-    </div>
+    <>
+      <SubPageHeader title={`Cộng đồng ${catData?.name}`} />
+      <div className="bg-color1">
+        <CategorySEO category={catData} />
+        {catData && <CfsDetailHeader cat={catData} />}
+        <main>
+          <CfsList cfsList={confessions} />
+        </main>
+      </div>
+    </>
   );
 };
 
