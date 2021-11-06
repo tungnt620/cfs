@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { Form, Button, Input, message } from 'antd';
 import { useCreateCommentMutation } from '@cfs/graphql';
 import {
   setCurrentUser,
@@ -7,13 +6,13 @@ import {
   setNewCommentCreatedByMe,
 } from '@cfs/helper';
 import { useReactiveVar } from '@apollo/react-hooks';
-
-const { TextArea } = Input;
+import { Box, Button, FormControl, Textarea, useToast } from '@chakra-ui/react';
 
 const CreateCommentEditor = ({ onClose, cfsId, parentId }) => {
   const [content, setContent] = useState('');
   const [createComment, { loading }] = useCreateCommentMutation();
   const currentUser = useReactiveVar(setCurrentUser);
+  const toast = useToast();
 
   const clear = useCallback(() => setContent(''), []);
   const onChangeWrap = useCallback((e) => setContent(e.target.value), []);
@@ -34,50 +33,51 @@ const CreateCommentEditor = ({ onClose, cfsId, parentId }) => {
             createComment: { comment },
           },
         }) => {
-          message.success('Bình luận của bạn đã được gửi');
+          toast({
+            title: 'Bình luận của bạn đã được gửi',
+            position: 'top',
+            isClosable: true,
+            status: 'success',
+          });
           setNewCommentCreatedByMe(comment);
           setContent('');
         }
       );
     }
-  }, [cfsId, content, createComment, currentUser?.id, parentId]);
+  }, [cfsId, content, createComment, currentUser?.id, parentId, toast]);
 
   return (
-    <div className="p-2">
-      <Form.Item className="mb-2">
-        <TextArea
+    <Box p={2}>
+      <FormControl mb={2}>
+        <Textarea
           rows={4}
           onChange={onChangeWrap}
           value={content}
           placeholder="Chia sẻ cảm nghĩ của bạn"
         />
-      </Form.Item>
-      <Form.Item>
-        <div className="flex justify-between">
+      </FormControl>
+      <FormControl>
+        <Box display={'flex'} justifyContent={'space-between'}>
           <div>
             {onClose ? (
-              <Button size="large" onClick={onClose}>
-                Huỷ
-              </Button>
+              <Button onClick={onClose}>Huỷ</Button>
             ) : (
-              <Button size="large" onClick={clear} disabled={!content?.length}>
+              <Button onClick={clear} disabled={!content?.length}>
                 Xoá
               </Button>
             )}
           </div>
 
           <Button
-            loading={loading}
+            isLoading={loading}
             onClick={addNewComment}
-            type="primary"
-            size="large"
-            disabled={!content?.length}
+            isDisabled={!content?.length}
           >
             {currentUser?.id ? 'Gửi' : 'Đăng nhập để gửi'}
           </Button>
-        </div>
-      </Form.Item>
-    </div>
+        </Box>
+      </FormControl>
+    </Box>
   );
 };
 

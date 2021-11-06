@@ -3,7 +3,7 @@ import CommentItem from './CommentItem';
 import { useSetLatestCommentIDUserSaw } from '@cfs/helper';
 import { useGetCommentsQuery } from '@cfs/graphql';
 import { usePagination, sendGAUserBehaviorEvent } from '@cfs/helper';
-import { Button } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 
 const CommentList = () => {
   const { offset, goPreviousPage, goNextPage } = usePagination();
@@ -51,7 +51,13 @@ const CommentList = () => {
         <CommentItem key={comment.id} comment={comment} />
       )) ?? null}
 
-      <div className="flex justify-between bg-white mt-1 pt-3">
+      <Box
+        display={'flex'}
+        justifyContent={'space-between'}
+        backgroundColor={'white'}
+        mt={1}
+        pt={3}
+      >
         <Button
           onClick={() => {
             goPreviousPage();
@@ -77,7 +83,7 @@ const CommentList = () => {
         >
           Tiếp
         </Button>
-      </div>
+      </Box>
     </>
   );
 };

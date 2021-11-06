@@ -1,15 +1,16 @@
 import React from 'react';
 import Image from 'next/image';
 import style from './style.module.scss';
-import { CloseOutlined } from '@ant-design/icons';
+import { AiOutlineClose } from 'react-icons/ai';
 import { useGoBack } from '@cfs/common';
 import Link from 'next/link';
+import { Box, Icon } from '@chakra-ui/react';
 
 const CfsDetailHeader = ({ cat = {} }) => {
   const goBack = useGoBack();
 
   return (
-    <div className={style.wrapper}>
+    <Box position={'relative'} h={'110px'} w={'100%'}>
       {cat.image && (
         <Image
           alt={`Ảnh bìa của ${cat.name}`}
@@ -19,16 +20,32 @@ const CfsDetailHeader = ({ cat = {} }) => {
         />
       )}
 
-      <div
-        className={`grid grid-rows-2 grid-cols-12 h-full ${style.marginRight_1px}`}
+      <Box
+        display="grid"
+        gridTemplateRows={'repeat(2,minmax(0,1fr))'}
+        gridTemplateColumns={'repeat(12,minmax(0,1fr))'}
+        h={'full'}
+        mr={'-1px'}
       >
         <div />
-        <div
-          className={`row-start-2 col-span-12 flex w-full justify-between bg-white z-10 ${style.logoBackground}`}
+        <Box
+          display="flex"
+          gridRowStart={2}
+          gridColumn={'span 12/span 12'}
+          w={'full'}
+          justifyContent={'space-between'}
+          backgroundColor={'white'}
+          zIndex={10}
+          className={style.logoBackground}
         >
           <div />
-          <div className="flex items-center flex-col -mt-8">
-            <div className="w-16 h-16 relative">
+          <Box
+            display="flex"
+            alignItems={'center'}
+            flexDirection="column"
+            mt={'-2rem'}
+          >
+            <Box w={16} h={16} position={'relative'}>
               <Link href={`/c/${cat.slug}/`}>
                 <a>
                   {cat.image && (
@@ -41,20 +58,25 @@ const CfsDetailHeader = ({ cat = {} }) => {
                   )}
                 </a>
               </Link>
-            </div>
+            </Box>
             <Link href={`/c/${cat.slug}/`}>
               <a>
-                <div className="font-bold">c/{cat.slug}</div>
+                <Box fontWeight={'bold'}>c/{cat.slug}</Box>
               </a>
             </Link>
-          </div>
+          </Box>
 
-          <div className="relative">
-            <CloseOutlined className={style.iconX} onClick={goBack} />
-          </div>
-        </div>
-      </div>
-    </div>
+          <Box position="relative">
+            <Icon
+              className={style.iconX}
+              boxSize={'1.5rem'}
+              as={AiOutlineClose}
+              onClick={goBack}
+            />
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

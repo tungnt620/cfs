@@ -10,6 +10,7 @@ import { useSharedLazyQuery } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
 import dynamic from 'next/dynamic';
 import { Loading } from '@cfs/ui';
+import { Box } from '@chakra-ui/react';
 
 const RegisterPopup = dynamic(() => import('../RegisterPopup'), {
   loading: () => <Loading />,
@@ -45,7 +46,9 @@ const MainLayout = ({ children }) => {
 
   return (
     <>
-      <div className="max-w-screen-xl mx-auto my-0 pl-2 pr-2 pb-4">{children}</div>
+      <Box mx={'auto'} my={0} pl={2} pr={2} pb={4} maxW={'1280px'}>
+        {children}
+      </Box>
 
       {loginPopupVisible && <LoginPopup />}
       {registerPopupVisible && <RegisterPopup />}

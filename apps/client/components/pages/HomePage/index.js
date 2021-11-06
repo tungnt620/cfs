@@ -78,7 +78,13 @@ const HomePage = () => {
   return (
     <>
       <Header />
-      <Box className="block bg-white pb-4" maxWidth={900} margin={'0 auto'}>
+      <Box
+        display={'block'}
+        backgroundColor={'white'}
+        pb={4}
+        maxWidth={900}
+        margin={'0 auto'}
+      >
         <Tabs
           isLazy={true}
           marginTop={4}

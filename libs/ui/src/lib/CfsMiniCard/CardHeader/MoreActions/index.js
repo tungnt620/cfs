@@ -1,12 +1,15 @@
 import React, { useCallback, useState } from 'react';
-import { Modal } from 'antd';
-import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser } from '@cfs/helper';
-import DeleteCfs from '../../../DeleteCfs';
+import dynamic from 'next/dynamic';
+import Loading from '../../../common/Loading';
+import { Icon } from '@chakra-ui/react';
+import { BsThreeDotsVertical } from 'react-icons/bs'
+
+const MoreActionsModal = dynamic(() => import('./MoreActionsModal'), {
+  loading: () => <Loading />,
+});
 
 const MoreActions = ({ cfs }) => {
   const [modalDisplayed, setModalDisplayed] = useState(false);
-  const currentUser = useReactiveVar(setCurrentUser);
 
   const toggle = useCallback(() => {
     setModalDisplayed((prev) => !prev);
@@ -14,24 +17,10 @@ const MoreActions = ({ cfs }) => {
 
   return (
     <>
-      <div
-        onClick={toggle}
-        className="icon icon-three-dot-horizontal pl-2 pr-2 cursor-pointer"
-      />
-      <Modal
-        visible={modalDisplayed}
-        onCancel={toggle}
-        centered={true}
-        maskClosable={true}
-        closable={true}
-        footer={null}
-      >
-        <div>
-          {(currentUser?.isAdmin || cfs?.userId === currentUser?.id) && (
-            <DeleteCfs cfs={cfs} />
-          )}
-        </div>
-      </Modal>
+      <Icon onClick={toggle} as={BsThreeDotsVertical} pl={2} pr={2} cursor={'pointer'} />
+      {modalDisplayed && (
+        <MoreActionsModal cfs={cfs} setModalDisplayed={setModalDisplayed} />
+      )}
     </>
   );
 };

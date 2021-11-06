@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import MoreActions from './MoreActions';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setCurrentUser } from '@cfs/helper';
+import { Box } from '@chakra-ui/react';
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');
@@ -18,48 +19,58 @@ const CardHeader = ({ cfs }) => {
   const currentUser = useReactiveVar(setCurrentUser);
 
   return (
-    <header className="flex mt-1 pt-2 leading-5">
-      <div className="flex items-center">
+    <Box as={'header'} display={'flex'} mt={1} pt={2} lineHeight={'1.25rem'}>
+      <Box display={'flex'} alignItems={'center'}>
         <Link href={`/c/${catData.slug}/`}>
           <a>
-            <div className="w-6 h-6 mr-1">
+            <Box w={6} h={6} mr={1}>
               <Image
                 alt={`Ảnh đại diện của ${catData.name}`}
-                className="rounded-full w-6 h-6"
+                className="rounded-full"
                 src={catData.image ?? emptyImage}
                 width={24}
                 height={24}
               />
-            </div>
+            </Box>
           </a>
         </Link>
 
         <Link href={`/c/${catData.slug}/`}>
           <a>
-            <div className="mr-2 text-sm font-medium whitespace-nowrap">
+            <Box
+              mr={2}
+              fontSize={'.875rem'}
+              lineHeight={'1.25rem'}
+              fontWeight={'medium'}
+              whiteSpace={'nowrap'}
+            >
               c/{catData.slug}
-            </div>
+            </Box>
           </a>
         </Link>
-
-        {/*<FollowBtn />*/}
 
         <Link href={`/${cfs?.slug}/`}>
           <a>
             <div>
-              <span className="text-sm whitespace-nowrap color4">
+              <Box
+                as={'span'}
+                fontSize={'.875rem'}
+                lineHeight={'1.25rem'}
+                whiteSpace={'nowrap'}
+                color={'#11182796'}
+              >
                 {dayjs(cfs?.createdAt).fromNow()}
-              </span>
+              </Box>
             </div>
           </a>
         </Link>
-      </div>
-      <div className="flex w-full justify-end">
+      </Box>
+      <Box display={'flex'} w={'full'} justifyContent={'flex-end'}>
         {(currentUser?.isAdmin || cfs?.userId === currentUser?.id) && (
           <MoreActions cfs={cfs} />
         )}
-      </div>
-    </header>
+      </Box>
+    </Box>
   );
 };
 

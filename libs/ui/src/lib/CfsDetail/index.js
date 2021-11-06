@@ -1,15 +1,24 @@
 import React, { useMemo } from 'react';
 import CfsDetailHeader from './CfsDetailHeader';
-import CommentSection from '../CommentSection';
 import Image from 'next/image';
-import CardActions from '../CfsMiniCard/CardActions';
 import dayjs from 'dayjs';
-import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Image as AntdImage } from 'antd';
 import style from './CfsDetail.module.scss';
-import { useBooleanToggle } from '@cfs/helper';
-import { findNumberOccurrenceInString } from '../../../../helper/src/string';
-import { CfsMiniCard } from '@cfs/ui';
+import { useBooleanToggle, findNumberOccurrenceInString } from '@cfs/helper';
+import Loading from '../common/Loading';
+import emptyImage from '../images/empty.png';
+import { AiOutlineUser } from 'react-icons/ai';
+import { Image as ChakraImage, Avatar, Box } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
+
+const CommentSection = dynamic(() => import('../CommentSection'), {
+  loading: () => <Loading />,
+});
+const CfsMiniCard = dynamic(() => import('../CfsMiniCard/CfsMiniCard'), {
+  loading: () => <Loading />,
+});
+const CardActions = dynamic(() => import('../CfsMiniCard/CardActions'), {
+  loading: () => <Loading />,
+});
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');
@@ -45,38 +54,61 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
   return (
     <main>
       <CfsDetailHeader cat={catData} />
-      <div className="ml-1 mr-1">
-        <header className="flex mt-1 pt-2 pb-2 leading-5">
-          <div className="flex items-center">
-            <div className="w-6 h-6 mr-1">
-              <Avatar size="small" icon={<UserOutlined />} />
-            </div>
+      <Box ml={1} mr={1}>
+        <Box
+          as={'header'}
+          display={'flex'}
+          mt={1}
+          pt={2}
+          pb={2}
+          lineHeight={'1.25rem'}
+        >
+          <Box display="flex" alignment="center">
+            <Box w={6} h={6} mr={1}>
+              <Avatar h={'100%'} w={'100%'} icon={<AiOutlineUser />} />
+            </Box>
 
-            <div className="mr-4 text-sm font-medium">{userData.username}</div>
+            <Box
+              mr={4}
+              fontWeight={'medium'}
+              fontSize={'0.875rem'}
+              lineHeight={'1.25rem'}
+            >
+              {userData.username}
+            </Box>
 
-            <div>
-              <span className="text-sm whitespace-nowrap color-4">
+            <Box>
+              <Box
+                as={'span'}
+                fontSize={'0.875rem'}
+                lineHeight={'1.25rem'}
+                whiteSpace={'nowrap'}
+                color={'#11182796'}
+              >
                 {dayjs(cfsDetailPageData.createdAt).fromNow()}
-              </span>
-            </div>
-          </div>
-          <div className="flex w-full justify-end">{/*<MoreActions />*/}</div>
-        </header>
+              </Box>
+            </Box>
+          </Box>
+          <Box display="flex" w={'full'} justifyContent={'flex-end'}>
+            {/*<MoreActions />*/}
+          </Box>
+        </Box>
 
-        <div className="font-medium text-lg">
+        <Box fontWeight={'medium'} fontSize={'1.125rem'} lineHeight={'1.75rem'}>
           {!isTitleCopyFromContent && cfsDetailPageData.title}
-        </div>
+        </Box>
 
         {expandedThumbnail ? (
-          <div className="flex items-center justify-center">
-            <AntdImage
+          <Box display="flex" alignment="center" justifyContent={'center'}>
+            <ChakraImage
               alt="Hình mô tả cho bài confession"
               src={cfsDetailPageData.image}
+              fallbackSrc={emptyImage}
             />
-          </div>
+          </Box>
         ) : (
           cfsDetailPageData.image && (
-            <div className={`relative w-full mt-2 ${style.minHeight300px}`}>
+            <Box position={'relative'} w={'full'} mt={2} minH={'300px'}>
               <Image
                 alt="Hình mô tả cho bài confession"
                 src={cfsDetailPageData.image}
@@ -84,25 +116,28 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
                 objectFit="contain"
                 onClick={toggleExpandedThumbnail}
               />
-            </div>
+            </Box>
           )
         )}
 
         {isContainSelfLink ? (
-          <div
-            className={`pt-2 mb-4 whitespace-pre-line ${style.highlightLink}`}
+          <Box
+            pt={2}
+            mb={4}
+            whiteSpace={'pre-line'}
+            className={style.highlightLink}
             dangerouslySetInnerHTML={{ __html: cfsDetailPageData.content }}
           />
         ) : (
-          <div className="pt-2 mb-4 whitespace-pre-line">
+          <Box pt={2} mb={4} whiteSpace={'pre-line'}>
             {cfsDetailPageData.content}
-          </div>
+          </Box>
         )}
 
-        <div className="mb-4">
+        <Box mb={4}>
           <CardActions cfs={cfsDetailPageData} />
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       <CommentSection
         comments={cfsDetailPageData.comments.nodes}
@@ -110,14 +145,19 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
       />
 
       {relativeCfsData && (
-        <div className="mt-8 ml-2 mr-2">
-          <h3 className="font-bold text-base">
+        <Box mt={8} ml={2} mr={2}>
+          <Box
+            as={'h3'}
+            fontWeight={'bold'}
+            fontSize={'1rem'}
+            lineHeight={'1.5rem'}
+          >
             Confession khác có thể bạn thích
-          </h3>
+          </Box>
           {relativeCfsData.map((cfs) => (
             <CfsMiniCard cfs={cfs} key={cfs.id} />
           ))}
-        </div>
+        </Box>
       )}
     </main>
   );

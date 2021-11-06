@@ -16,8 +16,18 @@ const SubPageHeader = ({ title, rightActions }) => {
   }, [router]);
 
   return (
-    <nav className="header-height select-none header-shadow">
-      <div className="flex items-center h-full">
+    <Box
+      as={'nav'}
+      userSelect={'none'}
+      display={'flex'}
+      justifyContent={'space-between'}
+      className="header-height header-shadow"
+      mx={{
+        base: 1,
+        sm: 6,
+      }}
+    >
+      <Box alignItems={'center'} display={'flex'} h={'full'}>
         <IconButton
           onClick={goHome}
           aria-label="Trở về trang chủ"
@@ -38,9 +48,13 @@ const SubPageHeader = ({ title, rightActions }) => {
             ? 'Nơi bạn chia sẻ những tâm sự thầm kín'
             : title}
         </Box>
-        {rightActions}
-      </div>
-    </nav>
+      </Box>
+      {rightActions && (
+        <Box display="flex" alignItems="center">
+          {rightActions}
+        </Box>
+      )}
+    </Box>
   );
 };
 

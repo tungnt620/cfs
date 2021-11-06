@@ -10,13 +10,13 @@ import {
 import { useRouter } from 'next/router';
 import {
   Alert,
-  AlertIcon,
+  AlertIcon, Box,
   Button,
   FormControl,
   FormErrorMessage,
   Select,
   Textarea,
-  useToast,
+  useToast
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import SelectCatModal from './SelectCatModal';
@@ -117,7 +117,7 @@ const NewCfs = () => {
           </Button>
         }
       />
-      <div className="mt-4">
+      <Box mt={4}>
         {createCfsError && (
           <Alert status="error">
             <AlertIcon />
@@ -171,7 +171,7 @@ const NewCfs = () => {
             setIsOpen={setIsOpenSelectCatIdModel}
           />
         )}
-      </div>
+      </Box>
     </>
   );
 };

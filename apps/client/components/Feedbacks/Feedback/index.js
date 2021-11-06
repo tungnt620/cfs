@@ -1,33 +1,17 @@
 import React from 'react';
-import { Comment } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
-import dayjs from 'dayjs';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setCurrentUser } from '@cfs/helper';
-import { Tooltip } from '@chakra-ui/react';
-
-require('dayjs/locale/vi');
-dayjs.locale('vi');
-
-const relativeTime = require('dayjs/plugin/relativeTime');
-dayjs.extend(relativeTime);
+import { Comment } from '@cfs/ui';
 
 const Feedback = ({ feedback }) => {
   const currentUser = useReactiveVar(setCurrentUser);
 
   return (
     <Comment
-      className="custom-ant-feedbacks"
-      author={<span>{currentUser?.username}</span>}
-      avatar={<UserOutlined className="text-lg" />}
       content={feedback.content}
-      datetime={
-        <Tooltip
-          label={dayjs(feedback.createdAt).format('YYYY-MM-DD HH:mm:ss')}
-        >
-          <span>{dayjs(feedback.createdAt).fromNow()}</span>
-        </Tooltip>
-      }
+      username={currentUser?.username}
+      time={feedback.createdAt}
+      mb={6}
     />
   );
 };

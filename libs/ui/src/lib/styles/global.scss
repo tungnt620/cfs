@@ -12,13 +12,6 @@ body {
   --bg-color1: #efefed;
 }
 
-@import './antd.css';
-@import 'icons';
-@import 'custom';
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 .color1 {
   color: var(--color-1)
 }
@@ -63,8 +56,6 @@ body {
   box-shadow: inset 0px -1px 0px var(--shadow-color);
 }
 
-.ant-image-preview-img-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.rounded-full {
+  border-radius: 99999px;
 }

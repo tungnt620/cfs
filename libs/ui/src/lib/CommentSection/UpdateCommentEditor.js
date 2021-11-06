@@ -1,12 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import { Form, Button, Input, message } from 'antd';
 import { useUpdateCommentMutation } from '@cfs/graphql';
-
-const { TextArea } = Input;
+import { Box, Button, FormControl, Textarea, useToast } from '@chakra-ui/react';
 
 const UpdateCommentEditor = ({ comment, onClose }) => {
   const [content, setContent] = useState(comment.content);
   const [updateComment, { loading }] = useUpdateCommentMutation();
+  const toast = useToast();
 
   const clear = useCallback(() => setContent(''), []);
   const onChangeWrap = useCallback((e) => setContent(e.target.value), []);
@@ -24,48 +23,50 @@ const UpdateCommentEditor = ({ comment, onClose }) => {
           updateComment: { comment: updatedComment },
         },
       }) => {
-        message.success('Bình luận của bạn đã được cập nhật');
+        toast({
+          title: 'Bình luận của bạn đã được cập nhật',
+          position: 'top',
+          isClosable: true,
+          status: 'success',
+        });
         onClose();
       }
     );
-  }, [comment.id, content, onClose, updateComment]);
+  }, [comment.id, content, onClose, toast, updateComment]);
 
   return (
-    <div className="p-2">
-      <Form.Item className="mb-2">
-        <TextArea
+    <Box p={2}>
+      <FormControl mb={2}>
+        <Textarea
           rows={4}
           onChange={onChangeWrap}
           value={content}
           placeholder="Chia sẻ cảm nghĩ của bạn"
         />
-      </Form.Item>
-      <Form.Item>
-        <div className="flex justify-between">
+      </FormControl>
+
+      <FormControl>
+        <Box display={'flex'} justifyContent={'space-between'}>
           <div>
             {onClose ? (
-              <Button size="large" onClick={onClose}>
-                Huỷ
-              </Button>
+              <Button onClick={onClose}>Huỷ</Button>
             ) : (
-              <Button size="large" onClick={clear} disabled={!content?.length}>
+              <Button onClick={clear} disabled={!content?.length}>
                 Xoá
               </Button>
             )}
           </div>
 
           <Button
-            loading={loading}
+            isLoading={loading}
             onClick={addNewComment}
-            type="primary"
-            size="large"
-            disabled={!content?.length || content === comment.content}
+            isDisabled={!content?.length || content === comment.content}
           >
             Cập nhật
           </Button>
-        </div>
-      </Form.Item>
-    </div>
+        </Box>
+      </FormControl>
+    </Box>
   );
 };
 

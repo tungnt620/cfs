@@ -1,71 +1,45 @@
-import React, { useCallback } from 'react';
-import { Comment, Image as AntdImage } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
-import dayjs from 'dayjs';
+import React from 'react';
+import { Box, Image as ChakraImage, Text } from '@chakra-ui/react';
 import Image from 'next/image';
-import style from './CommentItem.module.scss';
 import { useBooleanToggle } from '@cfs/helper';
-import { Vote } from '@cfs/ui';
+import { Comment, emptyImage, Vote } from '@cfs/ui';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { Button, Tooltip } from '@chakra-ui/react';
-
-require('dayjs/locale/vi');
-dayjs.locale('vi');
-
-const relativeTime = require('dayjs/plugin/relativeTime');
-dayjs.extend(relativeTime);
 
 const CommentItem = ({ comment }) => {
-  const router = useRouter();
   const [expandedThumbnail, toggleExpandedThumbnail] = useBooleanToggle(false);
 
   const catSlug =
     comment.confession.confessionCategories.nodes?.[0]?.category?.slug;
   const cfsSlug = comment.confession.slug;
 
-  const toggleShowConfession = useCallback(() => {
-    router.push(`/${cfsSlug}/`);
-  }, [cfsSlug, router]);
-
   return (
     <Comment
-      className="custom-ant-comments"
-      actions={[
-        <div className="block">
-          <Vote
-            voteNo={comment.totalReaction}
-            commentId={comment.id}
-            oldUserAction={comment.userCommentReaction?.nodes?.[0]?.reactType}
-          />
-          <Link href={`/c/${catSlug}/`}>
-            <a className="font-bold text-sm">c/{catSlug}</a>
-          </Link>
-          <Button variant='ghost' onClick={toggleShowConfession} marginLeft={'8px'}>
-            Xem cfs
-          </Button>
-        </div>,
-      ]}
-      author={<span>{comment.user?.username ?? comment.authorName}</span>}
-      avatar={<UserOutlined className="text-lg" />}
       content={
         <>
           {expandedThumbnail ? (
-            <div className="flex items-center justify-center">
-              <AntdImage alt="Ảnh trong comment" src={comment.image} />
-            </div>
+            <Box display="flex" alignItems="center" justifyContent={'center'}>
+              <ChakraImage
+                alt="Ảnh trong comment"
+                src={comment.image}
+                fallbackSrc={emptyImage}
+              />
+            </Box>
           ) : (
             comment.image && (
-              <div className={`relative w-full ${style.minHeight200px}`}>
+              <Box
+                position="relative"
+                w="full"
+                minHeight={'200px'}
+                cursor={'pointer'}
+              >
                 <Image
                   alt="Ảnh trong comment"
-                  className="cursor-pointer"
                   src={comment.image}
                   layout="fill"
                   objectFit="contain"
                   onClick={toggleExpandedThumbnail}
                 />
-              </div>
+              </Box>
             )
           )}
 
@@ -74,13 +48,55 @@ const CommentItem = ({ comment }) => {
               <p>{comment.content}</p>
             </a>
           </Link>
+          <Box mt={4}>
+            <Box
+              fontStyle={'italic'}
+              fontSize={'0.9rem'}
+              display={'inline'}
+              fontWeight={400}
+            >
+              trong
+            </Box>{' '}
+            <Link href={`/c/${catSlug}/`}>
+              <a>
+                <Text
+                  display={'inline'}
+                  fontSize={'0.9rem'}
+                  fontWeight={'bold'}
+                >
+                  c/{catSlug}
+                </Text>
+              </a>
+            </Link>
+          </Box>
         </>
       }
-      datetime={
-        <Tooltip label={dayjs(comment.createdAt).format('YYYY-MM-DD HH:mm:ss')}>
-          <span>{dayjs(comment.createdAt).fromNow()}</span>
-        </Tooltip>
+      username={comment.user?.username ?? comment.authorName}
+      time={comment.createdAt}
+      actions={
+        <Box display={'flex'} alignItems="center">
+          <Vote
+            voteNo={comment.totalReaction}
+            commentId={comment.id}
+            oldUserAction={comment.userCommentReaction?.nodes?.[0]?.reactType}
+          />
+
+          <Box ml={2} display={'inline'}>
+            <Link href={`/${cfsSlug}/`}>
+              <a>
+                <Text
+                  display={'inline'}
+                  fontSize={'0.9rem'}
+                  fontWeight={'bold'}
+                >
+                  Xem confession
+                </Text>
+              </a>
+            </Link>
+          </Box>
+        </Box>
       }
+      mb={6}
     />
   );
 };

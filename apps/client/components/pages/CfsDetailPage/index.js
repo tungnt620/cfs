@@ -10,6 +10,7 @@ import { useReactiveVar } from '@apollo/react-hooks';
 import { setNewDeletedCfsByMe, setRecentCatIdsViewedByMe } from '@cfs/helper';
 import { RECENT_CAT_IDS_VIEWED_LOCAL_STORAGE_KEY } from '@cfs/common';
 import SubPageHeader from '../../Header/SubPageHeader';
+import { Box } from '@chakra-ui/react';
 
 const CfsDetailPage = () => {
   const router = useRouter();
@@ -72,7 +73,7 @@ const CfsDetailPage = () => {
   return (
     <>
       <SubPageHeader />
-      <div className="mb-6">
+      <Box mb={6}>
         <ConfessionSEO
           confession={cfsDetailPageData}
           categories={cfsDetailPageData?.confessionCategories?.nodes}
@@ -83,7 +84,7 @@ const CfsDetailPage = () => {
             relativeCfsData={relativeCfsData?.getRelativeConfessions?.nodes}
           />
         )}
-      </div>
+      </Box>
     </>
   );
 };

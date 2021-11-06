@@ -1,9 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Image as AntdImage } from 'antd';
-import styles from './CardContent.module.scss';
+import { Box, Image as ChakraImage } from '@chakra-ui/react';
 import { useBooleanToggle } from '@cfs/helper';
+import emptyImage from '../../images/empty.png';
 
 const CardContent = ({ cfs }) => {
   const { image, slug, title } = cfs;
@@ -11,17 +11,30 @@ const CardContent = ({ cfs }) => {
 
   return (
     <>
-      <div className="flex justify-between mt-2 mb-2 items-center">
+      <Box
+        display={'flex'}
+        justifyContent={'space-between'}
+        mt={2}
+        mb={2}
+        alignItems="center"
+      >
         <Link href={`/${slug}/`}>
-          <a className="w-full">
-            <div className="whitespace-normal font-medium leading-5 flex items-center">
+          <a>
+            <Box
+              w={'full'}
+              display={'flex'}
+              alignItems="center"
+              whiteSpace={'normal'}
+              fontWeight={'medium'}
+              lineHeight={'1.25rem'}
+            >
               {title}
-            </div>
+            </Box>
           </a>
         </Link>
 
         {image && (
-          <div className={`ml-4 h-full cursor-pointer ${styles.smallImage}`}>
+          <Box ml={4} h={'full'} cursor={'pointer'} minW={'40px'}>
             <Image
               alt="Hình ảnh trong bài confession"
               src={image}
@@ -30,14 +43,18 @@ const CardContent = ({ cfs }) => {
               layout="intrinsic"
               onClick={toggleExpandedThumbnail}
             />
-          </div>
+          </Box>
         )}
-      </div>
+      </Box>
 
       {expandedThumbnail && (
-        <div className="flex items-center justify-center">
-          <AntdImage alt="Hình ảnh trong bài confession" src={image} />
-        </div>
+        <Box display={'flex'} justifyContent={'center'} alignItems="center">
+          <ChakraImage
+            alt="Hình ảnh trong bài confession"
+            src={image}
+            fallbackSrc={emptyImage}
+          />
+        </Box>
       )}
     </>
   );

@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import UpVote from '../../../icons/UpVote';
 import {
   ReactionType,
   useCreateOrUpdateCommentReactionMutation,
@@ -7,6 +6,8 @@ import {
 } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setCurrentUser, showPromoteLoginOrRegisterPopup } from '@cfs/helper';
+import { Box, Icon } from '@chakra-ui/react';
+import { BiUpvote, BiDownvote } from 'react-icons/bi';
 
 const Vote = ({ voteNo = 0, confessionId, commentId, oldUserAction }) => {
   const [action, setAction] = useState(oldUserAction);
@@ -131,23 +132,42 @@ const Vote = ({ voteNo = 0, confessionId, commentId, oldUserAction }) => {
   ]);
 
   return (
-    <div className="flex items-center h-8 b-1 border border-color1 rounded-2xl w-max mr-3">
-      <div className="p-2" onClick={upVote}>
-        <UpVote
-          className={`color2 h-4 w-4 cursor-pointer ${
-            action === ReactionType.Up ? 'color3' : ''
-          }`}
+    <Box
+      display={'flex'}
+      alignItems='center'
+      h={8}
+      b={1}
+      border={'1px solid #efefed'}
+      w={'max'}
+      borderRadius={'1rem'}
+    >
+      <Box p={2} onClick={upVote}>
+        <Icon
+          as={BiUpvote}
+          className={`color2 ${action === ReactionType.Up ? 'color3' : ''}`}
+          h={4}
+          w={4}
+          cursor={'pointer'}
         />
-      </div>
-      <span className="text-xs color2">{localVoteNo}</span>
-      <div className="p-2" onClick={downVote}>
-        <UpVote
-          className={`transform rotate-180 color2 h-4 w-4 cursor-pointer ${
-            action === ReactionType.Down ? 'color3' : ''
-          }`}
+      </Box>
+      <Box
+        as={'span'}
+        fontSize={'0.75rem'}
+        lineHeight={'1rem'}
+        color={'#56595a'}
+      >
+        {localVoteNo}
+      </Box>
+      <Box p={2} onClick={downVote}>
+        <Icon
+          as={BiDownvote}
+          className={`color2 ${action === ReactionType.Up ? 'color3' : ''}`}
+          h={4}
+          w={4}
+          cursor={'pointer'}
         />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

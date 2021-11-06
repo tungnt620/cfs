@@ -5,8 +5,17 @@ import CustomMenu from './CustomMenu';
 
 const HeaderUI = () => {
   return (
-    <nav className="header-height select-none header-shadow">
-      <div className="flex justify-between items-center h-full mx-1 sm:mx-6">
+    <Box as={'nav'} userSelect={'none'} className="header-height header-shadow">
+      <Box
+        display={'flex'}
+        justifyContent={'space-between'}
+        alignItems="center"
+        h={'full'}
+        mx={{
+          base: 1,
+          sm: 6,
+        }}
+      >
         <CustomMenu />
         <Box ml={4} mr={4} fontStyle="italic">
           Nơi bạn chia sẻ những tâm sự thầm kín
@@ -14,8 +23,8 @@ const HeaderUI = () => {
         <Box display="flex">
           <CreateNewCfs />
         </Box>
-      </div>
-    </nav>
+      </Box>
+    </Box>
   );
 };
 

@@ -4,6 +4,7 @@ import NestedComment from './NestedComment';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setNewCommentCreatedByMe } from '@cfs/helper';
 import { useSetLatestCommentIDUserSaw } from '@cfs/helper';
+import { Box } from '@chakra-ui/react';
 
 const CommentSection = ({ comments, cfsId }) => {
   const [allComments, setAllComments] = useState([]);
@@ -42,16 +43,19 @@ const CommentSection = ({ comments, cfsId }) => {
   return (
     <div id="comments">
       <CreateCommentEditor cfsId={cfsId} />
-      {allComments
-        ?.filter((comment) => !comment?.parentId)
-        ?.map((comment) => (
-          <NestedComment
-            key={comment.id}
-            comment={comment}
-            idChildrenComments={idChildrenComments}
-            cfsId={cfsId}
-          />
-        ))}
+      <Box mt={8}>
+        {allComments
+          ?.filter((comment) => !comment?.parentId)
+          ?.map((comment) => (
+            <NestedComment
+              key={comment.id}
+              comment={comment}
+              idChildrenComments={idChildrenComments}
+              cfsId={cfsId}
+            />
+          ))}
+      </Box>
+
     </div>
   );
 };

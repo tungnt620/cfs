@@ -1,11 +1,10 @@
 import React from 'react';
-import style from './CfsList.module.scss';
 import { CfsMiniCard } from '@cfs/ui';
 import { setLatestCfsIDGetByMe } from '@cfs/helper';
 import { LATEST_CFS_ID_USER_SAW_LOCAL_STORAGE_KEY } from '@cfs/common';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { usePagination, sendGAUserBehaviorEvent } from '@cfs/helper';
-import { Button } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 
 export const CfsList = ({ cfsList }) => {
   const { offset, goPreviousPage, goNextPage } = usePagination();
@@ -27,11 +26,17 @@ export const CfsList = ({ cfsList }) => {
   }
 
   return (
-    <div className={style.root}>
+    <Box backgroundColor={'#efefed'}>
       {cfsList.map((cfs) => (
         <CfsMiniCard cfs={cfs} key={cfs.id} />
       ))}
-      <div className="flex justify-between bg-white mt-1 pt-3">
+      <Box
+        display={'flex'}
+        justifyContent={'space-between'}
+        backgroundColor={'white'}
+        mt={1}
+        pt={3}
+      >
         <Button
           onClick={() => {
             goPreviousPage();
@@ -57,8 +62,8 @@ export const CfsList = ({ cfsList }) => {
         >
           Tiếp
         </Button>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

@@ -54,19 +54,17 @@ const CreateFeedback = () => {
           placeholder="Xin nhận các góp ý của bạn để làm Confession.vn trở nên tốt đẹp hơn."
         />
       </FormControl>
-      <FormControl>
-        <div className="flex justify-between">
-          <Button onClick={clear} disabled={!content?.length} variant="outline">
-            Xoá
-          </Button>
-          <Button
-            isLoading={loading}
-            onClick={addNewFeedback}
-            disabled={!content?.length}
-          >
-            {currentUser?.id ? 'Gửi' : 'Đăng nhập để để gửi'}
-          </Button>
-        </div>
+      <FormControl display={'flex'} justifyContent={'space-between'} mb={6}>
+        <Button onClick={clear} disabled={!content?.length} variant="outline">
+          Xoá
+        </Button>
+        <Button
+          isLoading={loading}
+          onClick={addNewFeedback}
+          disabled={!content?.length}
+        >
+          {currentUser?.id ? 'Gửi' : 'Đăng nhập để để gửi'}
+        </Button>
       </FormControl>
     </>
   );
