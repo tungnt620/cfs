@@ -17,7 +17,7 @@ const MoreActions = ({ cfs }) => {
 
   return (
     <>
-      <Icon onClick={toggle} as={BsThreeDotsVertical} pl={2} pr={2} cursor={'pointer'} />
+      <Icon onClick={toggle} as={BsThreeDotsVertical} cursor={'pointer'} />
       {modalDisplayed && (
         <MoreActionsModal cfs={cfs} setModalDisplayed={setModalDisplayed} />
       )}
