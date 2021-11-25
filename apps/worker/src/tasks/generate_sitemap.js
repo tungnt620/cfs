@@ -162,7 +162,7 @@ function generate(urls, logger) {
 
       sitemapStream
         .pipe(createGzip()) // compress the output of the sitemap
-        .pipe(createWriteStream(resolve(path + '.gz'))); // write it to sitemap-NUMBER.xml
+        .pipe(createWriteStream(resolve(path))); // write it to sitemap-NUMBER.xml
       // .pipe(createWriteStream(resolve(path))); // write it to sitemap-NUMBER.xml
 
       return [
