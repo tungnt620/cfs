@@ -158,7 +158,7 @@ function generate(urls, logger) {
       // if your server automatically serves sitemap.xml.gz when requesting sitemap.xml leave this line be
       // otherwise you will need to add .gz here and remove it a couple lines below so that both the index
       // and the actual file have a .gz extension
-      const path = `${basePath}/sitemap-${i}.xml.gz`;
+      const path = `./sitemap-${i}.xml.gz`;
 
       sitemapStream
         .pipe(createGzip()) // compress the output of the sitemap
