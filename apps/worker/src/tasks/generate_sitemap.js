@@ -155,18 +155,16 @@ function generate(urls, logger) {
         hostname: 'https://confession.vn',
         lastmodDateOnly: false, // defaults to false, flip to true for baidu
       });
-      // if your server automatically serves sitemap.xml.gz when requesting sitemap.xml leave this line be
-      // otherwise you will need to add .gz here and remove it a couple lines below so that both the index
-      // and the actual file have a .gz extension
-      const path = `./sitemap-${i}.xml.gz`;
+
+      const fileName = `sitemap-${i}.xml.gz`;
 
       sitemapStream
         .pipe(createGzip()) // compress the output of the sitemap
-        .pipe(createWriteStream(resolve(path))); // write it to sitemap-NUMBER.xml
+        .pipe(createWriteStream(resolve(`${basePath}/${fileName}`))); // write it to sitemap-NUMBER.xml
       // .pipe(createWriteStream(resolve(path))); // write it to sitemap-NUMBER.xml
 
       return [
-        new URL(path, 'https://confession.vn/').toString(),
+        new URL(fileName, 'https://confession.vn/').toString(),
         sitemapStream,
       ];
     },
