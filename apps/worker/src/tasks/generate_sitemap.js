@@ -55,7 +55,7 @@ ORDER BY
               name: 'Confession.vn',
               language: 'vi',
             },
-            publication_date: dayjs(cfs.created_at).format('YYYY/MM/DD'),
+            publication_date: dayjs(cfs.created_at).format('YYYY-MM-DD'),
             title: cfs.title,
             keywords: cfs.category_names,
             genres: 'Opinion',
@@ -160,8 +160,7 @@ function generate(urls, logger) {
 
       sitemapStream
         .pipe(createGzip()) // compress the output of the sitemap
-        .pipe(createWriteStream(resolve(`${basePath}/${fileName}`))); // write it to sitemap-NUMBER.xml
-      // .pipe(createWriteStream(resolve(path))); // write it to sitemap-NUMBER.xml
+        .pipe(createWriteStream(resolve(`${basePath}/${fileName}`)));
 
       return [
         new URL(fileName, 'https://confession.vn/').toString(),
