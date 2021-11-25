@@ -55,7 +55,7 @@ ORDER BY
               name: 'Confession.vn',
               language: 'vi',
             },
-            publication_date: cfs.created_at,
+            publication_date: dayjs(cfs.created_at).format('YYYY-MM-DD'),
             title: cfs.title,
             keywords: cfs.category_names,
             genres: 'Opinion',
