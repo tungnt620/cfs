@@ -44,6 +44,7 @@
     "@graphql-codegen/typescript": "1.23.0",
     "@graphql-codegen/typescript-operations": "1.18.4",
     "@graphql-codegen/typescript-react-apollo": "2.3.1",
+    "@next/bundle-analyzer": "^12.0.3",
     "@nrwl/cli": "12.6.0-beta.9",
     "@nrwl/cypress": "12.6.0-beta.9",
     "@nrwl/eslint-plugin-nx": "12.6.0-beta.9",
