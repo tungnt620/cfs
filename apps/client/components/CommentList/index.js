@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import CommentItem from './CommentItem';
-import { useSetLatestCommentIDUserSaw } from '@cfs/helper';
+import { useSetLatestCommentIDUserSaw } from '@cfs/helper/hooks';
 import { useGetCommentsQuery } from '@cfs/graphql';
-import { usePagination, sendGAUserBehaviorEvent } from '@cfs/helper';
+import { usePagination } from '@cfs/helper/hooks';
+import { sendGAUserBehaviorEvent } from '@cfs/helper/analytics';
 import { Box, Button } from '@chakra-ui/react';
 
 const CommentList = () => {

@@ -4,7 +4,7 @@ import {
   showFeedbacksModal,
   showLoginPopup,
   showRegisterPopup,
-} from '@cfs/helper';
+} from '@cfs/helper/reactiveVars';
 import { Box, Button, Icon, IconButton, useDisclosure } from '@chakra-ui/react';
 import {
   Drawer,

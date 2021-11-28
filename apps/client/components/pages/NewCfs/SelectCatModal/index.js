@@ -13,9 +13,9 @@ import {
 } from '@chakra-ui/react';
 import { useGetCategoriesQuery } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setRecentCatIdsViewedByMe } from '@cfs/helper';
+import { setRecentCatIdsViewedByMe } from '@cfs/helper/reactiveVars';
 import Image from 'next/image';
-import { emptyImage } from '@cfs/ui';
+import emptyImage from '@cfs/ui/images/empty.png';
 
 const SelectCatModal = ({ setSelectedCat, setIsOpen }) => {
   const recentCatIds = useReactiveVar(setRecentCatIdsViewedByMe);

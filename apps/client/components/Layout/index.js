@@ -5,11 +5,11 @@ import {
   showLoginPopup,
   showPromoteLoginOrRegisterPopup,
   showRegisterPopup,
-} from '@cfs/helper';
+} from '@cfs/helper/reactiveVars';
 import { useSharedLazyQuery } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
 import dynamic from 'next/dynamic';
-import { Loading } from '@cfs/ui';
+import Loading from '@cfs/ui/common/Loading';
 import { Box } from '@chakra-ui/react';
 
 const RegisterPopup = dynamic(() => import('../RegisterPopup'), {

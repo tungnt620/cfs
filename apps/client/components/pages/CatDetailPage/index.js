@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react';
 import { useCatDetailPageQuery, useGetCfsByCatSlugQuery } from '@cfs/graphql';
 import { useRouter } from 'next/router';
-import { CfsDetailHeader } from '@cfs/ui';
-import { CfsList } from '@cfs/ui';
+import CfsDetailHeader from '@cfs/ui/CfsDetail/CfsDetailHeader';
+import CfsList from '@cfs/ui/CfsList';
 import { useReactiveVar } from '@apollo/react-hooks';
 import {
   setCurrentUser,
   setNewDeletedCfsByMe,
-  usePagination,
-  sendGAUserBehaviorEvent,
   setRecentCatIdsViewedByMe,
-} from '@cfs/helper';
+} from '@cfs/helper/reactiveVars';
+import { sendGAUserBehaviorEvent } from '@cfs/helper/analytics';
+import { usePagination } from '@cfs/helper/hooks';
 import CategorySEO from '../../../shared/seo/CategorySEO';
-import { RECENT_CAT_IDS_VIEWED_LOCAL_STORAGE_KEY } from '@cfs/common';
+import { RECENT_CAT_IDS_VIEWED_LOCAL_STORAGE_KEY } from '@cfs/common/constants';
 import SubPageHeader from '../../Header/SubPageHeader';
 
 const CatDetailPage = () => {

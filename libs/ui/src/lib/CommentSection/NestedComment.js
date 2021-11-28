@@ -5,11 +5,10 @@ import CreateCommentEditor from './CreateCommentEditor';
 import Vote from '../CfsMiniCard/CardActions/Vote';
 import dayjs from 'dayjs';
 import Image from 'next/image';
-import style from './CommentSection.module.scss';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser } from '@cfs/helper';
+import { setCurrentUser } from '@cfs/helper/reactiveVars';
 import UpdateCommentEditor from './UpdateCommentEditor';
-import { useBooleanToggle } from '@cfs/helper';
+import { useBooleanToggle } from '@cfs/helper/hooks';
 import { Button } from '@chakra-ui/react';
 import Comment from '../common/Comment';
 

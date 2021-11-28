@@ -3,7 +3,7 @@ import {
   LATEST_CFS_ID_USER_SAW_LOCAL_STORAGE_KEY,
   LATEST_COMMENT_ID_USER_SAW_LOCAL_STORAGE_KEY,
   RECENT_CAT_IDS_VIEWED_LOCAL_STORAGE_KEY,
-} from '@cfs/common';
+} from '@cfs/common/constants';
 
 const isClient = typeof window !== 'undefined';
 

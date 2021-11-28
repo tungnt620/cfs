@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
-import { CfsList } from '@cfs/ui';
+import CfsList from '@cfs/ui/CfsList';
 import { useHomePageQuery } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
 import {
   setCurrentUser,
   setNewCfsCreatedByMe,
   setNewDeletedCfsByMe,
-} from '@cfs/helper';
-import { usePagination } from '@cfs/helper';
+} from '@cfs/helper/reactiveVars';
+import { usePagination } from '@cfs/helper/hooks';
 
 const Confessions = () => {
   const { offset } = usePagination();

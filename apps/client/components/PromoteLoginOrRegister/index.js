@@ -3,7 +3,7 @@ import {
   showLoginPopup,
   showRegisterPopup,
   showPromoteLoginOrRegisterPopup,
-} from '@cfs/helper';
+} from '@cfs/helper/reactiveVars';
 import {
   Box,
   Button,

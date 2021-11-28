@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text } from '@chakra-ui/react';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser } from '@cfs/helper';
+import { setCurrentUser } from '@cfs/helper/reactiveVars';
 
 const Intro = () => {
   const currentUser = useReactiveVar(setCurrentUser);

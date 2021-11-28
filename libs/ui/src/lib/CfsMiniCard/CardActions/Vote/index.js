@@ -5,7 +5,7 @@ import {
   useCreateOrUpdateConfessionReactionMutation,
 } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser, showPromoteLoginOrRegisterPopup } from '@cfs/helper';
+import { setCurrentUser, showPromoteLoginOrRegisterPopup } from '@cfs/helper/reactiveVars';
 import { Box, Icon } from '@chakra-ui/react';
 import { BiUpvote, BiDownvote } from 'react-icons/bi';
 

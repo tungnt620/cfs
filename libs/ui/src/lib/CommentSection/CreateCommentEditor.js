@@ -4,7 +4,7 @@ import {
   setCurrentUser,
   showPromoteLoginOrRegisterPopup,
   setNewCommentCreatedByMe,
-} from '@cfs/helper';
+} from '@cfs/helper/reactiveVars';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { Box, Button, FormControl, Textarea, useToast } from '@chakra-ui/react';
 

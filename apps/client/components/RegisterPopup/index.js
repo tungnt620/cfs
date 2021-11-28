@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { extractError, getCodeFromError } from '@cfs/helper';
+import { extractError, getCodeFromError } from '@cfs/helper/errors';
 import { useRegisterMutation } from '@cfs/graphql';
 import {
   setCurrentUser,
   showLoginPopup,
   showRegisterPopup,
-  sendGAUserBehaviorEvent,
-} from '@cfs/helper';
+} from '@cfs/helper/reactiveVars';
+import { sendGAUserBehaviorEvent } from '@cfs/helper/analytics';
 import {
   Alert,
   Box,

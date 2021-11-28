@@ -1,9 +1,10 @@
 import React from 'react';
-import { CfsMiniCard } from '@cfs/ui';
-import { setLatestCfsIDGetByMe } from '@cfs/helper';
-import { LATEST_CFS_ID_USER_SAW_LOCAL_STORAGE_KEY } from '@cfs/common';
+import CfsMiniCard from '@cfs/ui/CfsMiniCard/CfsMiniCard';
+import { setLatestCfsIDGetByMe } from '@cfs/helper/reactiveVars';
+import { LATEST_CFS_ID_USER_SAW_LOCAL_STORAGE_KEY } from '@cfs/common/constants';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { usePagination, sendGAUserBehaviorEvent } from '@cfs/helper';
+import { usePagination } from '@cfs/helper/hooks';
+import { sendGAUserBehaviorEvent } from '@cfs/helper/analytics';
 import { Box, Button } from '@chakra-ui/react';
 
 export const CfsList = ({ cfsList }) => {

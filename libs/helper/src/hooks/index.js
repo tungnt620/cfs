@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { useRouter } from 'next/router';
-import { setLatestCommentIDGetByMe } from '../index';
-import { LATEST_COMMENT_ID_USER_SAW_LOCAL_STORAGE_KEY } from '@cfs/common';
+import { LATEST_COMMENT_ID_USER_SAW_LOCAL_STORAGE_KEY } from '@cfs/common/constants';
+import { setLatestCommentIDGetByMe } from '../reactiveVars';
 
 export function useBooleanToggle(initialValue = false) {
   const [value, setValue] = useState(initialValue);

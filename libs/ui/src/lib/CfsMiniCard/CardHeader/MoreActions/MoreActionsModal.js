@@ -1,6 +1,6 @@
 import React from 'react';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser } from '@cfs/helper';
+import { setCurrentUser } from '@cfs/helper/reactiveVars';
 import DeleteCfs from '../../../DeleteCfs';
 import {
   Modal,

@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import CreateCommentEditor from './CreateCommentEditor';
 import NestedComment from './NestedComment';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setNewCommentCreatedByMe } from '@cfs/helper';
-import { useSetLatestCommentIDUserSaw } from '@cfs/helper';
+import { setNewCommentCreatedByMe } from '@cfs/helper/reactiveVars';
+import { useSetLatestCommentIDUserSaw } from '@cfs/helper/hooks';
 import { Box } from '@chakra-ui/react';
 
 const CommentSection = ({ comments, cfsId }) => {

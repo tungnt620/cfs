@@ -5,7 +5,7 @@ import emptyImage from '../../images/empty.png';
 import dayjs from 'dayjs';
 import MoreActions from './MoreActions';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser } from '@cfs/helper';
+import { setCurrentUser } from '@cfs/helper/reactiveVars';
 import { Box } from '@chakra-ui/react';
 
 require('dayjs/locale/vi');

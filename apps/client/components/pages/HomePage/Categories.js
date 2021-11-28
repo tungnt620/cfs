@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useAllCategoriesPageQuery } from '@cfs/graphql';
-import { sendGAUserBehaviorEvent } from '@cfs/helper';
+import { sendGAUserBehaviorEvent } from '@cfs/helper/analytics';
 import { useRouter } from 'next/router';
 import { Box, List, ListItem } from '@chakra-ui/react';
 import Image from 'next/image';
-import { emptyImage } from '@cfs/ui';
+import emptyImage from '@cfs/ui/images/empty.png';
 
 const Categories = () => {
   const router = useRouter();

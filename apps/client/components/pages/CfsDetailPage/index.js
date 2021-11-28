@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { CfsDetail } from '@cfs/ui';
+import CfsDetail from '@cfs/ui/CfsDetail';
 import {
   useCfsDetailPageQuery,
   useGetRelativeConfessionsLazyQuery,
@@ -7,8 +7,8 @@ import {
 import { useRouter } from 'next/router';
 import ConfessionSEO from '../../../shared/seo/ConfessionSEO';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setNewDeletedCfsByMe, setRecentCatIdsViewedByMe } from '@cfs/helper';
-import { RECENT_CAT_IDS_VIEWED_LOCAL_STORAGE_KEY } from '@cfs/common';
+import { setNewDeletedCfsByMe, setRecentCatIdsViewedByMe } from '@cfs/helper/reactiveVars';
+import { RECENT_CAT_IDS_VIEWED_LOCAL_STORAGE_KEY } from '@cfs/common/constants';
 import SubPageHeader from '../../Header/SubPageHeader';
 import { Box } from '@chakra-ui/react';
 

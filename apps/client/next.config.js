@@ -9,6 +9,7 @@ const nextConfig = {
     domains: ['confession.vn', 'storage.googleapis.com'],
   },
   trailingSlash: true,
+  // productionBrowserSourceMaps: true,
 };
 
 module.exports = withNx(withBundleAnalyzer(nextConfig));

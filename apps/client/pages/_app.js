@@ -5,7 +5,7 @@ import { DefaultSeo } from 'next-seo';
 import defaultSEOPropsConfigs from '../shared/seo/nextSEODefault.config';
 import '../../../libs/ui/src/lib/styles/global.scss';
 import MainLayout from '../components/Layout';
-import { withApollo } from '@cfs/helper';
+import { withApollo } from '@cfs/helper/withApollo';
 import Head from 'next/head';
 import { ChakraProvider } from "@chakra-ui/react"
 

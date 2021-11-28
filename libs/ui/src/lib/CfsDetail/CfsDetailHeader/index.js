@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import style from './style.module.scss';
 import { AiOutlineClose } from 'react-icons/ai';
-import { useGoBack } from '@cfs/common';
+import { useGoBack } from '@cfs/common/urls';
 import Link from 'next/link';
 import { Box, Icon } from '@chakra-ui/react';
 

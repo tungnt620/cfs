@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Box, Image as ChakraImage } from '@chakra-ui/react';
-import { useBooleanToggle } from '@cfs/helper';
+import { useBooleanToggle } from '@cfs/helper/hooks';
 import emptyImage from '../../images/empty.png';
 
 const CardContent = ({ cfs }) => {

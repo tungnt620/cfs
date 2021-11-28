@@ -10,13 +10,13 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
-import { Loading } from '@cfs/ui';
+import Loading from '@cfs/ui/common/Loading';
 import { AiOutlineHome } from 'react-icons/ai';
 import { FiSun } from 'react-icons/fi';
 import { BiCategory } from 'react-icons/bi';
 import { FaRegComment } from 'react-icons/fa';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setLatestCfsIDGetByMe, setLatestCommentIDGetByMe } from '@cfs/helper';
+import { setLatestCfsIDGetByMe, setLatestCommentIDGetByMe } from '@cfs/helper/reactiveVars';
 import { useSharedLazyQuery } from '@cfs/graphql';
 import Header from '../../Header';
 import { useRouter } from 'next/router';

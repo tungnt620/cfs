@@ -1,5 +1,5 @@
 import React from 'react';
-import { setNewDeletedCfsByMe } from '@cfs/helper';
+import { setNewDeletedCfsByMe } from '@cfs/helper/reactiveVars';
 import { useDeleteCfsMutation } from '@cfs/graphql';
 import {
   Button,

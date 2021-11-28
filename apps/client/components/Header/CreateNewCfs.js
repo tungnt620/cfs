@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Button } from "@chakra-ui/react"
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser, showPromoteLoginOrRegisterPopup } from '@cfs/helper';
+import { setCurrentUser, showPromoteLoginOrRegisterPopup } from '@cfs/helper/reactiveVars';
 import { useRouter } from 'next/router';
 
 const CreateNewCfs = () => {

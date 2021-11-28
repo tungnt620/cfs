@@ -17,11 +17,11 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "paths": {
-      "@cfs/common": ["libs/common/src/index.js"],
+      "@cfs/common/*": ["libs/common/src/lib/*"],
       "@cfs/config": ["libs/config/src/index.ts"],
-      "@cfs/helper": ["libs/helper/src/index.ts"],
-      "@cfs/ui": ["libs/ui/src/index.js"],
-      "@cfs/ui/icons": ["libs/ui/src/lib/icons/index.js"],
+      "@cfs/config/*": ["libs/config/src/*"],
+      "@cfs/helper/*": ["libs/helper/src/*"],
+      "@cfs/ui/*": ["libs/ui/src/lib/*"],
       "@cfs/graphql": ["libs/graphql/src/index.ts"]
     }
   },

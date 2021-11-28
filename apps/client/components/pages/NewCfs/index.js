@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { TEMP_CREATE_CFS_FORM_DATA_LOCAL_STORAGE_KEY } from '@cfs/common';
+import { TEMP_CREATE_CFS_FORM_DATA_LOCAL_STORAGE_KEY } from '@cfs/common/constants';
 import { useCreateCfsMutation } from '@cfs/graphql';
 import slugify from 'slugify';
-import {
-  setNewCfsCreatedByMe,
-  sendGAUserBehaviorEvent,
-  extractError,
-} from '@cfs/helper';
+import { setNewCfsCreatedByMe } from '@cfs/helper/reactiveVars';
+import { sendGAUserBehaviorEvent } from '@cfs/helper/analytics';
+import { extractError } from '@cfs/helper/errors';
 import { useRouter } from 'next/router';
 import {
   Alert,
-  AlertIcon, Box,
+  AlertIcon,
+  Box,
   Button,
   FormControl,
   FormErrorMessage,
   Select,
   Textarea,
-  useToast
+  useToast,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import SelectCatModal from './SelectCatModal';

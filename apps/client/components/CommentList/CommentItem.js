@@ -1,8 +1,10 @@
 import React from 'react';
 import { Box, Image as ChakraImage, Text } from '@chakra-ui/react';
 import Image from 'next/image';
-import { useBooleanToggle } from '@cfs/helper';
-import { Comment, emptyImage, Vote } from '@cfs/ui';
+import { useBooleanToggle } from '@cfs/helper/hooks';
+import emptyImage from '@cfs/ui/images/empty.png';
+import Comment from '@cfs/ui/common/Comment';
+import Vote from '@cfs/ui/CfsMiniCard/CardActions/Vote';
 import Link from 'next/link';
 
 const CommentItem = ({ comment }) => {

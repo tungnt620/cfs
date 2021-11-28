@@ -1,5 +1,5 @@
 import React from 'react';
-import { showFeedbacksModal } from '@cfs/helper';
+import { showFeedbacksModal } from '@cfs/helper/reactiveVars';
 import {
   Modal,
   ModalBody,
