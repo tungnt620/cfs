@@ -35,7 +35,7 @@ const UpdateCommentEditor = ({ comment, onClose }) => {
   }, [comment.id, content, onClose, toast, updateComment]);
 
   return (
-    <Box p={2} width={'100vh'}>
+    <Box p={2} minWidth={'300px'}>
       <FormControl mb={2}>
         <Textarea
           rows={4}
