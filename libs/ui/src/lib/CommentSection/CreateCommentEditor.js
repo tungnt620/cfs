@@ -39,7 +39,7 @@ const CreateCommentEditor = ({ onClose, cfsId, parentId }) => {
             isClosable: true,
             status: 'success',
           });
-          setNewCommentCreatedByMe(comment);
+          setNewCommentCreatedByMe({ ...comment, cfsId });
           setContent('');
         }
       );

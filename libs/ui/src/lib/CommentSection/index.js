@@ -5,8 +5,22 @@ import { useReactiveVar } from '@apollo/react-hooks';
 import { setNewCommentCreatedByMe } from '@cfs/helper/reactiveVars';
 import { useSetLatestCommentIDUserSaw } from '@cfs/helper/hooks';
 import { Box } from '@chakra-ui/react';
+import { useGetCommentsByCfsLazyQuery } from '@cfs/graphql';
+import { EMPTY_LIST } from '@cfs/common/constants';
 
-const CommentSection = ({ comments, cfsId }) => {
+const CommentSection = ({ cfsId }) => {
+  const [getComments, { data }] = useGetCommentsByCfsLazyQuery({
+    fetchPolicy: 'network-only',
+  });
+
+  const comments = data?.comments?.nodes || EMPTY_LIST;
+
+  useEffect(() => {
+    if (cfsId) {
+      getComments({ variables: { cfsId } });
+    }
+  }, [cfsId, getComments]);
+
   const [allComments, setAllComments] = useState([]);
   const newCommentCreatedByMe = useReactiveVar(setNewCommentCreatedByMe);
   const idChildrenComments = useMemo(() => {
@@ -35,10 +49,10 @@ const CommentSection = ({ comments, cfsId }) => {
   }, [comments]);
 
   useEffect(() => {
-    if (newCommentCreatedByMe) {
+    if (newCommentCreatedByMe && newCommentCreatedByMe.cfsId === cfsId) {
       setAllComments((prev) => [newCommentCreatedByMe, ...prev]);
     }
-  }, [newCommentCreatedByMe]);
+  }, [cfsId, newCommentCreatedByMe]);
 
   return (
     <div id="comments">
@@ -55,7 +69,6 @@ const CommentSection = ({ comments, cfsId }) => {
             />
           ))}
       </Box>
-
     </div>
   );
 };

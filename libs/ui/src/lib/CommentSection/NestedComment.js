@@ -108,7 +108,7 @@ const NestedComment = ({ comment, idChildrenComments, cfsId }) => {
       }
     >
       {idChildrenComments[comment.id]?.map((childComment) => (
-        <Box pt={4}>
+        <Box pt={4} key={childComment.id}>
           <NestedComment
             comment={childComment}
             idChildrenComments={idChildrenComments}

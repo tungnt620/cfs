@@ -2294,20 +2294,6 @@ export type CfsDetailPageQuery = (
     )>, comments: (
       { __typename?: 'CommentsConnection' }
       & Pick<CommentsConnection, 'totalCount'>
-      & { nodes: Array<(
-        { __typename?: 'Comment' }
-        & Pick<Comment, 'id' | 'authorName' | 'content' | 'image' | 'parentId' | 'createdAt' | 'totalReaction'>
-        & { userCommentReactions: (
-          { __typename?: 'UserCommentReactionsConnection' }
-          & { nodes: Array<(
-            { __typename?: 'UserCommentReaction' }
-            & Pick<UserCommentReaction, 'reactType'>
-          )> }
-        ), user?: Maybe<(
-          { __typename?: 'User' }
-          & Pick<User, 'username'>
-        )> }
-      )> }
     ), confessionCategories: (
       { __typename?: 'ConfessionCategoriesConnection' }
       & { nodes: Array<(
@@ -2604,6 +2590,32 @@ export type GetCommentsQuery = (
             )> }
           )> }
         ) }
+      )> }
+    )> }
+  )> }
+);
+
+export type GetCommentsByCfsQueryVariables = Exact<{
+  cfsId?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type GetCommentsByCfsQuery = (
+  { __typename?: 'Query' }
+  & { comments?: Maybe<(
+    { __typename?: 'CommentsConnection' }
+    & { nodes: Array<(
+      { __typename?: 'Comment' }
+      & Pick<Comment, 'id' | 'authorName' | 'content' | 'image' | 'parentId' | 'createdAt' | 'totalReaction'>
+      & { userCommentReactions: (
+        { __typename?: 'UserCommentReactionsConnection' }
+        & { nodes: Array<(
+          { __typename?: 'UserCommentReaction' }
+          & Pick<UserCommentReaction, 'reactType'>
+        )> }
+      ), user?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'username'>
       )> }
     )> }
   )> }
@@ -3238,23 +3250,6 @@ export const CfsDetailPageDocument = gql`
       username
     }
     comments(first: 500, orderBy: ID_DESC) {
-      nodes {
-        id
-        authorName
-        content
-        image
-        parentId
-        createdAt
-        totalReaction
-        userCommentReactions {
-          nodes {
-            reactType
-          }
-        }
-        user {
-          username
-        }
-      }
       totalCount
     }
     confessionCategories(first: 1) {
@@ -3897,6 +3892,57 @@ export function useGetCommentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetCommentsQueryHookResult = ReturnType<typeof useGetCommentsQuery>;
 export type GetCommentsLazyQueryHookResult = ReturnType<typeof useGetCommentsLazyQuery>;
 export type GetCommentsQueryResult = Apollo.QueryResult<GetCommentsQuery, GetCommentsQueryVariables>;
+export const GetCommentsByCfsDocument = gql`
+    query GetCommentsByCfs($cfsId: Int) {
+  comments(first: 500, orderBy: ID_DESC, condition: {confessionId: $cfsId}) {
+    nodes {
+      id
+      authorName
+      content
+      image
+      parentId
+      createdAt
+      totalReaction
+      userCommentReactions {
+        nodes {
+          reactType
+        }
+      }
+      user {
+        username
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCommentsByCfsQuery__
+ *
+ * To run a query within a React component, call `useGetCommentsByCfsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCommentsByCfsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCommentsByCfsQuery({
+ *   variables: {
+ *      cfsId: // value for 'cfsId'
+ *   },
+ * });
+ */
+export function useGetCommentsByCfsQuery(baseOptions?: Apollo.QueryHookOptions<GetCommentsByCfsQuery, GetCommentsByCfsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCommentsByCfsQuery, GetCommentsByCfsQueryVariables>(GetCommentsByCfsDocument, options);
+      }
+export function useGetCommentsByCfsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentsByCfsQuery, GetCommentsByCfsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCommentsByCfsQuery, GetCommentsByCfsQueryVariables>(GetCommentsByCfsDocument, options);
+        }
+export type GetCommentsByCfsQueryHookResult = ReturnType<typeof useGetCommentsByCfsQuery>;
+export type GetCommentsByCfsLazyQueryHookResult = ReturnType<typeof useGetCommentsByCfsLazyQuery>;
+export type GetCommentsByCfsQueryResult = Apollo.QueryResult<GetCommentsByCfsQuery, GetCommentsByCfsQueryVariables>;
 export const GetRelativeConfessionsDocument = gql`
     query GetRelativeConfessions($targetConfessionId: Int!) {
   getRelativeConfessions(targetConfessionId: $targetConfessionId) {

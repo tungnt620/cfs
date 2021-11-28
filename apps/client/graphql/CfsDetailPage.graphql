@@ -16,23 +16,6 @@ query CfsDetailPage($slug: String!) {
       username
     }
     comments(first: 500, orderBy: ID_DESC) {
-      nodes {
-        id
-        authorName
-        content
-        image
-        parentId
-        createdAt
-        totalReaction
-        userCommentReactions {
-          nodes {
-            reactType
-          }
-        }
-        user {
-          username
-        }
-      }
       totalCount
     }
     confessionCategories(first: 1) {

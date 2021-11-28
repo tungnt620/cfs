@@ -3,7 +3,7 @@ import CfsDetailHeader from './CfsDetailHeader';
 import Image from 'next/image';
 import dayjs from 'dayjs';
 import style from './CfsDetail.module.scss';
-import { useBooleanToggle,  } from '@cfs/helper/hooks';
+import { useBooleanToggle } from '@cfs/helper/hooks';
 import { findNumberOccurrenceInString } from '@cfs/helper/string';
 import Loading from '../common/Loading';
 import emptyImage from '../images/empty.png';
@@ -140,10 +140,7 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
         </Box>
       </Box>
 
-      <CommentSection
-        comments={cfsDetailPageData.comments.nodes}
-        cfsId={cfsDetailPageData.id}
-      />
+      <CommentSection cfsId={cfsDetailPageData.id} />
 
       {relativeCfsData && (
         <Box mt={8} ml={2} mr={2}>
