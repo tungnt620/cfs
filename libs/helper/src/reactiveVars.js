@@ -10,6 +10,8 @@ const isClient = typeof window !== 'undefined';
 export const setCurrentUser = makeVar({});
 export const showLoginPopup = makeVar(false);
 export const showRegisterPopup = makeVar(false);
+export const showRegisterWithoutPasswordPopup = makeVar(false);
+export const registerWithoutPasswordPopupNextAction = makeVar(undefined);
 export const showPromoteLoginOrRegisterPopup = makeVar(false);
 export const showFeedbacksModal = makeVar(false);
 export const setNewCfsCreatedByMe = makeVar(undefined);

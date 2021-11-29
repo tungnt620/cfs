@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { TEMP_CREATE_CFS_FORM_DATA_LOCAL_STORAGE_KEY } from '@cfs/common/constants';
 import { useCreateCfsMutation } from '@cfs/graphql';
 import slugify from 'slugify';
-import { setNewCfsCreatedByMe } from '@cfs/helper/reactiveVars';
+import {
+  registerWithoutPasswordPopupNextAction,
+  setCurrentUser,
+  setNewCfsCreatedByMe,
+  showRegisterWithoutPasswordPopup,
+} from '@cfs/helper/reactiveVars';
 import { sendGAUserBehaviorEvent } from '@cfs/helper/analytics';
 import { extractError } from '@cfs/helper/errors';
 import { useRouter } from 'next/router';
@@ -20,12 +25,14 @@ import {
 import { useForm } from 'react-hook-form';
 import SelectCatModal from './SelectCatModal';
 import SubPageHeader from '../../Header/SubPageHeader';
+import { useReactiveVar } from '@apollo/react-hooks';
 
 const NewCfs = () => {
   const router = useRouter();
   const toast = useToast();
   const [selectedCat, setSelectedCat] = useState(null);
   const [isOpenSelectCatIdModel, setIsOpenSelectCatIdModel] = useState(false);
+  const currentUser = useReactiveVar(setCurrentUser);
 
   const {
     handleSubmit,
@@ -103,12 +110,21 @@ const NewCfs = () => {
     }
   }, [createCfsData, router, toast]);
 
+  const onClickSendBtn = () => {
+    if (!currentUser?.id) {
+      showRegisterWithoutPasswordPopup(true);
+      registerWithoutPasswordPopupNextAction(() => handleSubmit(onSubmit));
+    } else {
+      handleSubmit(onSubmit)();
+    }
+  };
+
   return (
     <>
       <SubPageHeader
         rightActions={
           <Button
-            onClick={handleSubmit(onSubmit)}
+            onClick={onClickSendBtn}
             isLoading={createCfsLoading || isSubmitting}
             disabled={!selectedCat?.id}
           >

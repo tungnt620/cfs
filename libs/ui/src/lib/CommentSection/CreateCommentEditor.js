@@ -2,8 +2,9 @@ import React, { useCallback, useState } from 'react';
 import { useCreateCommentMutation } from '@cfs/graphql';
 import {
   setCurrentUser,
-  showPromoteLoginOrRegisterPopup,
   setNewCommentCreatedByMe,
+  showRegisterWithoutPasswordPopup,
+  registerWithoutPasswordPopupNextAction,
 } from '@cfs/helper/reactiveVars';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { Box, Button, FormControl, Textarea, useToast } from '@chakra-ui/react';
@@ -18,33 +19,38 @@ const CreateCommentEditor = ({ onClose, cfsId, parentId }) => {
   const onChangeWrap = useCallback((e) => setContent(e.target.value), []);
 
   const addNewComment = useCallback(() => {
-    if (!currentUser?.id) {
-      showPromoteLoginOrRegisterPopup(true);
-    } else {
-      createComment({
-        variables: {
-          confessionId: cfsId,
-          content,
-          parentId,
+    createComment({
+      variables: {
+        confessionId: cfsId,
+        content,
+        parentId,
+      },
+    }).then(
+      ({
+        data: {
+          createComment: { comment },
         },
-      }).then(
-        ({
-          data: {
-            createComment: { comment },
-          },
-        }) => {
-          toast({
-            title: 'Bình luận của bạn đã được gửi',
-            position: 'top',
-            isClosable: true,
-            status: 'success',
-          });
-          setNewCommentCreatedByMe({ ...comment, cfsId });
-          setContent('');
-        }
-      );
+      }) => {
+        toast({
+          title: 'Bình luận của bạn đã được gửi',
+          position: 'top',
+          isClosable: true,
+          status: 'success',
+        });
+        setNewCommentCreatedByMe({ ...comment, cfsId });
+        setContent('');
+      }
+    );
+  }, [cfsId, content, createComment, parentId, toast]);
+
+  const onClickSendBtn = useCallback(() => {
+    if (!currentUser?.id) {
+      showRegisterWithoutPasswordPopup(true);
+      registerWithoutPasswordPopupNextAction(() => addNewComment);
+    } else {
+      addNewComment();
     }
-  }, [cfsId, content, createComment, currentUser?.id, parentId, toast]);
+  }, [addNewComment, currentUser?.id]);
 
   return (
     <Box p={2}>
@@ -70,10 +76,10 @@ const CreateCommentEditor = ({ onClose, cfsId, parentId }) => {
 
           <Button
             isLoading={loading}
-            onClick={addNewComment}
+            onClick={onClickSendBtn}
             isDisabled={!content?.length}
           >
-            {currentUser?.id ? 'Gửi' : 'Đăng nhập để gửi'}
+            Gửi
           </Button>
         </Box>
       </FormControl>

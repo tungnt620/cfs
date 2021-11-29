@@ -5,7 +5,10 @@ import {
   useCreateOrUpdateConfessionReactionMutation,
 } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
-import { setCurrentUser, showPromoteLoginOrRegisterPopup } from '@cfs/helper/reactiveVars';
+import {
+  setCurrentUser,
+  showPromoteLoginOrRegisterPopup,
+} from '@cfs/helper/reactiveVars';
 import { Box, Icon } from '@chakra-ui/react';
 import { BiUpvote, BiDownvote } from 'react-icons/bi';
 
@@ -134,8 +137,8 @@ const Vote = ({ voteNo = 0, confessionId, commentId, oldUserAction }) => {
   return (
     <Box
       display={'flex'}
-      alignItems='center'
-      h={8}
+      alignItems="center"
+      h={10}
       b={1}
       border={'1px solid #efefed'}
       w={'max'}
@@ -144,26 +147,23 @@ const Vote = ({ voteNo = 0, confessionId, commentId, oldUserAction }) => {
       <Box p={2} onClick={upVote}>
         <Icon
           as={BiUpvote}
-          className={`color2 ${action === ReactionType.Up ? 'color3' : ''}`}
-          h={4}
-          w={4}
+          color={
+            action === ReactionType.Up ? 'var(--color-3)' : 'var(--color-2)'
+          }
+          boxSize={'1.2rem'}
           cursor={'pointer'}
         />
       </Box>
-      <Box
-        as={'span'}
-        fontSize={'0.75rem'}
-        lineHeight={'1rem'}
-        color={'#56595a'}
-      >
+      <Box as={'span'} fontSize={'1.2rem'} color={'#56595a'}>
         {localVoteNo}
       </Box>
       <Box p={2} onClick={downVote}>
         <Icon
           as={BiDownvote}
-          className={`color2 ${action === ReactionType.Up ? 'color3' : ''}`}
-          h={4}
-          w={4}
+          color={
+            action === ReactionType.Down ? 'var(--color-3)' : 'var(--color-2)'
+          }
+          boxSize={'1.2rem'}
           cursor={'pointer'}
         />
       </Box>

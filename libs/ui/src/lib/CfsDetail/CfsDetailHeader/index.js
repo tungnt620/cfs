@@ -69,7 +69,7 @@ const CfsDetailHeader = ({ cat = {} }) => {
           <Box position="relative">
             <Icon
               className={style.iconX}
-              boxSize={'1.5rem'}
+              boxSize={'1.8rem'}
               as={AiOutlineClose}
               onClick={goBack}
             />

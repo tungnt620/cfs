@@ -5,6 +5,7 @@ import {
   showLoginPopup,
   showPromoteLoginOrRegisterPopup,
   showRegisterPopup,
+  showRegisterWithoutPasswordPopup,
 } from '@cfs/helper/reactiveVars';
 import { useSharedLazyQuery } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
@@ -21,6 +22,12 @@ const FeedbacksModal = dynamic(() => import('../Feedbacks/FeedbacksModal'), {
 const LoginPopup = dynamic(() => import('../LoginPopup'), {
   loading: () => <Loading />,
 });
+const RegisterWithoutPasswordPopup = dynamic(
+  () => import('../RegisterWithoutPasswordPopup'),
+  {
+    loading: () => <Loading />,
+  }
+);
 const PromoteLoginOrRegister = dynamic(
   () => import('../PromoteLoginOrRegister'),
   { loading: () => <Loading /> }
@@ -31,6 +38,9 @@ const MainLayout = ({ children }) => {
 
   const loginPopupVisible = useReactiveVar(showLoginPopup);
   const registerPopupVisible = useReactiveVar(showRegisterPopup);
+  const registerWithoutPasswordPopupVisible = useReactiveVar(
+    showRegisterWithoutPasswordPopup
+  );
   const feedbacksModalVisible = useReactiveVar(showFeedbacksModal);
   const promoteLoginOrRegisterPopupVisible = useReactiveVar(
     showPromoteLoginOrRegisterPopup
@@ -52,6 +62,7 @@ const MainLayout = ({ children }) => {
 
       {loginPopupVisible && <LoginPopup />}
       {registerPopupVisible && <RegisterPopup />}
+      {registerWithoutPasswordPopupVisible && <RegisterWithoutPasswordPopup />}
       {feedbacksModalVisible && <FeedbacksModal />}
       {promoteLoginOrRegisterPopupVisible && <PromoteLoginOrRegister />}
     </>
