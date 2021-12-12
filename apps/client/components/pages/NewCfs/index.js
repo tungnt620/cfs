@@ -80,7 +80,7 @@ const NewCfs = () => {
     const title = newCfs.title;
     const slug = slugify(title.substring(0, 50), {
       replacement: '-',
-      remove: /[*+~.()'"!:@?]/g,
+      remove: /[#*+~.()'"!:@?]/g,
       lower: true,
       locale: 'vi',
     });
