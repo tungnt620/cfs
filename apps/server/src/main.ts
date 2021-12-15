@@ -1,12 +1,20 @@
-import { setEnv } from '@cfs/config'
-setEnv();
+import { setEnv } from '@cfs/config';
 import { makeApp } from './app';
+import generateV4WriteSignedUrl from '@cfs/helper/gcs/generateV4WriteSignedUrl';
+
+setEnv();
 
 async function main() {
   const app = await makeApp();
 
   app.get('/api', (req, res) => {
     res.send({ message: 'Welcome to server!' });
+  });
+
+  app.post('/api/gcs/signed-url/:fileExt', async (req, res) => {
+    const fileExt = req.params.fileExt;
+    const signedUrl = await generateV4WriteSignedUrl(fileExt);
+    res.send({ signedUrl });
   });
 
   const port = process.env.PORT || 3333;

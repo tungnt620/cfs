@@ -1,0 +1,7 @@
+mutation CreateCategory($name: String!, $slug: String!, $image: String!, $bannerImage: String) {
+  createCategory(
+    input: {category: {name: $name, slug: $slug, image: $image, bannerImage: $bannerImage}}
+  ) {
+    clientMutationId
+  }
+}

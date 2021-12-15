@@ -26,6 +26,8 @@ type CategoriesEdge {
 
 """Methods to use when ordering `Category`."""
 enum CategoriesOrderBy {
+  CREATED_BY_ASC
+  CREATED_BY_DESC
   ID_ASC
   ID_DESC
   NATURAL
@@ -36,6 +38,8 @@ enum CategoriesOrderBy {
 }
 
 type Category {
+  bannerImage: String
+
   """Reads and enables pagination through a set of `ConfessionCategory`."""
   confessionCategories(
     """Read all values in the set after (below) this cursor."""
@@ -65,11 +69,16 @@ type Category {
     orderBy: [ConfessionCategoriesOrderBy!] = [NATURAL]
   ): ConfessionCategoriesConnection!
   createdAt: Datetime!
+  createdBy: UUID
+  deletedAt: Datetime
   id: Int!
   image: String
   name: String!
   slug: String!
   updatedAt: Datetime!
+
+  """Reads a single `User` that is related to this `Category`."""
+  userByCreatedBy: User
 }
 
 """
@@ -77,6 +86,9 @@ A condition to be used against `Category` object types. All fields are tested
 for equality and combined with a logical ‘and.’
 """
 input CategoryCondition {
+  """Checks for equality with the object’s `createdBy` field."""
+  createdBy: UUID
+
   """Checks for equality with the object’s `id` field."""
   id: Int
 
@@ -86,6 +98,7 @@ input CategoryCondition {
 
 """An input for mutations affecting `Category`"""
 input CategoryInput {
+  bannerImage: String
   image: String
   name: String!
   slug: String!
@@ -95,6 +108,8 @@ input CategoryInput {
 Represents an update to a `Category`. Fields that are set will be updated.
 """
 input CategoryPatch {
+  bannerImage: String
+  deletedAt: Datetime
   image: String
   name: String
   slug: String
@@ -582,6 +597,9 @@ type CreateCategoryPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `Category`."""
+  userByCreatedBy: User
 }
 
 """All input for the `createCfs` mutation."""
@@ -1881,6 +1899,9 @@ type UpdateCategoryPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `Category`."""
+  userByCreatedBy: User
 }
 
 """All input for the `updateComment` mutation."""
@@ -2057,6 +2078,35 @@ type User {
   """Optional avatar URL."""
   avatarUrl: String
 
+  """Reads and enables pagination through a set of `Category`."""
+  categoriesByCreatedBy(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: CategoryCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Category`."""
+    orderBy: [CategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CategoriesConnection!
+
   """Reads and enables pagination through a set of `Comment`."""
   comments(
     """Read all values in the set after (below) this cursor."""
@@ -2155,6 +2205,7 @@ type User {
 
   """Public-facing name (or pseudonym) of the user."""
   name: String
+  role: String
   updatedAt: Datetime!
 
   """Reads and enables pagination through a set of `UserAuthentication`."""

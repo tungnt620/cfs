@@ -9,5 +9,6 @@ module.exports = {
     '<rootDir>/apps/worker',
     '<rootDir>/apps/db',
     '<rootDir>/libs/graphql',
+    '<rootDir>/libs/api',
   ],
 };

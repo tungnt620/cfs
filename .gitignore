@@ -43,3 +43,4 @@ Thumbs.db
 .env
 
 /data/static/sitemap*.*
+google-cloud-key.json

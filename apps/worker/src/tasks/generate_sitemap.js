@@ -23,7 +23,7 @@ FROM
       string_agg(ct.name, ', ') category_names
     FROM
       app_public.confession_category cc
-      LEFT JOIN app_public.category ct ON ct.id = cc.category_id
+      LEFT JOIN app_public.category ct ON ct.id = cc.category_id and ct.deleted_at is null
     GROUP BY
       cc.confession_id) s ON s.confession_id = c.id
 ORDER BY
@@ -91,6 +91,8 @@ FROM
           max(confession_id) AS confession_id
         FROM
           app_public.confession_category
+        WHERE
+          c.deleted_at IS NULL
         GROUP BY
           category_id) AS cc ON c.id = cc.confession_id) subquery ON subquery.category_id = ct.id
       `,

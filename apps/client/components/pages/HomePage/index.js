@@ -27,7 +27,7 @@ const Confessions = dynamic(() => import('./Confessions'), {
 const CommentList = dynamic(() => import('../../CommentList'), {
   loading: () => <Loading />,
 });
-const Categories = dynamic(() => import('./Categories'), {
+const Categories = dynamic(() => import('./Communities'), {
   loading: () => <Loading />,
 });
 const Intro = dynamic(() => import('./Intro'), {

@@ -20,9 +20,10 @@
       "@cfs/common/*": ["libs/common/src/lib/*"],
       "@cfs/config": ["libs/config/src/index.ts"],
       "@cfs/config/*": ["libs/config/src/*"],
+      "@cfs/graphql": ["libs/graphql/src/index.ts"],
       "@cfs/helper/*": ["libs/helper/src/*"],
       "@cfs/ui/*": ["libs/ui/src/lib/*"],
-      "@cfs/graphql": ["libs/graphql/src/index.ts"]
+      "@cfs/api/*": ["libs/api/src/lib/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

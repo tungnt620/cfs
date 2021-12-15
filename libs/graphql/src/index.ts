@@ -47,6 +47,8 @@ export type CategoriesEdge = {
 
 /** Methods to use when ordering `Category`. */
 export enum CategoriesOrderBy {
+  CreatedByAsc = 'CREATED_BY_ASC',
+  CreatedByDesc = 'CREATED_BY_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   Natural = 'NATURAL',
@@ -58,14 +60,19 @@ export enum CategoriesOrderBy {
 
 export type Category = {
   __typename?: 'Category';
+  bannerImage?: Maybe<Scalars['String']>;
   /** Reads and enables pagination through a set of `ConfessionCategory`. */
   confessionCategories: ConfessionCategoriesConnection;
   createdAt: Scalars['Datetime'];
+  createdBy?: Maybe<Scalars['UUID']>;
+  deletedAt?: Maybe<Scalars['Datetime']>;
   id: Scalars['Int'];
   image?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   slug: Scalars['String'];
   updatedAt: Scalars['Datetime'];
+  /** Reads a single `User` that is related to this `Category`. */
+  userByCreatedBy?: Maybe<User>;
 };
 
 
@@ -84,6 +91,8 @@ export type CategoryConfessionCategoriesArgs = {
  * for equality and combined with a logical ‘and.’
  */
 export type CategoryCondition = {
+  /** Checks for equality with the object’s `createdBy` field. */
+  createdBy?: Maybe<Scalars['UUID']>;
   /** Checks for equality with the object’s `id` field. */
   id?: Maybe<Scalars['Int']>;
   /** Checks for equality with the object’s `slug` field. */
@@ -92,6 +101,7 @@ export type CategoryCondition = {
 
 /** An input for mutations affecting `Category` */
 export type CategoryInput = {
+  bannerImage?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   slug: Scalars['String'];
@@ -99,6 +109,8 @@ export type CategoryInput = {
 
 /** Represents an update to a `Category`. Fields that are set will be updated. */
 export type CategoryPatch = {
+  bannerImage?: Maybe<Scalars['String']>;
+  deletedAt?: Maybe<Scalars['Datetime']>;
   image?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
@@ -461,6 +473,8 @@ export type CreateCategoryPayload = {
   clientMutationId?: Maybe<Scalars['String']>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query?: Maybe<Query>;
+  /** Reads a single `User` that is related to this `Category`. */
+  userByCreatedBy?: Maybe<User>;
 };
 
 
@@ -1639,6 +1653,8 @@ export type UpdateCategoryPayload = {
   clientMutationId?: Maybe<Scalars['String']>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query?: Maybe<Query>;
+  /** Reads a single `User` that is related to this `Category`. */
+  userByCreatedBy?: Maybe<User>;
 };
 
 
@@ -1799,6 +1815,8 @@ export type User = {
   __typename?: 'User';
   /** Optional avatar URL. */
   avatarUrl?: Maybe<Scalars['String']>;
+  /** Reads and enables pagination through a set of `Category`. */
+  categoriesByCreatedBy: CategoriesConnection;
   /** Reads and enables pagination through a set of `Comment`. */
   comments: CommentsConnection;
   /** Reads and enables pagination through a set of `Confession`. */
@@ -1814,6 +1832,7 @@ export type User = {
   isVerified: Scalars['Boolean'];
   /** Public-facing name (or pseudonym) of the user. */
   name?: Maybe<Scalars['String']>;
+  role?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Datetime'];
   /** Reads and enables pagination through a set of `UserAuthentication`. */
   userAuthenticationsList: Array<UserAuthentication>;
@@ -1825,6 +1844,18 @@ export type User = {
   userEmails: UserEmailsConnection;
   /** Public-facing username (or 'handle') of the user. */
   username: Scalars['String'];
+};
+
+
+/** A user who can log in to the application. */
+export type UserCategoriesByCreatedByArgs = {
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  condition?: Maybe<CategoryCondition>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Array<CategoriesOrderBy>>;
 };
 
 
@@ -2331,6 +2362,22 @@ export type ConfirmAccountDeletionMutation = (
   & { confirmAccountDeletion?: Maybe<(
     { __typename?: 'ConfirmAccountDeletionPayload' }
     & Pick<ConfirmAccountDeletionPayload, 'success'>
+  )> }
+);
+
+export type CreateCategoryMutationVariables = Exact<{
+  name: Scalars['String'];
+  slug: Scalars['String'];
+  image: Scalars['String'];
+  bannerImage?: Maybe<Scalars['String']>;
+}>;
+
+
+export type CreateCategoryMutation = (
+  { __typename?: 'Mutation' }
+  & { createCategory?: Maybe<(
+    { __typename?: 'CreateCategoryPayload' }
+    & Pick<CreateCategoryPayload, 'clientMutationId'>
   )> }
 );
 
@@ -3359,6 +3406,44 @@ export function useConfirmAccountDeletionMutation(baseOptions?: Apollo.MutationH
 export type ConfirmAccountDeletionMutationHookResult = ReturnType<typeof useConfirmAccountDeletionMutation>;
 export type ConfirmAccountDeletionMutationResult = Apollo.MutationResult<ConfirmAccountDeletionMutation>;
 export type ConfirmAccountDeletionMutationOptions = Apollo.BaseMutationOptions<ConfirmAccountDeletionMutation, ConfirmAccountDeletionMutationVariables>;
+export const CreateCategoryDocument = gql`
+    mutation CreateCategory($name: String!, $slug: String!, $image: String!, $bannerImage: String) {
+  createCategory(
+    input: {category: {name: $name, slug: $slug, image: $image, bannerImage: $bannerImage}}
+  ) {
+    clientMutationId
+  }
+}
+    `;
+export type CreateCategoryMutationFn = Apollo.MutationFunction<CreateCategoryMutation, CreateCategoryMutationVariables>;
+
+/**
+ * __useCreateCategoryMutation__
+ *
+ * To run a mutation, you first call `useCreateCategoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCategoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCategoryMutation, { data, loading, error }] = useCreateCategoryMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      slug: // value for 'slug'
+ *      image: // value for 'image'
+ *      bannerImage: // value for 'bannerImage'
+ *   },
+ * });
+ */
+export function useCreateCategoryMutation(baseOptions?: Apollo.MutationHookOptions<CreateCategoryMutation, CreateCategoryMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCategoryMutation, CreateCategoryMutationVariables>(CreateCategoryDocument, options);
+      }
+export type CreateCategoryMutationHookResult = ReturnType<typeof useCreateCategoryMutation>;
+export type CreateCategoryMutationResult = Apollo.MutationResult<CreateCategoryMutation>;
+export type CreateCategoryMutationOptions = Apollo.BaseMutationOptions<CreateCategoryMutation, CreateCategoryMutationVariables>;
 export const CreateCfsDocument = gql`
     mutation CreateCfs($title: String!, $content: String!, $slug: String!, $catId: Int!, $image: String = "") {
   createCfs(
