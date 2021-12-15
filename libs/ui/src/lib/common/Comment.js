@@ -32,7 +32,7 @@ const Comment = ({ username, time, content, actions, mb, children }) => {
             </Box>
           </Box>
           <Box mt={1}>
-            <Text>{content}</Text>
+            <Text whiteSpace='pre-line'>{content}</Text>
             {actions && <Box mt={2}>{actions}</Box>}
           </Box>
         </Box>
