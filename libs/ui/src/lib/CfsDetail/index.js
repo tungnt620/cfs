@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import CfsDetailHeader from './CfsDetailHeader';
 import Image from 'next/image';
 import dayjs from 'dayjs';
@@ -27,19 +27,42 @@ dayjs.locale('vi');
 const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
+const youtubeSubLinkRegex = /.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^ \n#&?]*).*/g;
+const youtubeLinkRegex = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^ \n#&?]*).*/;
+
+function addYoutubeEmbed(content) {
+  let newContent = content;
+  const youtubeLinks = newContent.match(youtubeSubLinkRegex);
+
+  if (youtubeLinks?.length) {
+    for (const youtubeLink of youtubeLinks) {
+      const videoId = youtubeLink.match(youtubeLinkRegex)[2];
+      const embedLink = `https://www.youtube.com/embed/${videoId}`;
+      const embedYoutube = `<div style='width: 100%; display: flex; justify-content: center'><iframe style='width: 400px; height: 315px;' src='${embedLink}' allowfullscreen></iframe></div>`;
+      newContent = newContent.split(youtubeLink).join(embedYoutube);
+    }
+  }
+
+  return newContent;
+}
+
 const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
   const [expandedThumbnail, toggleExpandedThumbnail] = useBooleanToggle(false);
   const userData = cfsDetailPageData.user;
   const catData = cfsDetailPageData.confessionCategories.nodes[0]?.category;
+  const [content, setContent] = useState(cfsDetailPageData.content);
 
   const isTitleCopyFromContent = useMemo(() => {
-    const content = cfsDetailPageData.content.substring(0, 200);
+    const firstParagraph = cfsDetailPageData.content.substring(0, 200);
     return (
-      content.replace(/[\r\n]+/g, '. ').includes(cfsDetailPageData.title) ||
-      content.replace(/[\r\n]+/g, ' ').includes(cfsDetailPageData.title)
+      firstParagraph
+        .replace(/[\r\n]+/g, '. ')
+        .includes(cfsDetailPageData.title) ||
+      firstParagraph.replace(/[\r\n]+/g, ' ').includes(cfsDetailPageData.title)
     );
   }, [cfsDetailPageData.content, cfsDetailPageData.title]);
 
+  // TODO: Fix this, use approach like youtube embed
   const isContainSelfLink = useMemo(() => {
     const numberOfLink = findNumberOccurrenceInString(
       cfsDetailPageData.content,
@@ -50,6 +73,12 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
       '<a href="https://confession.vn'
     );
     return numberOfSelfLink === numberOfLink;
+  }, [cfsDetailPageData.content]);
+
+  useEffect(() => {
+    if (cfsDetailPageData.content) {
+      setContent(addYoutubeEmbed(cfsDetailPageData.content));
+    }
   }, [cfsDetailPageData.content]);
 
   return (
@@ -127,11 +156,11 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
             mb={4}
             whiteSpace={'pre-line'}
             className={style.highlightLink}
-            dangerouslySetInnerHTML={{ __html: cfsDetailPageData.content }}
+            dangerouslySetInnerHTML={{ __html: content }}
           />
         ) : (
           <Box pt={2} mb={4} whiteSpace={'pre-line'}>
-            {cfsDetailPageData.content}
+            {content}
           </Box>
         )}
 
