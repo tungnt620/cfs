@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import emptyImage from '../images/empty.png';
-import { Box, Image as ChakraImage } from '@chakra-ui/react';
+import { Box, Image as ChakraImage, Button } from '@chakra-ui/react';
 import CreateCommentEditor from './CreateCommentEditor';
 import Vote from '../CfsMiniCard/CardActions/Vote';
 import dayjs from 'dayjs';
@@ -9,8 +9,8 @@ import { useReactiveVar } from '@apollo/react-hooks';
 import { setCurrentUser } from '@cfs/helper/reactiveVars';
 import UpdateCommentEditor from './UpdateCommentEditor';
 import { useBooleanToggle } from '@cfs/helper/hooks';
-import { Button } from '@chakra-ui/react';
 import Comment from '../common/Comment';
+import { addYoutubeEmbed } from '@cfs/common/embedContent';
 
 require('dayjs/locale/vi');
 dayjs.locale('vi');
@@ -23,6 +23,13 @@ const NestedComment = ({ comment, idChildrenComments, cfsId }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isShowCommentEditor, setIsShowCommentEditor] = useState(false);
   const currentUser = useReactiveVar(setCurrentUser);
+  const [content, setContent] = useState([comment.content]);
+
+  useEffect(() => {
+    if (comment.content) {
+      setContent(addYoutubeEmbed(comment.content));
+    }
+  }, [comment.content]);
 
   const toggleShowComment = useCallback(() => {
     setIsShowCommentEditor((prev) => !prev);
@@ -74,7 +81,7 @@ const NestedComment = ({ comment, idChildrenComments, cfsId }) => {
                 </Box>
               )
             )}
-            {comment.content}
+            <Box whiteSpace={'pre-line'}>{content.map((item) => item)}</Box>
           </>
         )
       }

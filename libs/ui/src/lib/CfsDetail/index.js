@@ -10,6 +10,7 @@ import emptyImage from '../images/empty.png';
 import { AiOutlineUser } from 'react-icons/ai';
 import { Image as ChakraImage, Avatar, Box } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
+import { addYoutubeEmbed } from '@cfs/common/embedContent';
 
 const CommentSection = dynamic(() => import('../CommentSection'), {
   loading: () => <Loading />,
@@ -27,30 +28,11 @@ dayjs.locale('vi');
 const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
-const youtubeSubLinkRegex = /.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^ \n#&?]*).*/g;
-const youtubeLinkRegex = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^ \n#&?]*).*/;
-
-function addYoutubeEmbed(content) {
-  let newContent = content;
-  const youtubeLinks = newContent.match(youtubeSubLinkRegex);
-
-  if (youtubeLinks?.length) {
-    for (const youtubeLink of youtubeLinks) {
-      const videoId = youtubeLink.match(youtubeLinkRegex)[2];
-      const embedLink = `https://www.youtube.com/embed/${videoId}`;
-      const embedYoutube = `<div style='width: 100%; display: flex; justify-content: center'><iframe style='width: 400px; height: 315px;' src='${embedLink}' allowfullscreen></iframe></div>`;
-      newContent = newContent.split(youtubeLink).join(embedYoutube);
-    }
-  }
-
-  return newContent;
-}
-
 const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
   const [expandedThumbnail, toggleExpandedThumbnail] = useBooleanToggle(false);
   const userData = cfsDetailPageData.user;
   const catData = cfsDetailPageData.confessionCategories.nodes[0]?.category;
-  const [content, setContent] = useState(cfsDetailPageData.content);
+  const [content, setContent] = useState([cfsDetailPageData.content]);
 
   const isTitleCopyFromContent = useMemo(() => {
     const firstParagraph = cfsDetailPageData.content.substring(0, 200);
@@ -72,7 +54,7 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
       cfsDetailPageData.content,
       '<a href="https://confession.vn'
     );
-    return numberOfSelfLink === numberOfLink;
+    return numberOfSelfLink === numberOfLink && numberOfSelfLink > 0;
   }, [cfsDetailPageData.content]);
 
   useEffect(() => {
@@ -156,11 +138,11 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
             mb={4}
             whiteSpace={'pre-line'}
             className={style.highlightLink}
-            dangerouslySetInnerHTML={{ __html: content }}
+            dangerouslySetInnerHTML={{ __html: content?.[0] }}
           />
         ) : (
           <Box pt={2} mb={4} whiteSpace={'pre-line'}>
-            {content}
+            {content.map(item => item)}
           </Box>
         )}
 
