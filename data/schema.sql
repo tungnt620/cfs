@@ -123,6 +123,7 @@ CREATE TABLE app_public.users (
     is_verified boolean DEFAULT false NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    role character varying(255),
     CONSTRAINT users_avatar_url_check CHECK ((avatar_url ~ '^https?://[^/]+'::text)),
     CONSTRAINT users_username_check CHECK (((length((username)::text) >= 2) AND (length((username)::text) <= 24)))
 );
@@ -918,7 +919,8 @@ CREATE TABLE app_public.confession (
     slug character varying(120),
     image character varying(255),
     user_id uuid DEFAULT app_public.current_user_id(),
-    total_reaction integer DEFAULT 0 NOT NULL
+    total_reaction integer DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone
 );
 
 
@@ -1053,10 +1055,34 @@ COMMENT ON FUNCTION app_public."current_user"() IS 'The currently logged in user
 
 
 --
+-- Name: delete_category(integer); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.delete_category(cat_id integer) RETURNS void
+    LANGUAGE plpgsql SECURITY DEFINER
+    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
+    AS $$
+begin
+  if exists(
+    select 1
+    from app_public.category
+    where (
+      created_by = app_public.current_user_id()
+      or exists ( select * from app_public.users where id = app_public.current_user_id() and is_admin = true )
+    )
+    and id = cat_id
+  ) then
+    update app_public.category set deleted_at = now() where id = cat_id;
+  end if;
+end;
+$$;
+
+
+--
 -- Name: delete_cfs(integer); Type: FUNCTION; Schema: app_public; Owner: -
 --
 
-CREATE FUNCTION app_public.delete_cfs(confession_id integer) RETURNS void
+CREATE FUNCTION app_public.delete_cfs(p_confession_id integer) RETURNS void
     LANGUAGE plpgsql SECURITY DEFINER
     SET search_path TO 'pg_catalog', 'public', 'pg_temp'
     AS $$
@@ -1067,10 +1093,17 @@ begin
     where (
       user_id = app_public.current_user_id()
       or exists ( select * from app_public.users where id = app_public.current_user_id() and is_admin = true )
+      -- Can delete confessions belong communities which created by current user
+      or exists (
+        select * from app_public.confession c
+        left join app_public.confession_category cc on c.id = cc.confession_id
+        LEFT join app_public.category ca on cc.category_id = ca.id
+        where c.id = p_confession_id and ca.created_by = app_public.current_user_id()
+      )
     )
-    and id = confession_id
+    and id = p_confession_id
   ) then
-    delete from app_public.confession where id = confession_id;
+    update app_public.confession set deleted_at = now() where id = p_confession_id;
   end if;
 end;
 $$;
@@ -1191,8 +1224,11 @@ CREATE FUNCTION app_public.get_cfs_by_cat(cat_id integer) RETURNS SETOF app_publ
 	FROM
 		app_public.confession c
 	LEFT JOIN app_public.confession_category cc ON c.id = cc.confession_id
+	left join app_public.category ca on cc.category_id = ca.id
 WHERE
-	cat_id = 0 or cc.category_id = cat_id
+  c.deleted_at is null
+  and ca.deleted_at is null
+	and (cat_id = 0 or cc.category_id = cat_id)
 ORDER BY
 	c.id DESC;
 $$;
@@ -1227,8 +1263,10 @@ CREATE FUNCTION app_public.get_relative_confessions(target_confession_id integer
     AS $$
   select * from app_public.confession where id in (
    select confession_id from app_public.confession_category where confession_id < target_confession_id and category_id in (
-      select category_id from app_public.confession_category where confession_id = target_confession_id limit 1
-   )
+      select category_id from app_public.confession_category cc
+      left join app_public.category ca on cc.category_id = ca.id
+      where ca.deleted_at is null and confession_id = target_confession_id limit 1
+   ) and deleted_at is null
    order by confession_id desc
    limit 3
   )
@@ -1743,7 +1781,10 @@ CREATE TABLE app_public.category (
     slug character varying(50),
     image character varying(255),
     created_at timestamp with time zone DEFAULT now(),
-    updated_at timestamp with time zone DEFAULT now()
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone,
+    created_by uuid DEFAULT app_public.current_user_id(),
+    banner_image character varying(255)
 );
 
 
@@ -2196,6 +2237,20 @@ CREATE INDEX sessions_user_id_idx ON app_private.sessions USING btree (user_id);
 
 
 --
+-- Name: category_created_by_idx; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX category_created_by_idx ON app_public.category USING btree (created_by);
+
+
+--
+-- Name: category_deleted_at_idx; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX category_deleted_at_idx ON app_public.category USING btree (deleted_at);
+
+
+--
 -- Name: comment_confession_id_index; Type: INDEX; Schema: app_public; Owner: -
 --
 
@@ -2221,6 +2276,13 @@ CREATE INDEX confession_category_category_id_index ON app_public.confession_cate
 --
 
 CREATE INDEX confession_category_confession_id_index ON app_public.confession_category USING btree (confession_id);
+
+
+--
+-- Name: confession_deleted_at_idx; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX confession_deleted_at_idx ON app_public.confession USING btree (deleted_at);
 
 
 --
@@ -2508,6 +2570,14 @@ ALTER TABLE ONLY app_private.user_secrets
 
 
 --
+-- Name: category category_created_by_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.category
+    ADD CONSTRAINT category_created_by_fkey FOREIGN KEY (created_by) REFERENCES app_public.users(id) ON DELETE SET NULL;
+
+
+--
 -- Name: comment comment_parent_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
 --
 
@@ -2784,6 +2854,15 @@ CREATE POLICY manage_as_admin ON app_public.user_comment_reaction USING ((EXISTS
 CREATE POLICY manage_as_admin ON app_public.user_confession_reaction USING ((EXISTS ( SELECT 1
    FROM app_public.users
   WHERE ((users.is_admin IS TRUE) AND (users.id = app_public.current_user_id())))));
+
+
+--
+-- Name: category manage_as_moderator; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY manage_as_moderator ON app_public.category USING (((created_by = app_public.current_user_id()) AND (EXISTS ( SELECT 1
+   FROM app_public.users
+  WHERE (((users.role)::text = 'moderator'::text) AND (users.id = app_public.current_user_id()))))));
 
 
 --
@@ -3215,11 +3294,19 @@ GRANT ALL ON FUNCTION app_public."current_user"() TO cfs_visitor;
 
 
 --
--- Name: FUNCTION delete_cfs(confession_id integer); Type: ACL; Schema: app_public; Owner: -
+-- Name: FUNCTION delete_category(cat_id integer); Type: ACL; Schema: app_public; Owner: -
 --
 
-REVOKE ALL ON FUNCTION app_public.delete_cfs(confession_id integer) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.delete_cfs(confession_id integer) TO cfs_visitor;
+REVOKE ALL ON FUNCTION app_public.delete_category(cat_id integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.delete_category(cat_id integer) TO cfs_visitor;
+
+
+--
+-- Name: FUNCTION delete_cfs(p_confession_id integer); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.delete_cfs(p_confession_id integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.delete_cfs(p_confession_id integer) TO cfs_visitor;
 
 
 --
@@ -3382,6 +3469,13 @@ GRANT INSERT(slug),UPDATE(slug) ON TABLE app_public.category TO cfs_visitor;
 --
 
 GRANT INSERT(image),UPDATE(image) ON TABLE app_public.category TO cfs_visitor;
+
+
+--
+-- Name: COLUMN category.banner_image; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(banner_image),UPDATE(banner_image) ON TABLE app_public.category TO cfs_visitor;
 
 
 --

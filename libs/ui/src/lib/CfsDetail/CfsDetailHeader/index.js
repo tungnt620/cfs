@@ -9,12 +9,14 @@ import { Box, Icon } from '@chakra-ui/react';
 const CfsDetailHeader = ({ cat = {} }) => {
   const goBack = useGoBack();
 
+  const bannerImage = cat.bannerImage || cat.image;
+
   return (
     <Box position={'relative'} h={'110px'} w={'100%'}>
-      {cat.image && (
+      {bannerImage && (
         <Image
           alt={`Ảnh bìa của ${cat.name}`}
-          src={cat.image}
+          src={bannerImage}
           layout="fill"
           objectFit="cover"
         />

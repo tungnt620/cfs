@@ -2,6 +2,7 @@ query CatDetailPage($slug: String!) {
   categoryBySlug(slug: $slug) {
     id
     name
+    bannerImage
     image
     slug
   }

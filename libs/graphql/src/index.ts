@@ -49,6 +49,8 @@ export type CategoriesEdge = {
 export enum CategoriesOrderBy {
   CreatedByAsc = 'CREATED_BY_ASC',
   CreatedByDesc = 'CREATED_BY_DESC',
+  DeletedAtAsc = 'DELETED_AT_ASC',
+  DeletedAtDesc = 'DELETED_AT_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   Natural = 'NATURAL',
@@ -93,6 +95,8 @@ export type CategoryConfessionCategoriesArgs = {
 export type CategoryCondition = {
   /** Checks for equality with the object’s `createdBy` field. */
   createdBy?: Maybe<Scalars['UUID']>;
+  /** Checks for equality with the object’s `deletedAt` field. */
+  deletedAt?: Maybe<Scalars['Datetime']>;
   /** Checks for equality with the object’s `id` field. */
   id?: Maybe<Scalars['Int']>;
   /** Checks for equality with the object’s `slug` field. */
@@ -110,7 +114,6 @@ export type CategoryInput = {
 /** Represents an update to a `Category`. Fields that are set will be updated. */
 export type CategoryPatch = {
   bannerImage?: Maybe<Scalars['String']>;
-  deletedAt?: Maybe<Scalars['Datetime']>;
   image?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
@@ -263,6 +266,7 @@ export type Confession = {
   confessionCategories: ConfessionCategoriesConnection;
   content: Scalars['String'];
   createdAt: Scalars['Datetime'];
+  deletedAt?: Maybe<Scalars['Datetime']>;
   id: Scalars['Int'];
   image?: Maybe<Scalars['String']>;
   slug: Scalars['String'];
@@ -366,6 +370,8 @@ export type ConfessionCategoryCondition = {
  * for equality and combined with a logical ‘and.’
  */
 export type ConfessionCondition = {
+  /** Checks for equality with the object’s `deletedAt` field. */
+  deletedAt?: Maybe<Scalars['Datetime']>;
   /** Checks for equality with the object’s `id` field. */
   id?: Maybe<Scalars['Int']>;
   /** Checks for equality with the object’s `slug` field. */
@@ -414,6 +420,8 @@ export type ConfessionsEdge = {
 
 /** Methods to use when ordering `Confession`. */
 export enum ConfessionsOrderBy {
+  DeletedAtAsc = 'DELETED_AT_ASC',
+  DeletedAtDesc = 'DELETED_AT_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   Natural = 'NATURAL',
@@ -738,6 +746,28 @@ export type CreateUserEmailPayloadUserEmailEdgeArgs = {
 
 
 
+/** All input for the `deleteCategory` mutation. */
+export type DeleteCategoryInput = {
+  catId: Scalars['Int'];
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+};
+
+/** The output of our `deleteCategory` mutation. */
+export type DeleteCategoryPayload = {
+  __typename?: 'DeleteCategoryPayload';
+  /**
+   * The exact same `clientMutationId` that was provided in the mutation input,
+   * unchanged and unused. May be used by a client to track mutations.
+   */
+  clientMutationId?: Maybe<Scalars['String']>;
+  /** Our root query field type. Allows us to run any query from our mutation payload. */
+  query?: Maybe<Query>;
+};
+
 /** All input for the `deleteCfs` mutation. */
 export type DeleteCfsInput = {
   /**
@@ -745,7 +775,7 @@ export type DeleteCfsInput = {
    * payload verbatim. May be used to track mutations by the client.
    */
   clientMutationId?: Maybe<Scalars['String']>;
-  confessionId: Scalars['Int'];
+  pConfessionId: Scalars['Int'];
 };
 
 /** The output of our `deleteCfs` mutation. */
@@ -1058,6 +1088,7 @@ export type Mutation = {
   createOrUpdateConfessionReaction?: Maybe<CreateOrUpdateConfessionReactionPayload>;
   /** Creates a single `UserEmail`. */
   createUserEmail?: Maybe<CreateUserEmailPayload>;
+  deleteCategory?: Maybe<DeleteCategoryPayload>;
   deleteCfs?: Maybe<DeleteCfsPayload>;
   /** Deletes a single `Comment` using a unique key. */
   deleteComment?: Maybe<DeleteCommentPayload>;
@@ -1155,6 +1186,12 @@ export type MutationCreateOrUpdateConfessionReactionArgs = {
 /** The root mutation type which contains root level fields which mutate data. */
 export type MutationCreateUserEmailArgs = {
   input: CreateUserEmailInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
+export type MutationDeleteCategoryArgs = {
+  input: DeleteCategoryInput;
 };
 
 
@@ -2267,7 +2304,7 @@ export type AllCategoriesPageQuery = (
     { __typename?: 'CategoriesConnection' }
     & { nodes: Array<(
       { __typename?: 'Category' }
-      & Pick<Category, 'id' | 'image' | 'name' | 'slug'>
+      & Pick<Category, 'id' | 'image' | 'name' | 'slug' | 'createdBy'>
       & { confessionCategories: (
         { __typename?: 'ConfessionCategoriesConnection' }
         & Pick<ConfessionCategoriesConnection, 'totalCount'>
@@ -2299,7 +2336,7 @@ export type CatDetailPageQuery = (
   { __typename?: 'Query' }
   & { categoryBySlug?: Maybe<(
     { __typename?: 'Category' }
-    & Pick<Category, 'id' | 'name' | 'image' | 'slug'>
+    & Pick<Category, 'id' | 'name' | 'bannerImage' | 'image' | 'slug'>
   )> }
 );
 
@@ -2501,6 +2538,19 @@ export type CurrentUserUpdatedSubscription = (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username' | 'name' | 'avatarUrl' | 'isAdmin' | 'isVerified'>
     )> }
+  )> }
+);
+
+export type DeleteCategoryMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteCategoryMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteCategory?: Maybe<(
+    { __typename?: 'DeleteCategoryPayload' }
+    & Pick<DeleteCategoryPayload, 'clientMutationId'>
   )> }
 );
 
@@ -2947,7 +2997,7 @@ export type SharedLayout_QueryFragment = (
 
 export type SharedLayout_UserFragment = (
   { __typename?: 'User' }
-  & Pick<User, 'id' | 'name' | 'username' | 'avatarUrl' | 'isAdmin' | 'isVerified'>
+  & Pick<User, 'id' | 'name' | 'username' | 'avatarUrl' | 'isAdmin' | 'role' | 'isVerified'>
 );
 
 export type UnlinkUserAuthenticationMutationVariables = Exact<{
@@ -2967,6 +3017,23 @@ export type UnlinkUserAuthenticationMutation = (
         & Pick<UserAuthentication, 'id' | 'identifier' | 'service' | 'createdAt'>
       )> }
     )> }
+  )> }
+);
+
+export type UpdateCategoryMutationVariables = Exact<{
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  slug: Scalars['String'];
+  image: Scalars['String'];
+  bannerImage?: Maybe<Scalars['String']>;
+}>;
+
+
+export type UpdateCategoryMutation = (
+  { __typename?: 'Mutation' }
+  & { updateCategory?: Maybe<(
+    { __typename?: 'UpdateCategoryPayload' }
+    & Pick<UpdateCategoryPayload, 'clientMutationId'>
   )> }
 );
 
@@ -3096,6 +3163,7 @@ export const SharedLayout_UserFragmentDoc = gql`
   username
   avatarUrl
   isAdmin
+  role
   isVerified
 }
     `;
@@ -3110,7 +3178,7 @@ export const SharedLayout_QueryFragmentDoc = gql`
       id
     }
   }
-  confessions(orderBy: ID_DESC, first: 1) {
+  confessions(orderBy: ID_DESC, first: 1, condition: {deletedAt: null}) {
     nodes {
       id
     }
@@ -3160,12 +3228,13 @@ export type AddEmailMutationResult = Apollo.MutationResult<AddEmailMutation>;
 export type AddEmailMutationOptions = Apollo.BaseMutationOptions<AddEmailMutation, AddEmailMutationVariables>;
 export const AllCategoriesPageDocument = gql`
     query AllCategoriesPage {
-  categories(first: 500) {
+  categories(first: 500, condition: {deletedAt: null}) {
     nodes {
       id
       image
       name
       slug
+      createdBy
       confessionCategories {
         totalCount
       }
@@ -3245,6 +3314,7 @@ export const CatDetailPageDocument = gql`
   categoryBySlug(slug: $slug) {
     id
     name
+    bannerImage
     image
     slug
   }
@@ -3732,9 +3802,42 @@ export function useCurrentUserUpdatedSubscription(baseOptions?: Apollo.Subscript
       }
 export type CurrentUserUpdatedSubscriptionHookResult = ReturnType<typeof useCurrentUserUpdatedSubscription>;
 export type CurrentUserUpdatedSubscriptionResult = Apollo.SubscriptionResult<CurrentUserUpdatedSubscription>;
+export const DeleteCategoryDocument = gql`
+    mutation DeleteCategory($id: Int!) {
+  deleteCategory(input: {catId: $id}) {
+    clientMutationId
+  }
+}
+    `;
+export type DeleteCategoryMutationFn = Apollo.MutationFunction<DeleteCategoryMutation, DeleteCategoryMutationVariables>;
+
+/**
+ * __useDeleteCategoryMutation__
+ *
+ * To run a mutation, you first call `useDeleteCategoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCategoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCategoryMutation, { data, loading, error }] = useDeleteCategoryMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteCategoryMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCategoryMutation, DeleteCategoryMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCategoryMutation, DeleteCategoryMutationVariables>(DeleteCategoryDocument, options);
+      }
+export type DeleteCategoryMutationHookResult = ReturnType<typeof useDeleteCategoryMutation>;
+export type DeleteCategoryMutationResult = Apollo.MutationResult<DeleteCategoryMutation>;
+export type DeleteCategoryMutationOptions = Apollo.BaseMutationOptions<DeleteCategoryMutation, DeleteCategoryMutationVariables>;
 export const DeleteCfsDocument = gql`
     mutation DeleteCfs($cfsId: Int!) {
-  deleteCfs(input: {confessionId: $cfsId}) {
+  deleteCfs(input: {pConfessionId: $cfsId}) {
     clientMutationId
   }
 }
@@ -4607,6 +4710,45 @@ export function useUnlinkUserAuthenticationMutation(baseOptions?: Apollo.Mutatio
 export type UnlinkUserAuthenticationMutationHookResult = ReturnType<typeof useUnlinkUserAuthenticationMutation>;
 export type UnlinkUserAuthenticationMutationResult = Apollo.MutationResult<UnlinkUserAuthenticationMutation>;
 export type UnlinkUserAuthenticationMutationOptions = Apollo.BaseMutationOptions<UnlinkUserAuthenticationMutation, UnlinkUserAuthenticationMutationVariables>;
+export const UpdateCategoryDocument = gql`
+    mutation UpdateCategory($id: Int!, $name: String!, $slug: String!, $image: String!, $bannerImage: String) {
+  updateCategory(
+    input: {patch: {name: $name, slug: $slug, image: $image, bannerImage: $bannerImage}, id: $id}
+  ) {
+    clientMutationId
+  }
+}
+    `;
+export type UpdateCategoryMutationFn = Apollo.MutationFunction<UpdateCategoryMutation, UpdateCategoryMutationVariables>;
+
+/**
+ * __useUpdateCategoryMutation__
+ *
+ * To run a mutation, you first call `useUpdateCategoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCategoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCategoryMutation, { data, loading, error }] = useUpdateCategoryMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      slug: // value for 'slug'
+ *      image: // value for 'image'
+ *      bannerImage: // value for 'bannerImage'
+ *   },
+ * });
+ */
+export function useUpdateCategoryMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCategoryMutation, UpdateCategoryMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateCategoryMutation, UpdateCategoryMutationVariables>(UpdateCategoryDocument, options);
+      }
+export type UpdateCategoryMutationHookResult = ReturnType<typeof useUpdateCategoryMutation>;
+export type UpdateCategoryMutationResult = Apollo.MutationResult<UpdateCategoryMutation>;
+export type UpdateCategoryMutationOptions = Apollo.BaseMutationOptions<UpdateCategoryMutation, UpdateCategoryMutationVariables>;
 export const UpdateCommentDocument = gql`
     mutation UpdateComment($id: Int!, $content: String!, $image: String) {
   updateComment(input: {patch: {content: $content, image: $image}, id: $id}) {

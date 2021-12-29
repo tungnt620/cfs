@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import slugify from 'slugify';
 import {
   registerWithoutPasswordPopupNextAction,
@@ -6,7 +6,7 @@ import {
   showRegisterWithoutPasswordPopup,
 } from '@cfs/helper/reactiveVars';
 import { sendGAUserBehaviorEvent } from '@cfs/helper/analytics';
-import { extractError } from '@cfs/helper/errors';
+import { extractError, getCodeFromError } from '@cfs/helper/errors';
 import { useRouter } from 'next/router';
 import {
   Alert,
@@ -25,28 +25,58 @@ import SubPageHeader from '../../Header/SubPageHeader';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { useCreateCategoryMutation } from '@cfs/graphql';
 import ImageSelector from './ImageSelector';
+import uploadFile from '@cfs/helper/gcs/uploadFile';
+
+const communityIgnoredCharacters = `#*+~()'"!:?`;
+const communityIgnoredCharactersRegex = /[#*+~()'"!:?]/g;
 
 const NewCommunityPage = () => {
   const router = useRouter();
   const toast = useToast();
   const currentUser = useReactiveVar(setCurrentUser);
+  const [responseError, setResponseError] = React.useState(null);
 
   const {
     handleSubmit,
     register,
     getValues,
     formState: { errors, isSubmitting },
+    watch,
     setValue,
     setError,
+    clearErrors,
   } = useForm();
+
+  const nameValue = watch('name', '');
+  const slugValue = watch('slug', '');
+
+  const normalizeSlug = useCallback(
+    (slug) => {
+      if (slug) {
+        slug = slugify(slug.substring(0, 50), {
+          replacement: '',
+          remove: communityIgnoredCharactersRegex,
+          lower: false,
+          locale: 'vi',
+        });
+      }
+
+      setValue('slug', slug);
+    },
+    [setValue]
+  );
+
+  useEffect(() => {
+    normalizeSlug(nameValue);
+  }, [normalizeSlug, nameValue]);
+
+  useEffect(() => {
+    normalizeSlug(slugValue);
+  }, [normalizeSlug, slugValue]);
 
   const [
     createCommunity,
-    {
-      data: createCommunityData,
-      error: createCommunityError,
-      loading: createCommunityLoading,
-    },
+    { loading: createCommunityLoading },
   ] = useCreateCategoryMutation();
 
   useEffect(() => {
@@ -57,26 +87,52 @@ const NewCommunityPage = () => {
     });
   }, []);
 
-  const onSubmit = (values) => {
-    if (values.banner_image)
+  const onSubmit = async (values) => {
+    console.log('onSubmit values', values);
 
-
-    createCommunity({
-      variables: values,
-    });
-  };
-
-  useEffect(() => {
-    if (createCommunityData) {
-      toast({
-        title: `Cộng đồng mới đã được tạo thành công`,
-        position: 'top',
-        isClosable: true,
-        status: 'success',
-      });
-      router.push('/?tabIndex=2');
+    let bannerImageUrl = '',
+      profileImageUrl = '';
+    const { image: bannerImage } = values.banner_image || {};
+    if (bannerImage) {
+      bannerImageUrl = await uploadFile(bannerImage);
     }
-  }, [createCommunityData, router, toast]);
+    const { image: profileImage } = values.image || {};
+    if (profileImage) {
+      profileImageUrl = await uploadFile(profileImage);
+    }
+
+    if (bannerImageUrl && profileImageUrl) {
+      try {
+        await createCommunity({
+          variables: {
+            name: values.name,
+            slug: values.slug,
+            image: profileImageUrl,
+            bannerImage: bannerImageUrl,
+          },
+        });
+        toast({
+          title: `Cộng đồng mới đã được tạo thành công`,
+          position: 'top',
+          isClosable: true,
+          status: 'success',
+        });
+        if (slugValue) {
+          router.push(`/c/${slugValue}`);
+        }
+      } catch (e) {
+        const code = getCodeFromError(e);
+        if (code === 'NUNIQ') {
+          setError('slug', {
+            type: 'manual',
+            message: 'Nick name đã tồn tại',
+          });
+        } else {
+          setResponseError(e);
+        }
+      }
+    }
+  };
 
   const onClickSendBtn = () => {
     if (!currentUser?.id) {
@@ -85,20 +141,19 @@ const NewCommunityPage = () => {
     } else {
       const formValues = getValues();
 
-      console.log(formValues);
-
-      if (!formValues.image) {
+      if (!formValues.image?.image) {
         setError('image', {
           type: 'manual',
           message: 'Ảnh đại diện không được để trống',
-        })
+        });
       }
-      if (!formValues.banner_image) {
+      if (!formValues.banner_image?.image) {
         setError('banner_image', {
           type: 'manual',
           message: 'Ảnh bìa không được để trống',
-        })
+        });
       }
+
       handleSubmit(onSubmit)();
     }
   };
@@ -117,27 +172,55 @@ const NewCommunityPage = () => {
         }
       />
       <Box mt={4}>
-        {createCommunityError && (
+        {responseError && (
           <Alert status="error">
             <AlertIcon />
-            {extractError(createCommunityError).message}
+            {extractError(responseError).message}
           </Alert>
         )}
 
         <form>
+          <FormControl isInvalid={errors.name} marginTop={4}>
+            <Input
+              id="name"
+              placeholder="Tên của cộng đồng"
+              {...register('name', {
+                required: 'Hãy đặt tên cho cộng đồng nào',
+              })}
+              maxLength={40}
+            />
+            <FormErrorMessage>
+              {errors.name && errors.name.message}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl isInvalid={errors.slug} marginTop={4}>
+            <Input
+              id="slug"
+              placeholder="Nick name của cộng đồng"
+              {...register('slug', {
+                required: 'Hãy đặt nick name cho cộng đồng nào',
+              })}
+              maxLength={40}
+            />
+            <FormHelperText>
+              Không được chứa các kí tự đặc biệt: {communityIgnoredCharacters}
+            </FormHelperText>
+            <FormErrorMessage>
+              {errors.slug && errors.slug.message}
+            </FormErrorMessage>
+          </FormControl>
+
           <FormControl isInvalid={errors.banner_image?.message} marginTop={4}>
             <FormLabel>Chọn ảnh bìa</FormLabel>
             <ImageSelector
               aspect={4 / 3}
               setCroppedImage={(croppedImage) => {
                 setValue('banner_image', croppedImage);
-                setError('banner_image', null);
+                clearErrors('banner_image');
                 console.log(croppedImage);
               }}
             />
-            <FormErrorMessage>
-              {errors.banner_image?.message}
-            </FormErrorMessage>
+            <FormErrorMessage>{errors.banner_image?.message}</FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={errors.image?.message} marginTop={4}>
             <FormLabel>Chọn ảnh đại diện</FormLabel>
@@ -145,41 +228,10 @@ const NewCommunityPage = () => {
               aspect={4 / 3}
               setCroppedImage={(croppedImage) => {
                 setValue('image', croppedImage);
-                console.log(croppedImage);
+                clearErrors('image');
               }}
             />
-            <FormErrorMessage>
-              {errors.image?.message}
-            </FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={errors.title} marginTop={4}>
-            <Input
-              id="title"
-              placeholder="Tên của cộng đồng"
-              {...register('title', {
-                required: 'Hãy đặt tên cho cộng đồng nào',
-              })}
-              maxLength={40}
-            />
-            <FormErrorMessage>
-              {errors.title && errors.title.message}
-            </FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={errors.slug} marginTop={4}>
-            <Input
-              id="slug"
-              placeholder="mã code của cộng đồng"
-              {...register('slug', {
-                required: 'Hãy đặt mã code cho cộng đồng nào',
-              })}
-              maxLength={40}
-            />
-            <FormHelperText>
-              Không được chứa các kí tự đặc biệt: #*+~()'"!:?
-            </FormHelperText>
-            <FormErrorMessage>
-              {errors.slug && errors.slug.message}
-            </FormErrorMessage>
+            <FormErrorMessage>{errors.image?.message}</FormErrorMessage>
           </FormControl>
         </form>
       </Box>

@@ -61,7 +61,8 @@ const CatDetailPage = () => {
         catIdsViewed.join(',')
       );
     }
-  }, [catData?.id, recentCatIds]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catData?.id]);
 
   useEffect(() => {
     fetchMoreCfs({ variables: { offset, catSlug: slug } });

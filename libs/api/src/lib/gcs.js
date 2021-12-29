@@ -1,12 +1,13 @@
 import Axios from 'axios';
+import { apiUrl } from './utils';
 
 const axiosInstance = Axios.create();
 
 export const getSignedUrl = (fileType) => {
   return axiosInstance
-    .post(`/api/gcs/signed-url/${fileType}`)
+    .post(`${apiUrl}/api/gcs/signed-url/${fileType}`)
     .then((res) => {
-      return res?.data?.signedUrl;
+      return res?.data || {};
     })
     .catch((err) => {
       console.error(err);
@@ -14,9 +15,13 @@ export const getSignedUrl = (fileType) => {
     });
 };
 
-export const uploadFileWithSignedUrl = (signedUrl, file) => {
+export const uploadFileWithSignedUrl = async (signedUrl, file) => {
   return axiosInstance
-    .put(signedUrl, Buffer.from(file))
+    .put(signedUrl, file, {
+      headers: {
+        'Content-Type': file.type,
+      },
+    })
     .then((res) => {
       console.log(res);
       return 1;

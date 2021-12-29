@@ -17,7 +17,7 @@ const ImageSelector = ({ setCroppedImage, aspect = 4 / 3 }) => {
           croppedAreaPixels,
           rotation
         );
-        setCroppedImage(croppedImage);
+        setCroppedImage({ image: croppedImage });
       } catch (e) {
         console.error(e);
         setCroppedImage(null);
@@ -48,7 +48,7 @@ const ImageSelector = ({ setCroppedImage, aspect = 4 / 3 }) => {
             setCroppedImage(null);
           }
         }}
-        accept="image/png, image/jpeg"
+        accept="image/png, image/jpeg, image/jpg"
       />
       {image && (
         <Box position="relative" minHeight="300px">

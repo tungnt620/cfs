@@ -80,13 +80,35 @@ export default async function getCroppedImg(
   // paste generated rotate image at the top left corner
   ctx.putImageData(data, 0, 0);
 
-  // As Base64 string
-  // return canvas.toDataURL('image/jpeg');
+  return postCanvasToURL(canvas);
+}
 
-  // As a blob
-  return new Promise((resolve, reject) => {
-    canvas.toBlob((file) => {
-      resolve(URL.createObjectURL(file));
-    }, 'image/jpeg');
-  });
+function postCanvasToURL(canvas) {
+  // Convert canvas image to Base64
+  const img = canvas.toDataURL();
+  // Convert Base64 image to binary
+  return dataURItoBlob(img);
+}
+
+function dataURItoBlob(dataURI) {
+  // convert base64/URLEncoded data component to raw binary data held in a string
+  let byteString;
+  if (dataURI.split(',')[0].indexOf('base64') >= 0) {
+    byteString = atob(dataURI.split(',')[1]);
+  } else {
+    byteString = unescape(dataURI.split(',')[1]);
+  }
+  // separate out the mime component
+  const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+  // write the bytes of the string to a typed array
+  const ia = new Uint8Array(byteString.length);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  console.log({
+    mimeString
+  })
+
+  return new Blob([ia], { type: mimeString });
 }

@@ -1,10 +1,11 @@
 query AllCategoriesPage {
-  categories(first: 500) {
+  categories(first: 500, condition: {deletedAt: null}) {
     nodes {
       id
       image
       name
       slug
+      createdBy
       confessionCategories {
         totalCount
       }

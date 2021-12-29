@@ -2,7 +2,6 @@ const { createWriteStream } = require('fs');
 const { resolve } = require('path');
 const { createGzip } = require('zlib');
 const { SitemapAndIndexStream, SitemapStream } = require('sitemap');
-const dayjs = require('dayjs');
 
 async function getConfessionLinks(withPgClient) {
   const { rows } = await withPgClient((pgClient) =>
@@ -26,6 +25,8 @@ FROM
       LEFT JOIN app_public.category ct ON ct.id = cc.category_id and ct.deleted_at is null
     GROUP BY
       cc.confession_id) s ON s.confession_id = c.id
+WHERE
+  c.deleted_at is null
 ORDER BY
   c.id DESC
       `,
@@ -34,7 +35,6 @@ ORDER BY
   );
 
   return rows.map((cfs) => {
-    const isNews = dayjs(cfs.created_at).add(2, 'day').isAfter(dayjs());
 
     return {
       url: `/${cfs.slug}/`,
@@ -49,19 +49,8 @@ ORDER BY
             },
           ]
         : [],
-      news: isNews
-        ? {
-            publication: {
-              name: 'Confession.vn',
-              language: 'vi',
-            },
-            publication_date: dayjs(cfs.created_at).format('YYYY-MM-DD'),
-            title: cfs.title,
-            keywords: cfs.category_names,
-            genres: 'Opinion',
-          }
-        : undefined,
-      changefreq: 'daily',
+      news: undefined,
+      changefreq: 'weekly',
       priority: 0.5,
       lastmod: cfs.updated_at,
     };

@@ -1,0 +1,7 @@
+mutation UpdateCategory($id: Int!, $name: String!, $slug: String!, $image: String!, $bannerImage: String) {
+  updateCategory(
+    input: {patch: {name: $name, slug: $slug, image: $image, bannerImage: $bannerImage}, id: $id}
+  ) {
+    clientMutationId
+  }
+}

@@ -28,6 +28,8 @@ type CategoriesEdge {
 enum CategoriesOrderBy {
   CREATED_BY_ASC
   CREATED_BY_DESC
+  DELETED_AT_ASC
+  DELETED_AT_DESC
   ID_ASC
   ID_DESC
   NATURAL
@@ -89,6 +91,9 @@ input CategoryCondition {
   """Checks for equality with the object’s `createdBy` field."""
   createdBy: UUID
 
+  """Checks for equality with the object’s `deletedAt` field."""
+  deletedAt: Datetime
+
   """Checks for equality with the object’s `id` field."""
   id: Int
 
@@ -109,7 +114,6 @@ Represents an update to a `Category`. Fields that are set will be updated.
 """
 input CategoryPatch {
   bannerImage: String
-  deletedAt: Datetime
   image: String
   name: String
   slug: String
@@ -361,6 +365,7 @@ type Confession {
   ): ConfessionCategoriesConnection!
   content: String!
   createdAt: Datetime!
+  deletedAt: Datetime
   id: Int!
   image: String
   slug: String!
@@ -472,6 +477,9 @@ A condition to be used against `Confession` object types. All fields are tested
 for equality and combined with a logical ‘and.’
 """
 input ConfessionCondition {
+  """Checks for equality with the object’s `deletedAt` field."""
+  deletedAt: Datetime
+
   """Checks for equality with the object’s `id` field."""
   id: Int
 
@@ -528,6 +536,8 @@ type ConfessionsEdge {
 
 """Methods to use when ordering `Confession`."""
 enum ConfessionsOrderBy {
+  DELETED_AT_ASC
+  DELETED_AT_DESC
   ID_ASC
   ID_DESC
   NATURAL
@@ -884,6 +894,31 @@ A point in time as described by the [ISO
 """
 scalar Datetime
 
+"""All input for the `deleteCategory` mutation."""
+input DeleteCategoryInput {
+  catId: Int!
+
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+}
+
+"""The output of our `deleteCategory` mutation."""
+type DeleteCategoryPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
 """All input for the `deleteCfs` mutation."""
 input DeleteCfsInput {
   """
@@ -891,7 +926,7 @@ input DeleteCfsInput {
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-  confessionId: Int!
+  pConfessionId: Int!
 }
 
 """The output of our `deleteCfs` mutation."""
@@ -1286,6 +1321,12 @@ type Mutation {
     """
     input: CreateUserEmailInput!
   ): CreateUserEmailPayload
+  deleteCategory(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteCategoryInput!
+  ): DeleteCategoryPayload
   deleteCfs(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.

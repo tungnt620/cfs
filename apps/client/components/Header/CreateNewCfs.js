@@ -10,7 +10,7 @@ const CreateNewCfs = () => {
   }, [router]);
 
   return (
-    <Button colorScheme="blue" onClick={onClick}>
+    <Button colorScheme="teal" onClick={onClick}>
       Viết bài
     </Button>
   );

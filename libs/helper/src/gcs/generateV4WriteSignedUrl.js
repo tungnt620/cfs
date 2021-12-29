@@ -1,4 +1,4 @@
-import { storage } from './utils';
+import { getPublicUrl, storage } from './utils';
 import { DEFAULT_BUCKET_NAME } from './constants';
 
 const uuid = require('uuid');
@@ -25,7 +25,10 @@ export default function generateV4WriteSignedUrl(fileExt) {
         console.error(err);
         reject(err);
       } else {
-        resolve(url);
+        resolve({
+          url,
+          publicUrl: getPublicUrl(filename),
+        });
       }
     });
   });

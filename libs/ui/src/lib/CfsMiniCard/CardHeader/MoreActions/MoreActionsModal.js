@@ -24,7 +24,7 @@ const MoreActionsModal = ({ cfs, setModalDisplayed }) => {
         <ModalCloseButton />
         <ModalBody pb={6} pt={6}>
           {(currentUser?.isAdmin || cfs?.userId === currentUser?.id) && (
-            <DeleteCfs cfs={cfs} />
+            <DeleteCfs cfs={cfs} callback={onClose} />
           )}
         </ModalBody>
       </ModalContent>

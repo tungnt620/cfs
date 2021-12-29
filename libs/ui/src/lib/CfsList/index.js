@@ -31,6 +31,11 @@ export const CfsList = ({ cfsList }) => {
       {cfsList.map((cfs) => (
         <CfsMiniCard cfs={cfs} key={cfs.id} />
       ))}
+      {cfsList.length === 0 && (
+        <Box display='flex' justifyContent='center' mt={10} mb={10}>
+          <i>Chưa có bài viết nào</i>
+        </Box>
+      )}
       <Box
         display={'flex'}
         justifyContent={'space-between'}
