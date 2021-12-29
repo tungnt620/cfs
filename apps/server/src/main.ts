@@ -1,8 +1,9 @@
 import { setEnv } from '@cfs/config';
-import { makeApp } from './app';
-import generateV4WriteSignedUrl from '@cfs/helper/gcs/generateV4WriteSignedUrl';
 
 setEnv();
+
+import { makeApp } from './app';
+import generateV4WriteSignedUrl from '@cfs/helper/gcs/generateV4WriteSignedUrl';
 
 async function main() {
   const app = await makeApp();
