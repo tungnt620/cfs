@@ -3944,7 +3944,7 @@ export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordM
 export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
 export const GetCategoriesDocument = gql`
     query GetCategories {
-  categories {
+  categories(first: 500, condition: {deletedAt: null}) {
     nodes {
       id
       name

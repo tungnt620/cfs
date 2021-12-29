@@ -1,5 +1,5 @@
 query GetCategories {
-  categories {
+  categories(first: 500, condition: {deletedAt: null}) {
     nodes {
       id
       name

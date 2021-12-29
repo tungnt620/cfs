@@ -18,6 +18,8 @@ import {
   Button,
   FormControl,
   FormErrorMessage,
+  FormLabel,
+  Input,
   Select,
   Textarea,
   useToast,
@@ -26,6 +28,7 @@ import { useForm } from 'react-hook-form';
 import SelectCatModal from './SelectCatModal';
 import SubPageHeader from '../../Header/SubPageHeader';
 import { useReactiveVar } from '@apollo/react-hooks';
+import uploadFile from '@cfs/helper/gcs/uploadFile';
 
 const NewCfs = () => {
   const router = useRouter();
@@ -39,6 +42,7 @@ const NewCfs = () => {
     register,
     watch,
     formState: { errors, isSubmitting },
+    setValue,
   } = useForm({
     defaultValues:
       typeof window !== 'undefined'
@@ -71,7 +75,7 @@ const NewCfs = () => {
     });
   }, []);
 
-  const onSubmit = (values) => {
+  const onSubmit = async (values) => {
     const newCfs = {
       ...values,
     };
@@ -84,11 +88,17 @@ const NewCfs = () => {
       lower: true,
       locale: 'vi',
     });
+
+    let image = newCfs.image || '';
+    if (image) {
+      image = await uploadFile(image);
+    }
+
     createCfs({
       variables: {
         ...newCfs,
         slug,
-        image: '',
+        image,
       },
     });
   };
@@ -177,6 +187,25 @@ const NewCfs = () => {
             <FormErrorMessage>
               {errors.content && errors.content.message}
             </FormErrorMessage>
+          </FormControl>
+          <FormControl isInvalid={errors.image?.message} marginTop={4}>
+            <FormLabel>Thêm ảnh cho bài</FormLabel>
+            <Input
+              type="file"
+              variant="filled"
+              focusBorderColor="lime"
+              placeholder="Chọn ảnh cho bài của bạn"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  setValue('image', file);
+                } else {
+                  setValue('image', null);
+                }
+              }}
+              accept="image/png, image/jpeg, image/jpg"
+            />
+            <FormErrorMessage>{errors.image?.message}</FormErrorMessage>
           </FormControl>
         </form>
         {isOpenSelectCatIdModel && (
