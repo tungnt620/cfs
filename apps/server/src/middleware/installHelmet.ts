@@ -1,7 +1,7 @@
 import { Express } from "express";
 import helmet from "helmet";
 
-const tmpRootUrl = process.env.ROOT_URL;
+const tmpRootUrl = 'http://localhost:5678'
 
 if (!tmpRootUrl || typeof tmpRootUrl !== "string") {
   throw new Error("Envvar ROOT_URL is required.");
