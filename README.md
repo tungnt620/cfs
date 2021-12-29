@@ -17,7 +17,11 @@
 - In local
   - `nx run db:watch` watch change in `1-current.sql` file and run to database
   - `nx run db:commit` commit sql change to migration files
-- Migrate in production `nx run db:migrate`
+- Migrate in production:
+  - Login to db server
+  - `yarn install`
+  - `cd apps/db`
+  - `../../node_modules/.bin/cross-env NODE_OPTIONS="$NODE_OPTIONS -r ../../libs/config/env" ../../node_modules/.bin/graphile-migrate migrate`
 
 ### Worker
 - In local

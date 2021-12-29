@@ -1,5 +1,5 @@
 import { setEnv } from '@cfs/config';
-
+// This function call must always be the first in the file. It loads the env file
 setEnv();
 
 import { makeApp } from './app';
