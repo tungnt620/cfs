@@ -44,17 +44,13 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
     );
   }, [cfsDetailPageData.content, cfsDetailPageData.title]);
 
-  // TODO: Fix this, use approach like youtube embed
   const isContainSelfLink = useMemo(() => {
-    const numberOfLink = findNumberOccurrenceInString(
-      cfsDetailPageData.content,
-      '<a href='
-    );
-    const numberOfSelfLink = findNumberOccurrenceInString(
-      cfsDetailPageData.content,
-      '<a href="https://confession.vn'
-    );
-    return numberOfSelfLink === numberOfLink && numberOfSelfLink > 0;
+    const _content = cfsDetailPageData.content;
+    const no1 = findNumberOccurrenceInString(_content, '<a href=');
+    const no2 = findNumberOccurrenceInString(_content, '<a href="https://confession.vn');
+    const no3 = findNumberOccurrenceInString(_content, '<a  href=');
+    const no4 = findNumberOccurrenceInString(_content, '<a  href="https://confession.vn');
+    return (no1 === no2 && no1 > 0) || (no3 === no4 && no3 > 0);
   }, [cfsDetailPageData.content]);
 
   useEffect(() => {
