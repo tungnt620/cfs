@@ -25,8 +25,13 @@
 
 ### Worker
 - In local
-  - `nx run worker:serve`
+  - `nx run worker:serve --watch`
 - Deploy to production
   - `pm2 deploy ./apps/worker/ecosystem.config.js production`
 - Add job in db to worker run:
   - `SELECT graphile_worker.add_job('generate_sitemap');`
+
+
+### TODO:
+- Move google credentials out of configuration file, it hard for maintainer or move to new server
+- 

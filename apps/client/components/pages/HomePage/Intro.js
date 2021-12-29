@@ -5,6 +5,8 @@ import { setCurrentUser } from '@cfs/helper/reactiveVars';
 
 const Intro = () => {
   const currentUser = useReactiveVar(setCurrentUser);
+  const isSilverUser = currentUser?.role === 'moderator';
+  const isNormalUser = currentUser?.id && !currentUser?.role;
 
   return (
     <>
@@ -17,6 +19,18 @@ const Intro = () => {
         học tập, gia đình, ...
       </Text>
       <Text mt={4}>Cảm ơn bạn đã ghé thăm Confession.vn</Text>
+      {isSilverUser && (
+        <Text mt={4} color={'silver'}>
+          Bạn đang là thành viên bạc.
+          <br/>
+          Bây giờ bạn có thể tạo cộng đồng cho riêng mình
+        </Text>
+      )}
+      {isNormalUser && (
+        <Text mt={4} color={'#ad6648'}>
+          Bạn đang là thành viên đồng
+        </Text>
+      )}
     </>
   );
 };
