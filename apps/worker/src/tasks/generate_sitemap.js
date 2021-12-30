@@ -80,10 +80,8 @@ FROM
           max(confession_id) AS confession_id
         FROM
           app_public.confession_category
-        WHERE
-          c.deleted_at IS NULL
         GROUP BY
-          category_id) AS cc ON c.id = cc.confession_id) subquery ON subquery.category_id = ct.id
+          category_id) AS cc ON c.id = cc.confession_id and c.deleted_at is null) subquery ON subquery.category_id = ct.id
       `,
       []
     )
