@@ -22,8 +22,7 @@ export const uploadFileWithSignedUrl = async (signedUrl, file) => {
         'Content-Type': file.type,
       },
     })
-    .then((res) => {
-      console.log(res);
+    .then(() => {
       return 1;
     })
     .catch((err) => {

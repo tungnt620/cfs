@@ -88,8 +88,6 @@ const NewCommunityPage = () => {
   }, []);
 
   const onSubmit = async (values) => {
-    console.log('onSubmit values', values);
-
     let bannerImageUrl = '',
       profileImageUrl = '';
     const { image: bannerImage } = values.banner_image || {};
@@ -217,7 +215,6 @@ const NewCommunityPage = () => {
               setCroppedImage={(croppedImage) => {
                 setValue('banner_image', croppedImage);
                 clearErrors('banner_image');
-                console.log(croppedImage);
               }}
             />
             <FormErrorMessage>{errors.banner_image?.message}</FormErrorMessage>

@@ -106,9 +106,5 @@ function dataURItoBlob(dataURI) {
     ia[i] = byteString.charCodeAt(i);
   }
 
-  console.log({
-    mimeString
-  })
-
   return new Blob([ia], { type: mimeString });
 }
