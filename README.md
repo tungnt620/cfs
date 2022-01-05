@@ -1,4 +1,8 @@
 ## Deploy
+- Setup in first time
+  - `pm2 deploy production setup`
+
+
 ### Client
 - In local
   - `nx run client:serve`
