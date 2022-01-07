@@ -1,5 +1,5 @@
 query GetCommentsByCfs($cfsId: Int) {
-  comments(first: 500, orderBy: ID_DESC, condition: {confessionId: $cfsId}) {
+  comments(first: 70, orderBy: ID_DESC, condition: {confessionId: $cfsId}) {
     nodes {
       id
       authorName

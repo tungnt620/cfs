@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CfsDetailHeader from './CfsDetailHeader';
 import Image from 'next/image';
 import dayjs from 'dayjs';
@@ -33,24 +33,34 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
   const userData = cfsDetailPageData.user;
   const catData = cfsDetailPageData.confessionCategories.nodes[0]?.category;
   const [content, setContent] = useState([cfsDetailPageData.content]);
+  const [isContainSelfLink, setIsContainSelfLink] = useState(false);
+  const [isTitleCopyFromContent, setIsTitleCopyFromContent] = useState(false);
 
-  const isTitleCopyFromContent = useMemo(() => {
+  useEffect(() => {
     const firstParagraph = cfsDetailPageData.content.substring(0, 200);
-    return (
+    setIsTitleCopyFromContent(
       firstParagraph
         .replace(/[\r\n]+/g, '. ')
         .includes(cfsDetailPageData.title) ||
-      firstParagraph.replace(/[\r\n]+/g, ' ').includes(cfsDetailPageData.title)
+        firstParagraph
+          .replace(/[\r\n]+/g, ' ')
+          .includes(cfsDetailPageData.title)
     );
   }, [cfsDetailPageData.content, cfsDetailPageData.title]);
 
-  const isContainSelfLink = useMemo(() => {
+  useEffect(() => {
     const _content = cfsDetailPageData.content;
     const no1 = findNumberOccurrenceInString(_content, '<a href=');
-    const no2 = findNumberOccurrenceInString(_content, '<a href="https://confession.vn');
+    const no2 = findNumberOccurrenceInString(
+      _content,
+      '<a href="https://confession.vn'
+    );
     const no3 = findNumberOccurrenceInString(_content, '<a  href=');
-    const no4 = findNumberOccurrenceInString(_content, '<a  href="https://confession.vn');
-    return (no1 === no2 && no1 > 0) || (no3 === no4 && no3 > 0);
+    const no4 = findNumberOccurrenceInString(
+      _content,
+      '<a  href="https://confession.vn'
+    );
+    setIsContainSelfLink((no1 === no2 && no1 > 0) || (no3 === no4 && no3 > 0));
   }, [cfsDetailPageData.content]);
 
   useEffect(() => {
@@ -138,7 +148,7 @@ const CfsDetail = ({ cfsDetailPageData, relativeCfsData }) => {
           />
         ) : (
           <Box pt={2} mb={4} whiteSpace={'pre-line'}>
-            {content.map(item => item)}
+            {content.map((item) => item)}
           </Box>
         )}
 
