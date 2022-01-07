@@ -4082,7 +4082,7 @@ export type GetCommentsLazyQueryHookResult = ReturnType<typeof useGetCommentsLaz
 export type GetCommentsQueryResult = Apollo.QueryResult<GetCommentsQuery, GetCommentsQueryVariables>;
 export const GetCommentsByCfsDocument = gql`
     query GetCommentsByCfs($cfsId: Int) {
-  comments(first: 500, orderBy: ID_DESC, condition: {confessionId: $cfsId}) {
+  comments(first: 70, orderBy: ID_DESC, condition: {confessionId: $cfsId}) {
     nodes {
       id
       authorName
