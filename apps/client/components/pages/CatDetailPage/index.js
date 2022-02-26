@@ -14,6 +14,7 @@ import { usePagination } from '@cfs/helper/hooks';
 import CategorySEO from '../../../shared/seo/CategorySEO';
 import { RECENT_CAT_IDS_VIEWED_LOCAL_STORAGE_KEY } from '@cfs/common/constants';
 import SubPageHeader from '../../Header/SubPageHeader';
+import { Button } from '@chakra-ui/react';
 
 const CatDetailPage = () => {
   const router = useRouter();
@@ -81,9 +82,20 @@ const CatDetailPage = () => {
     }
   }, [refetchCfs, newCfsDeletedByMe]);
 
+  const gotoCreateConfessionPage = () => {
+    router.push('/new/?catId=' + catData?.id);
+  };
+
   return (
     <>
-      <SubPageHeader title={`Cộng đồng ${catData?.name}`} />
+      <SubPageHeader
+        title={`Cộng đồng ${catData?.name}`}
+        rightActions={
+          <Button colorScheme="teal" onClick={gotoCreateConfessionPage}>
+            Viết bài
+          </Button>
+        }
+      />
       <div className="bg-color1">
         <CategorySEO category={catData} />
         {catData && <CfsDetailHeader cat={catData} />}

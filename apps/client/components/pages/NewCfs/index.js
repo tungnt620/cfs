@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { TEMP_CREATE_CFS_FORM_DATA_LOCAL_STORAGE_KEY } from '@cfs/common/constants';
-import { useCreateCfsMutation } from '@cfs/graphql';
+import { useCreateCfsMutation, useGetCategoriesQuery } from '@cfs/graphql';
 import slugify from 'slugify';
 import {
   registerWithoutPasswordPopupNextAction,
@@ -36,6 +36,18 @@ const NewCfs = () => {
   const [selectedCat, setSelectedCat] = useState(null);
   const [isOpenSelectCatIdModel, setIsOpenSelectCatIdModel] = useState(false);
   const currentUser = useReactiveVar(setCurrentUser);
+  const { data: getCategoriesData } = useGetCategoriesQuery({
+    fetchPolicy: "network-only"
+  });
+  const categories = getCategoriesData?.categories?.nodes;
+
+  const { catId } = router.query;
+
+  useEffect(() => {
+    if (catId && categories?.length > 0) {
+      setSelectedCat(categories.find((c) => c.id === Number(catId)));
+    }
+  }, [catId, categories]);
 
   const {
     handleSubmit,
@@ -210,9 +222,9 @@ const NewCfs = () => {
         </form>
         {isOpenSelectCatIdModel && (
           <SelectCatModal
-            selectedCat={selectedCat}
             setSelectedCat={setSelectedCat}
             setIsOpen={setIsOpenSelectCatIdModel}
+            categories={categories}
           />
         )}
       </Box>

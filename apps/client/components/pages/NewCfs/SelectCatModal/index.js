@@ -11,17 +11,14 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import { useGetCategoriesQuery } from '@cfs/graphql';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setRecentCatIdsViewedByMe } from '@cfs/helper/reactiveVars';
 import Image from 'next/image';
 import emptyImage from '@cfs/ui/images/empty.png';
 
-const SelectCatModal = ({ setSelectedCat, setIsOpen }) => {
+const SelectCatModal = ({ setSelectedCat, setIsOpen, categories }) => {
   const recentCatIds = useReactiveVar(setRecentCatIdsViewedByMe);
 
-  const { data: getCategoriesData } = useGetCategoriesQuery();
-  const categories = getCategoriesData?.categories?.nodes;
   const catIdDataMap = useMemo(
     () =>
       categories?.reduce((acc, cat) => {

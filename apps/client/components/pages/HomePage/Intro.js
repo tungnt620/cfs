@@ -1,12 +1,18 @@
 import React from 'react';
-import { Text } from '@chakra-ui/react';
+import { Button, Text } from '@chakra-ui/react';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setCurrentUser } from '@cfs/helper/reactiveVars';
+import { useRouter } from 'next/router';
 
 const Intro = () => {
+  const router = useRouter();
   const currentUser = useReactiveVar(setCurrentUser);
   const isSilverUser = currentUser?.role === 'moderator';
   const isNormalUser = currentUser?.id && !currentUser?.role;
+
+  const gotoNewCatPage = () => {
+    router.push('/c/new/');
+  };
 
   return (
     <>
@@ -22,13 +28,23 @@ const Intro = () => {
       {isSilverUser && (
         <Text mt={4} color={'silver'}>
           Bạn đang là thành viên bạc.
-          <br/>
-          Bây giờ bạn có thể tạo cộng đồng cho riêng mình
+          <br />
+          <br />
+          Bây giờ bạn có thể{' '}
+          <Button colorScheme="teal" onClick={gotoNewCatPage}>
+            Tạo cộng đồng riêng cho mình
+          </Button>
         </Text>
       )}
       {isNormalUser && (
         <Text mt={4} color={'#ad6648'}>
-          Bạn đang là thành viên đồng
+          Bạn đang là thành viên đồng.
+          <br />
+          <br />
+          Bây giờ bạn có thể{' '}
+          <Button colorScheme="teal" onClick={gotoNewCatPage}>
+            Tạo cộng đồng riêng cho mình
+          </Button>
         </Text>
       )}
     </>
