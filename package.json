@@ -26,8 +26,8 @@
     "help": "nx help",
     "generate-graphql": "graphql-codegen --config codegen.yml",
     "deploy-client": "rm -rf dist/apps/client && nx build client --prod && rsync -av -e ssh --exclude='*.webp' --exclude='*.pack' --exclude='*.pack_' ./dist/apps/client root@45.76.159.248:/data/cfs/source/dist/apps/. && /root/.asdf/installs/nodejs/14.17.6/.npm/bin/pm2 deploy ./apps/client/ecosystem.config.js production",
-    "deploy-server": "/root/.asdf/installs/nodejs/14.17.6/.npm/bin/pm2 deploy ./apps/server/ecosystem.config.js production",
-    "deploy-worker": "/root/.asdf/installs/nodejs/14.17.6/.npm/bin/pm2 deploy ./apps/worker/ecosystem.config.js production"
+    "deploy-server": "/Users/tung/.asdf/shims/pm2 deploy ./apps/server/ecosystem.config.js production",
+    "deploy-worker": "/Users/tung/.asdf/shims/pm2 deploy ./apps/worker/ecosystem.config.js production"
   },
   "private": true,
   "optionalDependencies": {
