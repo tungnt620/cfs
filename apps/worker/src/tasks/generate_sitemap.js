@@ -44,14 +44,11 @@ ORDER BY
               url: cfs.image,
               caption: cfs.title,
               title: cfs.title,
-              geoLocation: 'Vietnam',
-              license: 'https://creativecommons.org/licenses/by/4.0/',
             },
           ]
         : [],
-      news: undefined,
-      changefreq: 'weekly',
-      priority: 0.5,
+      changefreq: 'daily',
+      priority: 0.7,
       lastmod: cfs.updated_at,
     };
   });
@@ -96,12 +93,10 @@ FROM
               url: cat.image,
               caption: `Hình ảnh của danh mục confession ${cat.name}`,
               title: `Danh mục confession ${cat.name}`,
-              geoLocation: 'Vietnam',
-              license: 'https://creativecommons.org/licenses/by/4.0/',
             },
           ]
         : [],
-      changefreq: 'weekly',
+      changefreq: 'daily',
       priority: 0.5,
       lastmod: cat.updated_at,
     };
