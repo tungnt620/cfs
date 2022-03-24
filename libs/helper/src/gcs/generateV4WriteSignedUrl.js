@@ -20,16 +20,18 @@ export default function generateV4WriteSignedUrl(fileExt) {
   const file = storage.bucket(DEFAULT_BUCKET_NAME).file(filename);
 
   return new Promise((resolve, reject) => {
-    file.getSignedUrl(options, (err, url) => {
-      if (err) {
-        console.error(err);
-        reject(err);
-      } else {
-        resolve({
-          url,
-          publicUrl: getPublicUrl(filename),
-        });
-      }
-    });
+    resolve('https://storage.googleapis.com/' + getPublicUrl(file.name));
+
+    // file.getSignedUrl(options, (err, url) => {
+    //   if (err) {
+    //     console.error(err);
+    //     reject(err);
+    //   } else {
+    //     resolve({
+    //       url,
+    //       publicUrl: getPublicUrl(filename),
+    //     });
+    //   }
+    // });
   });
 }
