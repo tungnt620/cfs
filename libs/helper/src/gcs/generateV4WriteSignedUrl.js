@@ -10,7 +10,7 @@ const uuid = require('uuid');
  * @returns {Promise<unknown>}
  */
 export default function generateV4WriteSignedUrl(fileExt, fileSize) {
-  if (fileSize > 20000000) {
+  if (fileSize > 2000000) {
     throw new Error('File size is too large');
   }
 
