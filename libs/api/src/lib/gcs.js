@@ -3,9 +3,9 @@ import { apiUrl } from './utils';
 
 const axiosInstance = Axios.create();
 
-export const getSignedUrl = (fileType) => {
+export const getSignedUrl = (fileType, file) => {
   return axiosInstance
-    .post(`${apiUrl}/api/gcs/signed-url/${fileType}`)
+    .post(`${apiUrl}/api/gcs/signed-url/${fileType}?fileSize=${file.size}`)
     .then((res) => {
       return res?.data || {};
     })
@@ -20,6 +20,7 @@ export const uploadFileWithSignedUrl = async (signedUrl, file) => {
     .put(signedUrl, file, {
       headers: {
         'Content-Type': file.type,
+        'X-Upload-Content-Length': file.size,
       },
     })
     .then(() => {

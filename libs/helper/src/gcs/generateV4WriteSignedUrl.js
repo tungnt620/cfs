@@ -9,13 +9,17 @@ const uuid = require('uuid');
  * Client use PUT method to upload the file to the signed URL.
  * @returns {Promise<unknown>}
  */
-export default function generateV4WriteSignedUrl(fileExt) {
+export default function generateV4WriteSignedUrl(fileExt, fileSize) {
+  if (fileSize > 20000000) {
+    throw new Error('File size is too large');
+  }
+
   const options = {
     version: 'v4',
     action: 'write',
     expires: Date.now() + 30 * 60 * 1000, // 15 minutes
     extensionHeaders: {
-      'X-Upload-Content-Length': 2000000,
+      'X-Upload-Content-Length': fileSize,
     }
   };
 

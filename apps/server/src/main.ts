@@ -14,7 +14,8 @@ async function main() {
 
   app.post('/api/gcs/signed-url/:fileExt', async (req, res) => {
     const fileExt = req.params.fileExt;
-    const { url: signedUrl, publicUrl } = await generateV4WriteSignedUrl(fileExt);
+    const fileSize = req.query.fileSize;
+    const { url: signedUrl, publicUrl } = await generateV4WriteSignedUrl(fileExt, fileSize);
     res.send({ signedUrl, publicUrl });
   });
 
