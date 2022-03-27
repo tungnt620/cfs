@@ -123,7 +123,7 @@ const NewCommunityPage = () => {
         if (code === 'NUNIQ') {
           setError('slug', {
             type: 'manual',
-            message: 'Nick name đã tồn tại',
+            message: 'Tên cộng đồng đã tồn tại',
           });
         } else {
           setResponseError(e);

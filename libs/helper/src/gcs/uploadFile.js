@@ -5,9 +5,7 @@ const uploadFile = async (file) => {
   const { signedUrl, publicUrl } = await getSignedUrl(fileExt);
   const result = await uploadFileWithSignedUrl(signedUrl, file);
 
-  return null;
-
-  // return result ? publicUrl : null;
+  return result ? publicUrl : null;
 };
 
 export default uploadFile;

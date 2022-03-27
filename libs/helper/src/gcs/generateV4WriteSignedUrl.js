@@ -14,24 +14,26 @@ export default function generateV4WriteSignedUrl(fileExt) {
     version: 'v4',
     action: 'write',
     expires: Date.now() + 30 * 60 * 1000, // 15 minutes
+    extensionHeaders: {
+      'Content-Type': 'application/octet-stream',
+      'X-Upload-Content-Length': 2000000,
+    }
   };
 
   const filename = fileExt ? `${uuid.v4()}.${fileExt}` : uuid.v4(); // v4 is a random uuid
   const file = storage.bucket(DEFAULT_BUCKET_NAME).file(filename);
 
   return new Promise((resolve, reject) => {
-    resolve('https://storage.googleapis.com/' + getPublicUrl(file.name));
-
-    // file.getSignedUrl(options, (err, url) => {
-    //   if (err) {
-    //     console.error(err);
-    //     reject(err);
-    //   } else {
-    //     resolve({
-    //       url,
-    //       publicUrl: getPublicUrl(filename),
-    //     });
-    //   }
-    // });
+    file.getSignedUrl(options, (err, url) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+      } else {
+        resolve({
+          url,
+          publicUrl: getPublicUrl(filename),
+        });
+      }
+    });
   });
 }
