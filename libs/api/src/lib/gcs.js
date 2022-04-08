@@ -17,7 +17,7 @@ export const uploadFileWithSignedUrl = async (signedUrl, file) => {
   return axiosInstance
     .put(signedUrl, file, {
       headers: {
-        'content-length': file.size,
+        'Content-Length': file.size,
         'Content-Type': `image/${fileExt}`,
       },
     })
