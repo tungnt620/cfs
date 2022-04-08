@@ -93,10 +93,12 @@ const NewCommunityPage = () => {
     const { image: bannerImage } = values.banner_image || {};
     if (bannerImage) {
       bannerImageUrl = await uploadFile(bannerImage, toast);
+      if (image === 'error') return;
     }
     const { image: profileImage } = values.image || {};
     if (profileImage) {
       profileImageUrl = await uploadFile(profileImage, toast);
+      if (image === 'error') return;
     }
 
     if (bannerImageUrl && profileImageUrl) {

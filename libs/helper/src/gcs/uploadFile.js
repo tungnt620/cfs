@@ -18,7 +18,7 @@ const uploadFile = async (file, toast) => {
           status: 'error',
         });
 
-        return '';
+        return 'error';
       }
     }
   }
