@@ -103,7 +103,7 @@ const NewCfs = () => {
 
     let image = newCfs.image || '';
     if (image) {
-      image = await uploadFile(image);
+      image = await uploadFile(image, toast);
     }
 
     createCfs({

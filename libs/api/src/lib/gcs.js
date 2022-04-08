@@ -9,18 +9,16 @@ export const getSignedUrl = (fileType, file) => {
     .then((res) => {
       return res?.data || {};
     })
-    .catch((err) => {
-      console.error(err);
-      return null;
-    });
 };
 
 export const uploadFileWithSignedUrl = async (signedUrl, file) => {
+  const fileExt = file.type?.split('/')[1];
+
   return axiosInstance
     .put(signedUrl, file, {
       headers: {
-        'Content-Type': 'application/octet-stream',
-        'X-Upload-Content-Length': file.size,
+        'content-length': file.size,
+        'Content-Type': `image/${fileExt}`,
       },
     })
     .then(() => {

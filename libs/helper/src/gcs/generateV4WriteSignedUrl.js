@@ -11,17 +11,25 @@ const uuid = require('uuid');
  */
 export default function generateV4WriteSignedUrl(fileExt, fileSize) {
   if (fileSize > 2000000) {
-    throw new Error('File size is too large');
+    return new Promise((resolve, reject) => {
+      reject('Dung lượng file quá lớn');
+    });
+  }
+
+  if (['png', 'jpg', 'jpeg', 'gif'].indexOf(fileExt) === -1) {
+    return new Promise((resolve, reject) => {
+      reject('Kiểu file không hỗ trợ');
+    });
   }
 
   const options = {
     version: 'v4',
     action: 'write',
     expires: Date.now() + 30 * 60 * 1000, // 15 minutes
+    contentType: `image/${fileExt}`,
     extensionHeaders: {
-      'X-Upload-Content-Length': fileSize,
-      "Content-Type": "application/octet-stream",
-    }
+      'content-length': fileSize,
+    },
   };
 
   const filename = fileExt ? `${uuid.v4()}.${fileExt}` : uuid.v4(); // v4 is a random uuid
