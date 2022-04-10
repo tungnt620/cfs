@@ -29,6 +29,7 @@ export default function generateV4WriteSignedUrl(fileExt, fileSize) {
     contentType: `application/octet-stream`,
     extensionHeaders: {
       'content-length': fileSize,
+      "Access-Control-Allow-Origin": "*",
     },
   };
 
