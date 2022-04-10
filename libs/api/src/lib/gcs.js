@@ -8,16 +8,14 @@ export const getSignedUrl = (fileType, file) => {
     .post(`${apiUrl}/api/gcs/signed-url/${fileType}?fileSize=${file.size}`)
     .then((res) => {
       return res?.data || {};
-    })
+    });
 };
 
 export const uploadFileWithSignedUrl = async (signedUrl, file) => {
-  const fileExt = file.type?.split('/')[1];
-
   return axiosInstance
     .put(signedUrl, file, {
       headers: {
-        'Content-Type': `image/${fileExt}`,
+        'Content-Type': `application/octet-stream`,
       },
     })
     .then(() => {

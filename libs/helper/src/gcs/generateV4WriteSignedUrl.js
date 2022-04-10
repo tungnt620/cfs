@@ -26,6 +26,7 @@ export default function generateV4WriteSignedUrl(fileExt, fileSize) {
     version: 'v4',
     action: 'write',
     expires: Date.now() + 30 * 60 * 1000, // 15 minutes
+    contentType: `application/octet-stream`,
     extensionHeaders: {
       'content-length': fileSize,
     },
