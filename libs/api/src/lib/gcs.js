@@ -27,3 +27,23 @@ export const uploadFileWithSignedUrl = async (signedUrl, file) => {
       return 0;
     });
 };
+
+export const uploadFileWithGCS = async (file) => {
+  const bodyFormData = new FormData();
+  bodyFormData.append('file', file);
+
+  return axiosInstance
+    .post(`${apiUrl}/upload`, bodyFormData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      withCredentials: true,
+    })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.error(err);
+      return 0;
+    });
+};

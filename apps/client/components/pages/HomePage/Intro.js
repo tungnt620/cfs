@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Text } from '@chakra-ui/react';
+import { Alert, AlertIcon, AlertTitle, Button, Text } from '@chakra-ui/react';
 import { useReactiveVar } from '@apollo/react-hooks';
 import { setCurrentUser } from '@cfs/helper/reactiveVars';
 import { useRouter } from 'next/router';
@@ -16,6 +16,10 @@ const Intro = () => {
 
   return (
     <>
+      <Alert status='info'>
+        <AlertIcon />
+        Chúng mình vừa sửa lỗi upload file ảnh, bây giờ bạn có thể tạo confession/cộng đồng mới với hình ảnh.
+      </Alert>
       <Text fontSize="2xl">
         Xin chào {currentUser?.id ? <b>{currentUser?.username}</b> : 'bạn!'}
       </Text>

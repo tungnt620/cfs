@@ -21,6 +21,8 @@
 - In local
   - `nx run db:watch` watch change in `1-current.sql` file and run to database
   - `nx run db:commit` commit sql change to migration files
+  - `nx run db:uncommit` uncommit sql change to migration files
+  - `nx run db:migrate` migrate
 - Migrate in production:
   - Login to db server
   - `yarn install`

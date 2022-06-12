@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 13.2
--- Dumped by pg_dump version 13.2
+-- Dumped from database version 14.3
+-- Dumped by pg_dump version 14.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1271,6 +1271,18 @@ CREATE FUNCTION app_public.get_relative_confessions(target_confession_id integer
    limit 3
   )
   order by id desc;
+$$;
+
+
+--
+-- Name: is_user_logged_in(); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.is_user_logged_in() RETURNS boolean
+    LANGUAGE sql STABLE SECURITY DEFINER
+    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
+    AS $$
+  select id is not null from app_public.users where id = app_public.current_user_id();
 $$;
 
 
@@ -3342,6 +3354,14 @@ GRANT ALL ON FUNCTION app_public.get_relative_confessions(target_confession_id i
 
 
 --
+-- Name: FUNCTION is_user_logged_in(); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.is_user_logged_in() FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.is_user_logged_in() TO cfs_visitor;
+
+
+--
 -- Name: FUNCTION logout(); Type: ACL; Schema: app_public; Owner: -
 --
 
@@ -3573,7 +3593,6 @@ GRANT SELECT,USAGE ON SEQUENCE app_public.user_confession_reaction_id_seq TO cfs
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: app_hidden; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_hidden REVOKE ALL ON SEQUENCES  FROM cfs;
 ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_hidden GRANT SELECT,USAGE ON SEQUENCES  TO cfs_visitor;
 
 
@@ -3581,8 +3600,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_hidden GRANT SELECT,USAGE ON
 -- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: app_hidden; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_hidden REVOKE ALL ON FUNCTIONS  FROM PUBLIC;
-ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_hidden REVOKE ALL ON FUNCTIONS  FROM cfs;
 ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_hidden GRANT ALL ON FUNCTIONS  TO cfs_visitor;
 
 
@@ -3590,7 +3607,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_hidden GRANT ALL ON FUNCTION
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: app_public; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_public REVOKE ALL ON SEQUENCES  FROM cfs;
 ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_public GRANT SELECT,USAGE ON SEQUENCES  TO cfs_visitor;
 
 
@@ -3598,8 +3614,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_public GRANT SELECT,USAGE ON
 -- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: app_public; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_public REVOKE ALL ON FUNCTIONS  FROM PUBLIC;
-ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_public REVOKE ALL ON FUNCTIONS  FROM cfs;
 ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_public GRANT ALL ON FUNCTIONS  TO cfs_visitor;
 
 
@@ -3607,7 +3621,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA app_public GRANT ALL ON FUNCTION
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: public; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA public REVOKE ALL ON SEQUENCES  FROM cfs;
 ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA public GRANT SELECT,USAGE ON SEQUENCES  TO cfs_visitor;
 
 
@@ -3615,8 +3628,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA public GRANT SELECT,USAGE ON SEQ
 -- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: public; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA public REVOKE ALL ON FUNCTIONS  FROM PUBLIC;
-ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA public REVOKE ALL ON FUNCTIONS  FROM cfs;
 ALTER DEFAULT PRIVILEGES FOR ROLE cfs IN SCHEMA public GRANT ALL ON FUNCTIONS  TO cfs_visitor;
 
 
